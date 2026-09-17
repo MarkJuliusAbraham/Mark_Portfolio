@@ -1,0 +1,40 @@
+.typeset-docs {
+    --typeset-font-body: "Geist Variable", sans-serif;
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 15px;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+}
+
+.typeset-badge {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable";
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 32px;
+    --typeset-leading: 1.1;
+    --typeset-flow: 1.25em;
+
+    font-family: var(--typeset-font-heading), sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.typeset-nav-item {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 18px;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.15em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}
