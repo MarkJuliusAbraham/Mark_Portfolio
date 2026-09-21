@@ -1,14 +1,4 @@
-.typeset-docs {
-    --typeset-font-body: "Geist Variable", sans-serif;
-    --typeset-font-heading: "Geist Variable", sans-serif;
-    --typeset-font-mono: monospace;
-
-    --typeset-size: 15px;
-    --typeset-leading: 1.75;
-    --typeset-flow: 1.25em;
-}
-
-.typeset-badge {
+.typeset-nav-header {
     --typeset-font-body: "Geist Variable";
     --typeset-font-heading: "Geist Variable";
     --typeset-font-mono: monospace;
@@ -27,7 +17,7 @@
     --typeset-font-heading: "Geist Variable", sans-serif;
     --typeset-font-mono: monospace;
 
-    --typeset-size: 18px;
+    --typeset-size: 24px;
     --typeset-leading: 1.75;
     --typeset-flow: 1.25em;
     --typeset-spacing: 0.15em;
@@ -35,6 +25,141 @@
 
     font-family: var(--typeset-font-body), sans-serif;
     font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}
+
+
+.typeset-nav-footer {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 18px;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.05em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}
+
+.typeset-BIG-TEXT {
+    --typeset-font-body: "Anton";
+    --typeset-font-heading: "Anton", sans-serif;
+    --typeset-size: 75px;
+    --typeset-leading: 1.25;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.05em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 100;
+}
+
+.typeset-BIG-TEXT-smaller-screen {
+    --typeset-font-body: "Anton";
+    --typeset-font-heading: "Anton", sans-serif;
+    --typeset-size: 95px;
+    --typeset-leading: 1.25;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.05em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 100;
+}
+
+
+.typeset-mini-text {
+    --typeset-font-body: "Roboto";
+    --typeset-font-heading: "Roboto", sans-serif;
+    --typeset-size: 16px;
+    --typeset-leading: 1.05;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.2em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 400;
+}
+
+.typeset-aesthetic {
+    --typeset-font-body: "BBH Bogle";
+    --typeset-font-heading: "BBH Bogle";
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 28px;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: -0.05em;
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 1;
+}
+
+.typeset-card-title {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 32px;
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 900;
+}
+
+.typeset-card-toner {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 14px;
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.25em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}
+
+.typeset-card-readable {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 16px;
+    --typeset-leading: 1.5;
+    --typeset-spacing: 0;
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    font-weight: 400;
     line-height: var(--typeset-leading);
     letter-spacing: var(--typeset-spacing);
 }
