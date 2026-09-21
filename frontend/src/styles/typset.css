@@ -63,23 +63,6 @@
     font-weight: 100;
 }
 
-.typeset-BIG-TEXT-smaller-screen {
-    --typeset-font-body: "Anton";
-    --typeset-font-heading: "Anton", sans-serif;
-    --typeset-size: 95px;
-    --typeset-leading: 1.25;
-    --typeset-flow: 1.25em;
-    --typeset-spacing: 0.05em;
-
-
-    font-family: var(--typeset-font-body), sans-serif;
-    font-size: var(--typeset-size);
-    line-height: var(--typeset-leading);
-    letter-spacing: var(--typeset-spacing);
-    font-weight: 100;
-}
-
-
 .typeset-mini-text {
     --typeset-font-body: "Roboto";
     --typeset-font-heading: "Roboto", sans-serif;
@@ -113,12 +96,12 @@
     font-weight: 1;
 }
 
-.typeset-card-title {
+.typeset-title {
     --typeset-font-body: "Geist Variable";
     --typeset-font-heading: "Geist Variable", sans-serif;
     --typeset-font-mono: monospace;
 
-    --typeset-size: 32px;
+    --typeset-size: 52px;
     --typeset-leading: 1;
     --typeset-flow: 1.25em;
     --typeset-spacing: 0em;
@@ -128,7 +111,25 @@
     font-size: var(--typeset-size);
     line-height: var(--typeset-leading);
     letter-spacing: var(--typeset-spacing);
-    font-weight: 900;
+    font-weight: 700;
+}
+
+.typeset-card-title {
+    --typeset-font-body: "Geist Variable";
+    --typeset-font-heading: "Geist Variable", sans-serif;
+    --typeset-font-mono: monospace;
+
+    --typeset-size: 28px;
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0em;
+
+
+    font-family: var(--typeset-font-body), sans-serif;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 600;
 }
 
 .typeset-card-toner {

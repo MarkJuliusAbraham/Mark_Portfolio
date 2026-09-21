@@ -7,7 +7,7 @@ export const Sidebar = ({ items, email, children }) => {
   const controls = useAnimation();
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1400px)");
+    const mediaQuery = window.matchMedia("(min-width: 1100px)");
 
     const update = () => {
       controls.start({

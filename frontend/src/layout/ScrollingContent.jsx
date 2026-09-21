@@ -1,12 +1,12 @@
-export const ScrollingContent = ({children}) => {
+export const ScrollingContent = ({ref, children}) => {
   return (
-    <div className="
+    <div ref={ref} className="
       ml-0
       w-full
       px-4
       py-10
 
-      min-[1400px]:ml-80
+      min-[1100px]:ml-80
     ">
       {children}
     </div>
