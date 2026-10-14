@@ -1,0 +1,93 @@
+.hero-banner {
+    container: hero / inline-size;
+    min-width: 0;
+    width: 100%;
+}
+
+.hero-banner-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 32px;
+    padding-block: clamp(8px, 2cqw, 24px);
+}
+
+.hero-name {
+    container-type: inline-size;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.hero-name-heading {
+    font-family: var(--font-portfolio-display);
+    font-size: clamp(2.25rem, 14cqw, 6rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: 0.015em;
+}
+
+.hero-name-line {
+    display: block;
+    white-space: nowrap;
+}
+
+.hero-name-line div {
+    vertical-align: top;
+}
+
+.hero-role {
+    color: var(--muted-foreground);
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
+}
+
+/* The frame owns geometry; source dimensions and loading cannot resize it. */
+.hero-photo-frame {
+    --photo-inset: 8px;
+    position: relative;
+    width: 100%;
+    max-width: 22rem;
+    min-width: 0;
+    aspect-ratio: 4 / 5;
+    justify-self: start;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--nier-panel);
+}
+
+.hero-photo {
+    position: absolute;
+    inset: var(--photo-inset);
+    display: block;
+    width: calc(100% - 2 * var(--photo-inset));
+    height: calc(100% - 2 * var(--photo-inset));
+    background: var(--nier-field);
+}
+
+.hero-photo-placeholder {
+    position: absolute;
+    inset: var(--photo-inset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--nier-field);
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+}
+
+@container hero (min-width: 640px) {
+    .hero-banner-content {
+        grid-template-columns: minmax(0, 1fr) clamp(14rem, 34cqw, 22rem);
+        gap: clamp(32px, 5cqw, 80px);
+    }
+
+    .hero-photo-frame {
+        justify-self: end;
+    }
+}
