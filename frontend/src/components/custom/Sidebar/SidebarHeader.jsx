@@ -1,7 +1,7 @@
-export const SidebarHeader = ({name}) => {
+export const SidebarHeader = ({name, onClick}) => {
     return (
-        <div className="typeset-nav-header min-h-24">
+        <button type="button" className="sidebar-wordmark" onClick={onClick} aria-label={`${name} — go to home`}>
             {name}
-        </div>
+        </button>
     );
 }

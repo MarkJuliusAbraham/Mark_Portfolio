@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 
 export const FadeInComponent = ({
                                   className,
@@ -8,6 +8,7 @@ export const FadeInComponent = ({
                                 }) => {
   const [delay, setDelay] = useState(0);
   const ref = useRef(null);
+  const reducedMotion = useReducedMotion();
 
   const isInView = useInView(ref, {
     once: false,
@@ -47,19 +48,19 @@ export const FadeInComponent = ({
   return (
     <motion.div
       ref={ref}
-      initial={{
+      initial={reducedMotion ? false : {
         opacity: 0,
         x: initialPosition.x,
         y: initialPosition.y,
       }}
       animate={{
-        opacity: isInView ? 1 : 0,
-        x: isInView ? 0 : initialPosition.x,
-        y: isInView ? 0 : initialPosition.y,
+        opacity: reducedMotion || isInView ? 1 : 0,
+        x: reducedMotion || isInView ? 0 : initialPosition.x,
+        y: reducedMotion || isInView ? 0 : initialPosition.y,
       }}
       transition={{
-        duration: 0.7,
-        delay: isInView ? delay : 0,
+        duration: reducedMotion ? 0 : 0.6,
+        delay: reducedMotion ? 0 : isInView ? delay : 0,
       }}
       className={className}
     >

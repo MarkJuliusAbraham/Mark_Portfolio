@@ -2,7 +2,7 @@ import {ThreeTierInfo} from "@/components/custom/Cards/ThreeTierInfo.jsx";
 import {DualDisplay} from "@/components/custom/Container/DualDisplay.jsx";
 import {TitledCard} from "@/components/custom/Cards/TitledCard.jsx";
 
-export const AboutSection = ({ref}) => {
+export const AboutSection = ({educationRef}) => {
 
   const about = [
     {
@@ -16,7 +16,7 @@ export const AboutSection = ({ref}) => {
         {
           toner: "2025",
           title: "AlbertaEnvirothon | Software Developer",
-          readable: "Coursework, Client-work, Full Stack development"
+          readable: "Coursework, Client-work, Full Stack development lead"
         }
       ]
     },
@@ -33,11 +33,11 @@ export const AboutSection = ({ref}) => {
   ]
 
   return (
-    <section ref={ref}>
+    <div className="min-w-0">
       <DualDisplay>
         {
           about.map((entry, index) => (
-            <TitledCard key={index} title={entry.header}>
+            <TitledCard key={index} ref={entry.header === "Education" ? educationRef : undefined} title={entry.header}>
               {entry.contents.map((item, i) => (
                 <ThreeTierInfo
                   key = {i}
@@ -50,6 +50,6 @@ export const AboutSection = ({ref}) => {
           ))
         }
       </DualDisplay>
-    </section>
+    </div>
   );
 }

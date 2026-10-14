@@ -1,11 +1,11 @@
-import {PopInComponent} from "@/components/custom/Animated/PopInComponent.jsx";
+import {PhrasePopIn} from "@/components/custom/Animated/PhrasePopIn.jsx";
 
-export const TitledCard = ({title = "Default Title", children}) => {
+export const TitledCard = ({ref, title = "Default Title", children}) => {
   return (
-    <div className="flex flex-col gap-8 overflow-hidden pt-40">
-      <PopInComponent className="typeset-title">
-        {title}
-      </PopInComponent>
+    <div ref={ref} className="section-anchor flex min-w-0 flex-col gap-4 sm:gap-6">
+      <h3 aria-label={title}>
+        <span aria-hidden="true"><PhrasePopIn word={title} className="typeset-title inline-block"/></span>
+      </h3>
       <div>
         {children}
       </div>

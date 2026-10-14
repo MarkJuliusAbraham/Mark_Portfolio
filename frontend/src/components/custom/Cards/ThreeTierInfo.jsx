@@ -9,9 +9,9 @@ export const ThreeTierInfo = (
 
   return (
     <FadeInComponent
-      className="box-border flex w-full flex-col gap-2 py-4 px-2  overflow-hidden"
+      className="box-border flex min-w-0 w-full flex-col gap-2 py-4 px-2 wrap-break-word"
     >
-      <div className="typeset-card-toner text-gray-600">
+      <div className="typeset-card-toner text-muted-foreground">
         {toner}
       </div>
 

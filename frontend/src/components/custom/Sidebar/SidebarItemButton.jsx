@@ -1,20 +1,20 @@
-import {ArrowRightIcon} from "lucide-react";
-import {Button} from "@/components/ui/button.jsx";
+import { ArrowRight } from "lucide-react";
 
-export const SidebarItemButton = ({href, label, onClick}) => {
+export const SidebarItemButton = ({label, onClick, active = false, children}) => {
     return (
-        <Button
-            variant="ghost"
+        <button
+            type="button"
             onClick = {onClick}
-            className="group my-0.5 h-16 w-full justify-between rounded-none p-0 hover:bg-transparent hover:shadow-[inset_0_-2px_0_0_black]"
+            className="sidebar-item"
+            data-active={active}
+            aria-current={active ? "location" : undefined}
         >
-            <div className="typeset-nav-item">
+            {children}
+            <span className="sidebar-item-label">
                 {label}
-            </div>
+            </span>
 
-            <ArrowRightIcon
-                className="scale-150 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100"
-            />
-        </Button>
+            <ArrowRight className="sidebar-item-arrow" strokeWidth={1.5} aria-hidden="true" />
+        </button>
     );
 }

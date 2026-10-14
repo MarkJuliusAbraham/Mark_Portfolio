@@ -1,39 +1,16 @@
-import {FadeInComponent} from "@/components/custom/Animated/FadeInComponent.jsx";
-import {PopInComponent} from "@/components/custom/Animated/PopInComponent.jsx";
+import {PhrasePopIn} from "@/components/custom/Animated/PhrasePopIn.jsx";
 
-export const NameBanner = () => {
-  const name = "Mark Julius Abraham";
-
+export const NameBanner = ({ nameLines, description }) => {
   return (
-    <div className="relative min-[1400px]:w-[50%]">
-      {/* Small text */}
-      <div className="absolute left-0.5 -top-3">
-        <FadeInComponent>
-          <div className="typeset-mini-text text-gray-600">
-            Designer / Developer
-          </div>
-        </FadeInComponent>
-      </div>
-
-      {/* Big text */}
-      <div className="typeset-BIG-TEXT flex w-full min-w-0 flex-col items-stretch min-[1000px]:flex-row min-[1400px]:flex-col">
-        {name.split(" ").map((word, wordIndex) => (
-          <div
-            key={wordIndex}
-            className="whitespace-nowrap shrink-0 overflow-hidden pr-10"
-          >
-            {[...word].map((char, charIndex) => (
-              <PopInComponent
-                key={charIndex}
-                className="mr-[-0.06em] inline-block"
-              >
-                <span>{char}</span>
-              </PopInComponent>
-            ))}
-          </div>
+    <div className="hero-name">
+      <h1 aria-label={nameLines.join(" ")} className="hero-name-heading">
+        {nameLines.map((line, index) => (
+          <span key={`${line}-${index}`} aria-hidden="true" className="hero-name-line">
+            <PhrasePopIn word={line} />
+          </span>
         ))}
-      </div>
-
+      </h1>
+      {description && <p className="hero-role">{description}</p>}
     </div>
   );
-}
+};
