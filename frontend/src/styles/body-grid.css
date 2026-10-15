@@ -1,0 +1,125 @@
+/* Decorative grid behind the page content; the sidebar and mobile header stay clear of it. */
+@property --body-grid-angle {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+/* Registered so scripts read the resolved spacing in px when placing pulses. */
+@property --body-grid-size {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 48px;
+}
+
+:root {
+    /* Rotates the grid lines; 0deg is square to the viewport, 45deg is a diamond lattice. */
+    --body-grid-angle: 28deg;
+    /* Lines per base cell; 2 halves the spacing, 0.5 doubles it. */
+    --body-grid-density: 1;
+    --body-grid-base-size: 56px;
+    /* Line strength as a share of the text color. Light mode is biased stronger, since faint dark
+       lines on the light background read weaker than faint light lines on the dark one. */
+    --body-grid-line-strength: 6.5%;
+    --body-grid-line: color-mix(in srgb, var(--nier-foreground) var(--body-grid-line-strength), transparent);
+    /* How much of the grid still shows at the center of the screen, from 0 to 1; it eases back to
+       full strength toward the edges. */
+    --body-grid-center: 0.05;
+    /* Light passing behind the grid; only its influence on the lines is visible. */
+    --body-grid-pulse: color-mix(in srgb, var(--nier-foreground) 40%, transparent);
+    /* Diameter of the light; it fades smoothly to nothing at the edge. */
+    --body-grid-pulse-glow-size: calc(var(--body-grid-size) * 5);
+}
+
+.dark {
+    --body-grid-line-strength: 4.5%;
+}
+
+.body-grid {
+    position: fixed;
+    inset: var(--mobile-header-height) 0 0 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    /* Fades the grid gradually toward the center; the eased stops avoid a visible ring. */
+    mask-image: radial-gradient(
+        ellipse farthest-corner at center,
+        rgb(0 0 0 / var(--body-grid-center)) 0%,
+        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.08)) 20%,
+        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.3)) 40%,
+        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.62)) 60%,
+        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.9)) 80%,
+        #000 100%
+    );
+    /* Resolved here so a density override on any ancestor still applies. */
+    --body-grid-size: calc(var(--body-grid-base-size) / var(--body-grid-density));
+}
+
+/* Oversized square rotated about the viewport center so it covers every corner at any angle. */
+.body-grid-layer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150vmax;
+    height: 150vmax;
+    transform: translate(-50%, -50%) rotate(var(--body-grid-angle));
+    background-image:
+        linear-gradient(to right, var(--body-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--body-grid-line) 1px, transparent 1px);
+    background-size: var(--body-grid-size) var(--body-grid-size);
+}
+
+/* Where the light is along a pulse's path, animated by BodyGrid. */
+@property --pulse-head {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+/* Light sits behind the grid, so it only shows through the lines; this mask matches them. */
+.body-grid-light {
+    position: absolute;
+    inset: 0;
+    mask-image:
+        linear-gradient(to right, #000 1px, transparent 1px),
+        linear-gradient(to bottom, #000 1px, transparent 1px);
+    mask-size: var(--body-grid-size) var(--body-grid-size);
+}
+
+/* Invisible track along a pulse's path that carries the light and its brightness. */
+.body-grid-pulse {
+    position: absolute;
+    opacity: 0;
+    will-change: opacity;
+}
+
+/* Soft light centered on the track; through the mask it brightens nearby lines, with an eased
+   falloff so no single point or line stands out. */
+.body-grid-pulse-glow {
+    --offset: calc(var(--pulse-head) - var(--body-grid-pulse-glow-size) / 2);
+    --center: calc(50% - var(--body-grid-pulse-glow-size) / 2);
+    position: absolute;
+    width: var(--body-grid-pulse-glow-size);
+    height: var(--body-grid-pulse-glow-size);
+    background: radial-gradient(
+        circle closest-side,
+        var(--body-grid-pulse) 0%,
+        color-mix(in srgb, var(--body-grid-pulse) 85%, transparent) 15%,
+        color-mix(in srgb, var(--body-grid-pulse) 60%, transparent) 32%,
+        color-mix(in srgb, var(--body-grid-pulse) 35%, transparent) 50%,
+        color-mix(in srgb, var(--body-grid-pulse) 15%, transparent) 68%,
+        color-mix(in srgb, var(--body-grid-pulse) 4%, transparent) 85%,
+        transparent 100%
+    );
+}
+
+[data-heading="to right"] > .body-grid-pulse-glow { left: var(--offset); top: var(--center); }
+[data-heading="to left"] > .body-grid-pulse-glow { right: var(--offset); top: var(--center); }
+[data-heading="to bottom"] > .body-grid-pulse-glow { top: var(--offset); left: var(--center); }
+[data-heading="to top"] > .body-grid-pulse-glow { bottom: var(--offset); left: var(--center); }
+
+@media (min-width: 1100px) {
+    .body-grid {
+        inset: 0 0 0 var(--sidebar-width);
+    }
+}

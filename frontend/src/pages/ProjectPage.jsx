@@ -1,8 +1,8 @@
-import {ProjectHeadliner} from "@/components/custom/ProjectFeature/ProjectHeadliner.jsx";
-import {ScrollingContent} from "@/layout/ScrollingContent.jsx";
+import {ProjectHeadliner} from "@/components/organisms/ProjectHeadliner.jsx";
+import {ScrollingContent} from "@/components/templates/ScrollingContent.jsx";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import {WebGpuCanvas} from "@/components/custom/Canvas/WebGpuCanvas.jsx";
+import {WebGpuCanvas} from "@/components/organisms/WebGpuCanvas.jsx";
 import projectPreview from "@/gifs/MitsuhaRun.gif";
 
 export const ProjectPage = () => {

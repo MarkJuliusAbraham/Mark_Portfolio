@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.jsx";
-import "./styles/index.css";
+import "@/styles/index.css";
 import { BrowserRouter } from "react-router-dom";
-import { initializeTheme } from "./utility/useTheme.js";
+import { initializeTheme } from "@/hooks/useTheme.js";
 
 initializeTheme();
 

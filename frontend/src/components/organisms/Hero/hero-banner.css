@@ -1,0 +1,299 @@
+.hero-banner {
+    container: hero / inline-size;
+    min-width: 0;
+    width: 100%;
+}
+
+/* Stacked on narrow screens: meta, name, photo, then the focus strip. */
+.hero-banner-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "meta"
+        "name"
+        "photo"
+        "focus";
+    gap: 40px;
+}
+
+/* Thin header line: label, a rule that fills the space, then the year. */
+.hero-meta {
+    grid-area: meta;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.hero-meta-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.hero-name {
+    grid-area: name;
+    container-type: inline-size;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hero-role {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.hero-name-heading {
+    font-family: var(--font-portfolio-display);
+    font-size: clamp(2.75rem, 16cqw, 8rem);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: 0.005em;
+}
+
+.hero-name-line {
+    display: block;
+    white-space: nowrap;
+}
+
+.hero-name-line div {
+    vertical-align: top;
+}
+
+.hero-intro {
+    max-width: 34rem;
+    color: var(--muted-foreground);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+.hero-action {
+    min-height: 44px;
+    padding-inline: 20px;
+    border-radius: 0;
+    letter-spacing: 0.06em;
+}
+
+.hero-photo-figure {
+    grid-area: photo;
+    display: flex;
+    width: 100%;
+    max-width: 24rem;
+    min-width: 0;
+    flex-direction: column;
+    gap: 12px;
+    justify-self: start;
+}
+
+/* The frame owns geometry; source dimensions and loading cannot resize it. */
+.hero-photo-frame {
+    --photo-inset: 8px;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--nier-panel);
+}
+
+/* Corner brackets, drawn over the photo's inset border. */
+.hero-photo-frame::before,
+.hero-photo-frame::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    border: 0 solid var(--foreground);
+    pointer-events: none;
+}
+
+.hero-photo-frame::before {
+    top: 3px;
+    left: 3px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+}
+
+.hero-photo-frame::after {
+    right: 3px;
+    bottom: 3px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+}
+
+.hero-photo {
+    position: absolute;
+    inset: var(--photo-inset);
+    display: block;
+    width: calc(100% - 2 * var(--photo-inset));
+    height: calc(100% - 2 * var(--photo-inset));
+    background: var(--nier-field);
+}
+
+.hero-photo-placeholder {
+    position: absolute;
+    inset: var(--photo-inset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--nier-field);
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+}
+
+.hero-photo-caption {
+    display: flex;
+    gap: 12px;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+}
+
+.hero-photo-caption span:first-child {
+    flex-shrink: 0;
+    color: var(--foreground);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* One numbered strip of focus areas, divided by thin rules. */
+.hero-focus {
+    grid-area: focus;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-bottom: 1px solid var(--border);
+    list-style: none;
+}
+
+.hero-focus-item {
+    min-width: 0;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+}
+
+/* Use the same single border as the other items. Marker backings interrupt it;
+   once shifted, the panel edge supplies the boundary instead. */
+.hero-focus-item[data-accent="game"][data-inverted="true"] {
+    border-top-color: transparent;
+}
+
+.hero-focus-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.hero-focus-text {
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+/* Bleed only the mobile Games background into the page gutter. The copy, illustration,
+   breathing seal, and bottom separator retain their original content-width alignment. */
+@container hero (width < 560px) {
+    .hero-focus-item[data-accent="game"] {
+        isolation: isolate;
+    }
+
+    .hero-focus-item[data-accent="game"][data-inverted="true"] {
+        background: transparent;
+    }
+
+    .hero-focus-item[data-accent="game"][data-inverted="true"]::before {
+        content: "";
+        position: absolute;
+        inset: 0 -1rem;
+        z-index: -1;
+        background: var(--background);
+        pointer-events: none;
+    }
+}
+
+@container hero (min-width: 560px) {
+    .hero-focus {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-focus-item {
+        padding: 24px;
+    }
+
+    .hero-focus-item:nth-child(odd) {
+        padding-left: 0;
+    }
+
+    .hero-focus-item:nth-child(even) {
+        border-left: 1px solid var(--border);
+    }
+}
+
+/* Name beside the photo, both resting on the focus strip. */
+@container hero (min-width: 640px) {
+    .hero-banner-content {
+        grid-template-columns: minmax(0, 1fr) clamp(13rem, 30cqw, 23rem);
+        grid-template-rows: auto 1fr auto;
+        grid-template-areas:
+            "meta  meta"
+            "name  photo"
+            "focus focus";
+        column-gap: clamp(32px, 6cqw, 96px);
+        row-gap: clamp(32px, 5cqw, 56px);
+    }
+
+    .hero-name {
+        align-self: end;
+    }
+
+    .hero-photo-figure {
+        align-self: center;
+        justify-self: end;
+    }
+}
+
+@container hero (min-width: 1000px) {
+    .hero-focus {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 0;
+    }
+
+    .hero-focus-item,
+    .hero-focus-item:nth-child(odd) {
+        padding: 24px 24px 8px;
+    }
+
+    .hero-focus-item:first-child {
+        padding-left: 0;
+    }
+
+    .hero-focus-item:not(:first-child) {
+        border-left: 1px solid var(--border);
+    }
+}
+
+/* With room to spare, the opening fills the first screen. */
+@media (min-width: 1100px) and (min-height: 700px) {
+    .hero-banner-content {
+        min-height: min(calc(100dvh - 6rem), 64rem);
+    }
+}

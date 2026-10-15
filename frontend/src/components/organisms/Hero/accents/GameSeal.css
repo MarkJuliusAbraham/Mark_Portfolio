@@ -1,0 +1,132 @@
+/* [04] Games: the divider opens around a small diamond with a slow inhale and exhale. */
+.focus-game-seal {
+    position: absolute;
+    top: -0.5px;
+    inset-inline: 0;
+    display: flex;
+    align-items: center;
+    height: 22px;
+    transform: translateY(-50%);
+    color: var(--foreground);
+    pointer-events: none;
+    --seal-breath-duration: 4.8s;
+    --seal-bar-height: 16px;
+    --seal-wave-span: 30%;
+    --seal-bar-pulse-duration: calc(var(--seal-shift-duration) * 0.55 + 100ms);
+}
+
+.focus-game-seal-mark {
+    display: grid;
+    order: 1;
+    flex-shrink: 0;
+    width: 26px;
+    height: 22px;
+    place-items: center;
+    background: var(--background);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.focus-game-seal-symbol {
+    transform-origin: center;
+    animation: focus-seal-breathe var(--seal-breath-duration) ease-in-out infinite;
+}
+
+.focus-game-seal-core {
+    animation: focus-seal-core var(--seal-breath-duration) ease-in-out infinite;
+}
+
+.focus-game-seal-progress {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+.focus-game-seal-bars {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 22px;
+    overflow: hidden;
+}
+
+.focus-game-seal-bars[data-side="right"] {
+    order: 2;
+    transform: scaleX(-1);
+}
+
+.focus-game-seal-wave {
+    position: absolute;
+    inset: 0;
+}
+
+/* Fixed bars occupy the inner wave span on each side. Only their active pulse cuts a gap. */
+.focus-game-seal-bar {
+    position: absolute;
+    top: 50%;
+    left: calc(100% - var(--seal-wave-span) + var(--seal-wave-span) * (var(--bar-step) + 0.5) / var(--seal-bar-count));
+    width: 1px;
+    height: var(--seal-bar-height);
+    outline: 1px solid var(--background);
+    background: currentColor;
+    visibility: hidden;
+    transform: translate(-50%, -50%);
+    animation: focus-seal-bar-pulse var(--seal-bar-pulse-duration) ease-in-out both;
+    animation-delay: calc(var(--bar-delay) * (var(--seal-shift-duration) - var(--seal-bar-pulse-duration)));
+}
+
+/* On the return pass, invert the two surfaces meeting beneath the bar, without cutouts. */
+.hero-focus-item[data-inverted="true"] .focus-game-seal-bar {
+    outline-color: transparent;
+    background: linear-gradient(to bottom, var(--nier-surface) 50%, var(--background) 50%);
+    filter: invert(1);
+}
+
+.hero-focus-item[data-active="true"] .focus-game-seal-progress {
+    animation: focus-seal-charge var(--seal-shift-duration) linear forwards;
+}
+
+.focus-game-seal[data-paused="true"] :is(.focus-game-seal-symbol, .focus-game-seal-core, .focus-game-seal-progress, .focus-game-seal-bar) {
+    animation-play-state: paused;
+}
+
+@keyframes focus-seal-bar-pulse {
+    0%, 100% { visibility: hidden; transform: translate(-50%, -50%) scaleY(0); }
+    1%, 99% { visibility: visible; }
+    38.5% { transform: translate(-50%, -50%) scaleY(1); }
+}
+
+@keyframes focus-seal-charge {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes focus-seal-breathe {
+    0%, 100% { opacity: 0.45; transform: scale(0.86); }
+    45%, 55% { opacity: 0.9; transform: scale(1.1); }
+}
+
+@keyframes focus-seal-core {
+    0%, 100% { opacity: 0.08; }
+    45%, 55% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .focus-game-seal-symbol {
+        animation: none;
+        opacity: 0.7;
+    }
+
+    .focus-game-seal-core {
+        animation: none;
+        opacity: 0.25;
+    }
+
+    .hero-focus-item[data-active="true"] .focus-game-seal-progress {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+
+    .focus-game-seal-bar {
+        animation: none;
+        visibility: visible;
+        transform: translate(-50%, -50%) scaleY(0.45);
+    }
+}

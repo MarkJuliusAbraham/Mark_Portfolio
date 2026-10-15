@@ -1,0 +1,422 @@
+.sidebar-desktop {
+    background: var(--sidebar);
+    border-inline-end: 1px solid var(--sidebar-border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--nier-hover) var(--sidebar);
+}
+
+.sidebar-shell {
+    display: flex;
+    min-height: 100dvh;
+    flex-direction: column;
+    padding: 40px 28px 28px;
+}
+
+/* Holds the typed name, one hero line per line. Its size is always the full name's, so typing
+   never moves anything around it; with nothing typed it is empty space. */
+.sidebar-wordmark {
+    align-self: flex-start;
+    min-height: 44px;
+    color: var(--foreground);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-align: left;
+    white-space: pre-line;
+    cursor: pointer;
+    transition: opacity 160ms ease;
+}
+
+/* Text selected for a one-keystroke delete, styled like the site's text selection. */
+.sidebar-wordmark-selection {
+    background: var(--nier-selection);
+    color: var(--nier-selection-text);
+}
+
+.sidebar-desktop .sidebar-navigation {
+    margin-top: clamp(48px, 14vh, 144px);
+    margin-bottom: 32px;
+}
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 16px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding-inline: 12px;
+    border: 1px solid var(--nier-border);
+    background: var(--sidebar-accent);
+    color: var(--sidebar-foreground);
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    text-align: start;
+    cursor: pointer;
+}
+
+.sidebar-active-indicator {
+    --sidebar-cursor-shape: polygon(0 50%, 33.333% 0, 100% 50%, 33.333% 100%);
+    position: absolute;
+    inset-inline-start: -18px;
+    top: calc(50% - 4px);
+    width: 12px;
+    height: 8px;
+    pointer-events: none;
+}
+
+.sidebar-cursor-core,
+.sidebar-cursor-ghost,
+.sidebar-active-indicator::before,
+.sidebar-active-indicator::after {
+    width: 100%;
+    height: 100%;
+    clip-path: var(--sidebar-cursor-shape);
+}
+
+.sidebar-cursor-core {
+    position: relative;
+    z-index: 1;
+    display: block;
+    background: var(--foreground);
+}
+
+.sidebar-active-indicator::before,
+.sidebar-active-indicator::after,
+.sidebar-cursor-ghost {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+.sidebar-active-indicator::before {
+    background: #f33d4a;
+    transform: translate(calc(var(--cursor-fringe-x, 0px) * -1), calc(var(--cursor-fringe-y, 0px) * -1));
+}
+
+.sidebar-active-indicator::after {
+    background: #397bfa;
+    transform: translate(var(--cursor-fringe-x, 0px), var(--cursor-fringe-y, 0px));
+}
+
+.sidebar-cursor-ghost {
+    background: var(--foreground);
+    transform: translate(var(--cursor-ghost-x, 0px), var(--cursor-ghost-y, 0px));
+}
+
+.sidebar-active-indicator[data-moving]::before,
+.sidebar-active-indicator[data-moving]::after {
+    opacity: var(--cursor-chromatic-opacity, 0.7);
+}
+
+.sidebar-active-indicator[data-moving] .sidebar-cursor-ghost {
+    opacity: var(--cursor-ghost-opacity, 0);
+}
+
+.sidebar-item[data-active="true"] {
+    background: var(--sidebar-primary);
+    color: var(--sidebar-primary-foreground);
+    font-weight: 700;
+}
+
+.sidebar-item-label {
+    transition: transform 160ms ease;
+}
+
+/* Scroll progress through the active section: a track on the inner right edge, filled top down. */
+.sidebar-item-progress {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 3px;
+    background: color-mix(in srgb, var(--sidebar-primary-foreground) 22%, transparent);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-item-progress::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--sidebar-primary-foreground);
+    transform: scaleY(var(--item-progress));
+    transform-origin: top;
+}
+
+.sidebar-item[data-active="true"] .sidebar-item-progress {
+    opacity: calc(1 - var(--item-fixed));
+}
+
+/* A dot with red and blue fringes either side, for sections that can't be scrolled through. */
+.sidebar-item-dot {
+    --dot-fringe: 2px;
+    position: absolute;
+    top: calc(50% - 3.5px);
+    right: 5px;
+    width: 7px;
+    height: 7px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-item-dot::before,
+.sidebar-item-dot::after,
+.sidebar-item-dot-core {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+}
+
+.sidebar-item-dot::before {
+    background: #f33d4a;
+    opacity: 0.9;
+    transform: translateX(calc(var(--dot-fringe) * -1));
+}
+
+.sidebar-item-dot::after {
+    background: #397bfa;
+    opacity: 0.9;
+    transform: translateX(var(--dot-fringe));
+}
+
+.sidebar-item-dot-core {
+    z-index: 1;
+    background: var(--sidebar-primary-foreground);
+}
+
+.sidebar-item[data-active="true"] .sidebar-item-dot {
+    opacity: var(--item-fixed);
+    animation: sidebar-dot-pop 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* The fringes flare wide as the dot pops out, then glitch: they hold, then snap far out and back
+   with no easing in between. Red and blue jump to different distances so the split looks uneven. */
+.sidebar-item[data-active="true"] .sidebar-item-dot::before {
+    animation:
+        sidebar-dot-fringe-red 480ms ease-out,
+        sidebar-dot-glitch-red 2.6s steps(1, end) 480ms infinite;
+}
+
+.sidebar-item[data-active="true"] .sidebar-item-dot::after {
+    animation:
+        sidebar-dot-fringe-blue 480ms ease-out,
+        sidebar-dot-glitch-blue 2.6s steps(1, end) 480ms infinite;
+}
+
+@keyframes sidebar-dot-pop {
+    from {
+        transform: scale(0);
+    }
+}
+
+@keyframes sidebar-dot-fringe-red {
+    from {
+        transform: translateX(-9px);
+    }
+}
+
+@keyframes sidebar-dot-fringe-blue {
+    from {
+        transform: translateX(9px);
+    }
+}
+
+@keyframes sidebar-dot-glitch-red {
+    0%, 58% { transform: translate(-2px, 0); opacity: 0.9; }
+    60% { transform: translate(-7px, 0); opacity: 1; }
+    63% { transform: translate(-3px, 1px); opacity: 0.5; }
+    66% { transform: translate(-9px, -1px); opacity: 1; }
+    69%, 84% { transform: translate(-2px, 0); opacity: 0.9; }
+    86% { transform: translate(-6px, 1px); opacity: 1; }
+    89%, 100% { transform: translate(-2px, 0); opacity: 0.9; }
+}
+
+@keyframes sidebar-dot-glitch-blue {
+    0%, 58% { transform: translate(2px, 0); opacity: 0.9; }
+    60% { transform: translate(5px, -1px); opacity: 1; }
+    63% { transform: translate(8px, 0); opacity: 0.6; }
+    66% { transform: translate(4px, 1px); opacity: 1; }
+    69%, 84% { transform: translate(2px, 0); opacity: 0.9; }
+    86% { transform: translate(8px, -1px); opacity: 1; }
+    89%, 100% { transform: translate(2px, 0); opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-item[data-active="true"] .sidebar-item-dot,
+    .sidebar-item[data-active="true"] .sidebar-item-dot::before,
+    .sidebar-item[data-active="true"] .sidebar-item-dot::after {
+        animation: none;
+    }
+}
+
+.sidebar-item-arrow {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transform: translateX(-3px);
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.sidebar-footer {
+    min-width: 0;
+    margin-top: auto;
+}
+
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: auto;
+}
+
+.sidebar-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-footer-inner {
+    border-top: 1px solid var(--sidebar-border);
+    padding-top: 16px;
+}
+
+.sidebar-email {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}
+
+.sidebar-socials {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: -12px;
+}
+
+.sidebar-social-link {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    color: var(--muted-foreground);
+    transition: color 160ms ease, background-color 160ms ease;
+}
+
+.sidebar-item:focus-visible,
+.sidebar-wordmark:focus-visible,
+.sidebar-social-link:focus-visible,
+.sidebar-email:focus-visible,
+.sidebar-menu-toggle:focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 4px;
+    border-radius: 0;
+}
+
+.sidebar-item:focus-visible .sidebar-item-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.sidebar-mobile-header .sidebar-wordmark {
+    align-self: auto;
+    font-size: 1rem;
+}
+
+.sidebar-mobile-panel .sidebar-footer {
+    max-width: 20rem;
+    margin-top: 24px;
+}
+
+.sidebar-mobile-panel .sidebar-email,
+.sidebar-mobile-panel .sidebar-social-link {
+    color: var(--popover-foreground);
+}
+
+.sidebar-mobile-panel {
+    background: var(--popover);
+    border-color: var(--nier-popup-border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--nier-hover) var(--popover);
+}
+
+.sidebar-mobile-header {
+    background: var(--sidebar);
+    border-color: var(--sidebar-border);
+}
+
+.sidebar-menu-toggle {
+    padding-inline: 10px;
+    border: 2px solid var(--nier-button-outline);
+    background: var(--nier-panel);
+    box-shadow: inset 1px 1px var(--nier-button-highlight), inset -1px -1px var(--nier-button-shadow);
+}
+
+.sidebar-mobile-header details[open] .sidebar-menu-toggle {
+    background: var(--nier-selection);
+    color: var(--nier-selection-text);
+    box-shadow: none;
+}
+
+@media (hover: hover) {
+    .sidebar-item[data-active="false"]:hover {
+        background: var(--nier-panel);
+    }
+
+    .sidebar-item:hover .sidebar-item-label {
+        transform: translateX(3px);
+    }
+
+    .sidebar-item:hover .sidebar-item-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .sidebar-wordmark:hover {
+        opacity: 0.7;
+    }
+
+    .sidebar-email:hover {
+        color: var(--foreground);
+        text-decoration-line: underline;
+    }
+
+    .sidebar-social-link:hover {
+        color: var(--foreground);
+        background: var(--nier-hover);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-active-indicator[data-moving]::before,
+    .sidebar-active-indicator[data-moving]::after,
+    .sidebar-active-indicator[data-moving] .sidebar-cursor-ghost {
+        opacity: 0;
+    }
+
+    .sidebar-item,
+    .sidebar-item-label,
+    .sidebar-item-arrow,
+    .sidebar-social-link,
+    .sidebar-wordmark {
+        transition: none;
+    }
+}
