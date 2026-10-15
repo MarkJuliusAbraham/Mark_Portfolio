@@ -1,0 +1,257 @@
+.about-section {
+    min-width: 0;
+    container-type: inline-size;
+}
+
+.about-section-header {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.about-section-header h2 {
+    flex: none;
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+}
+
+.about-heading-rule {
+    height: 1px;
+    flex: 1;
+    background: var(--border);
+}
+
+.about-layout {
+    display: grid;
+    grid-template-areas: "profile" "experience" "education";
+    gap: 3rem;
+    align-items: start;
+}
+
+.about-profile,
+.about-experience,
+.about-role {
+    min-width: 0;
+}
+
+.about-profile {
+    grid-area: profile;
+}
+
+.about-experience {
+    grid-area: experience;
+}
+
+.about-introduction h3 {
+    margin: 0 0 1.5rem;
+    max-width: 17ch;
+    font-size: clamp(1.875rem, 3.8vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    text-wrap: balance;
+}
+
+.about-introduction-copy,
+.about-role-summary,
+.about-role-detail {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+
+.about-introduction-copy {
+    display: grid;
+    gap: 1rem;
+    max-width: 62ch;
+    color: var(--muted-foreground);
+}
+
+.about-section p {
+    margin: 0;
+}
+
+.about-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.25rem;
+    padding: 1.25rem 0 0;
+    margin: 1.5rem 0 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.about-subheading {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+.about-education {
+    grid-area: education;
+    padding: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--card-foreground);
+}
+
+.about-education-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-education-period,
+.about-year {
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+}
+
+.about-education h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.about-degree {
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.about-study {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    margin: 1rem 0 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.about-study > div {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.about-study dt {
+    font-weight: 700;
+}
+
+.about-study dd {
+    margin: 0;
+    color: var(--muted-foreground);
+}
+
+.about-timeline {
+    padding: 0;
+    margin: 1.75rem 0 0;
+    list-style: none;
+}
+
+.about-timeline-entry {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-bottom: 2.5rem;
+}
+
+.about-timeline-entry:last-child {
+    padding-bottom: 0;
+}
+
+.about-year {
+    padding-top: 0.2rem;
+}
+
+.about-role {
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--border);
+}
+
+.about-role::before {
+    content: "";
+    position: absolute;
+    top: 0.55rem;
+    left: -0.25rem;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    background: var(--foreground);
+    transform: rotate(45deg);
+}
+
+.about-role-header {
+    margin-bottom: 1.25rem;
+}
+
+.about-role h4 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.25rem, 2.3vw, 1.75rem);
+    line-height: 1.2;
+    font-weight: 700;
+    text-wrap: balance;
+}
+
+.about-organization {
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 700;
+}
+
+.about-role-detail {
+    margin-top: 1rem !important;
+    color: var(--muted-foreground);
+}
+
+.about-draft-note {
+    margin-top: 2rem !important;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.6;
+}
+
+@container (min-width: 720px) {
+    .about-layout {
+        grid-template-areas: "profile experience" "education experience";
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr);
+        gap: clamp(2.5rem, 5cqi, 4.5rem);
+    }
+
+    .about-timeline-entry {
+        grid-template-columns: 3.5rem minmax(0, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-education {
+        padding: 1.25rem;
+    }
+
+    .about-timeline-entry {
+        grid-template-columns: 2.75rem minmax(0, 1fr);
+        gap: 0.875rem;
+    }
+
+    .about-role {
+        padding-left: 1.125rem;
+    }
+}

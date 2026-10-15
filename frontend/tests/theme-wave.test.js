@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createWaveFrames } from "../src/utility/theme-transition/waveGeometry.js";
-import { createThemeTransition } from "../src/utility/theme-transition/themeTransition.js";
+import { createWaveFrames } from "../src/lib/theme-transition/waveGeometry.js";
+import { createThemeTransition } from "../src/lib/theme-transition/themeTransition.js";
 import { environment } from "./helpers/themeEnvironment.js";
 
 const rectangles = (frame) => [...frame.clipPath.matchAll(/M([\d.]+),([\d.]+)H([\d.]+)V([\d.]+)H[\d.]+Z/g)]

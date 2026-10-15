@@ -1,4 +1,4 @@
-/* Theme transitions capture one UI layer; media may opt into separate layers. */
+/* Capture the painted page together, preserving clipping and occlusion. */
 :root[data-theme-transition] * {
     view-transition-name: none !important;
     transition-duration: 0s !important;
@@ -26,15 +26,6 @@
 
 :root[data-theme-transition]::view-transition-new(root) {
     z-index: 2;
-}
-
-/* Media snapshots remain above the filtered UI, with no channel displacement. */
-:root[data-theme-transition="chromatic"]::view-transition-group(*) {
-    z-index: 1;
-}
-
-:root[data-theme-transition="chromatic"]::view-transition-group(root) {
-    z-index: 0;
 }
 
 :root[data-theme-transition="chromatic"]::view-transition-new(root) {

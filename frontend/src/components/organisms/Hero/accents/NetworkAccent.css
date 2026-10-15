@@ -1,0 +1,72 @@
+/* [02] AI: lower right in the four-column strip; upper right when stacked or in the top-right cell. */
+.focus-network {
+    position: absolute;
+    right: 4px;
+    bottom: -4px;
+    width: 116px;
+    height: 92px;
+    overflow: visible;
+    color: var(--foreground);
+    opacity: 0.14;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+}
+
+@container hero (width < 1000px) {
+    .focus-network {
+        top: 8px;
+        bottom: auto;
+    }
+}
+
+.focus-network-edge {
+    stroke: currentColor;
+    stroke-width: 0.6;
+}
+
+.focus-network-node {
+    fill: currentColor;
+}
+
+.hero-focus-item[data-active="true"] .focus-network {
+    opacity: 0.4;
+}
+
+.hero-focus-item[data-active="true"] .focus-network-edge {
+    animation: focus-signal-edge 1.6s ease-in-out infinite;
+    animation-delay: calc(var(--layer) * 0.3s);
+}
+
+.hero-focus-item[data-active="true"] .focus-network-node {
+    animation: focus-signal-node 1.6s ease-in-out infinite;
+    animation-delay: calc(var(--layer) * 0.3s);
+}
+
+@keyframes focus-signal-edge {
+    0%, 100% { opacity: 0.35; }
+    30% { opacity: 1; stroke-width: 1.2; }
+}
+
+@keyframes focus-signal-node {
+    0%, 100% { r: 2.2; }
+    30% { r: 3.4; }
+}
+
+.focus-network-node {
+    animation: focus-idle-twinkle 5s ease-in-out infinite backwards;
+    animation-delay: var(--twinkle-delay, 0s);
+}
+
+@keyframes focus-idle-twinkle {
+    0%, 100% { opacity: 0.5; }
+    20% { opacity: 1; }
+    40% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .focus-network-node,
+    .hero-focus-item[data-active="true"] .focus-network-edge,
+    .hero-focus-item[data-active="true"] .focus-network-node {
+        animation: none;
+    }
+}

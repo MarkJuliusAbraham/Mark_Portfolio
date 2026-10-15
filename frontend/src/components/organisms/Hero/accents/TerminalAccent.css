@@ -1,0 +1,71 @@
+/* [03] Software: output scrolls and fades through the original single-line terminal. */
+.focus-terminal {
+    --terminal-line-height: 1.2em;
+    --terminal-scroll-duration: 220ms;
+    position: relative;
+    display: block;
+    height: var(--terminal-line-height);
+    min-height: var(--terminal-line-height);
+    margin-top: 4px;
+    color: var(--muted-foreground);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0.6;
+    transition: opacity 200ms ease, color 200ms ease;
+}
+
+.hero-focus-item[data-active="true"] .focus-terminal {
+    color: var(--foreground);
+    opacity: 1;
+}
+
+.focus-terminal-viewport {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(-1 * var(--terminal-line-height));
+    height: calc(2 * var(--terminal-line-height));
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.09) 45%, rgb(0 0 0 / 0.09) 49%, #000 53%);
+}
+
+.focus-terminal-scroll {
+    display: block;
+    transform: translateY(calc((1 - var(--terminal-line)) * var(--terminal-line-height)));
+    transition: transform var(--terminal-scroll-duration) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.focus-terminal-line {
+    display: block;
+    height: var(--terminal-line-height);
+}
+
+.focus-terminal-output {
+    padding-inline-start: 2ch;
+    color: var(--muted-foreground);
+}
+
+.focus-terminal-command,
+.focus-terminal-output[data-success="true"] {
+    font-weight: 600;
+}
+
+.focus-terminal-output[data-success="true"] {
+    padding-inline-start: 0;
+    color: var(--foreground);
+}
+
+.focus-terminal-prompt {
+    color: var(--muted-foreground);
+}
+
+.focus-terminal[data-paused="true"] .type-caret {
+    animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .focus-terminal-scroll {
+        transition: none;
+    }
+}

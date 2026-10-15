@@ -1,0 +1,95 @@
+.theme-toggle {
+    position: relative;
+    --theme-fringe-opacity: 0.18;
+    width: 100%;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: space-between;
+    padding-inline: 12px;
+    font-size: 0.875rem;
+}
+
+/* Two sharp, subpixel edges; no blur, filled overlay, or persistent glow. */
+.theme-toggle::before,
+.theme-toggle::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.theme-toggle::before {
+    border-color: #f33d4a;
+    transform: translate(0.65px, 0.25px);
+}
+
+.theme-toggle::after {
+    border-color: #397bfa;
+    transform: translate(-0.65px, -0.25px);
+}
+
+.theme-toggle[data-chromatic-fringe]::before,
+.theme-toggle[data-chromatic-fringe]::after {
+    animation: theme-toggle-fringe var(--theme-fringe-duration) ease-in-out both;
+}
+
+@keyframes theme-toggle-fringe {
+    0%, 100% { opacity: 0; }
+    35% { opacity: var(--theme-fringe-opacity); }
+    65% { opacity: calc(var(--theme-fringe-opacity) * 0.65); }
+}
+
+:root[data-theme-transition] .theme-toggle::before,
+:root[data-theme-transition] .theme-toggle::after,
+.theme-toggle:disabled::before,
+.theme-toggle:disabled::after {
+    animation: none;
+    opacity: 0;
+}
+
+.theme-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-toggle-track {
+    width: 32px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 1px solid var(--nier-border);
+    padding: 3px;
+    background: var(--nier-field);
+    box-shadow: inset 1px 1px var(--nier-button-shadow), inset -1px -1px var(--nier-button-highlight);
+}
+
+.theme-toggle-thumb {
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: var(--nier-foreground);
+    transition: transform 160ms ease-out;
+}
+
+.theme-toggle[aria-checked="true"] .theme-toggle-thumb {
+    transform: translateX(14px);
+}
+
+.theme-toggle-compact {
+    width: 44px;
+    justify-content: center;
+    padding-inline: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle::before,
+    .theme-toggle::after {
+        animation: none;
+    }
+
+    .theme-toggle-thumb {
+        transition: none;
+    }
+}

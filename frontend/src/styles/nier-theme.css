@@ -2,13 +2,30 @@
 :root {
     color-scheme: light;
     --nier-font-family: "Bahnschrift", "Segoe UI", Arial, sans-serif;
+    /* Shared palette values let surfaces use either preset without duplicating colors. */
+    --nier-light-panel: #e2dfce;
+    --nier-light-foreground: #45443b;
+    --nier-light-muted: #6a685d;
+    --nier-light-border: #a5a291;
+    --nier-light-hover: #cbc8b7;
+    --nier-dark-panel: #303028;
+    --nier-dark-field: #20201b;
+    --nier-dark-foreground: #dedbc8;
+    --nier-dark-muted: #999786;
+    --nier-dark-border: #68685a;
+    --nier-dark-hover: #414137;
     --nier-surface: #dad7c6;
-    --nier-panel: #e2dfce;
+    --nier-panel: var(--nier-light-panel);
     --nier-field: #eeebdd;
-    --nier-hover: #cbc8b7;
-    --nier-border: #a5a291;
-    --nier-foreground: #45443b;
-    --nier-muted: #6a685d;
+    --nier-hover: var(--nier-light-hover);
+    --nier-border: var(--nier-light-border);
+    --nier-foreground: var(--nier-light-foreground);
+    --nier-muted: var(--nier-light-muted);
+    --card-inverse: var(--nier-dark-panel);
+    --card-inverse-foreground: var(--nier-dark-foreground);
+    --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+    --card-inverse-border: var(--nier-dark-border);
+    --card-inverse-footer: var(--nier-dark-field);
     --nier-disabled: #858274;
     --nier-selection: #45443b;
     --nier-selection-text: #f2efdf;
@@ -44,12 +61,17 @@
 .dark {
     color-scheme: dark;
     --nier-surface: #25251f;
-    --nier-panel: #303028;
-    --nier-field: #20201b;
-    --nier-hover: #414137;
-    --nier-border: #68685a;
-    --nier-foreground: #dedbc8;
-    --nier-muted: #999786;
+    --nier-panel: var(--nier-dark-panel);
+    --nier-field: var(--nier-dark-field);
+    --nier-hover: var(--nier-dark-hover);
+    --nier-border: var(--nier-dark-border);
+    --nier-foreground: var(--nier-dark-foreground);
+    --nier-muted: var(--nier-dark-muted);
+    --card-inverse: var(--nier-light-panel);
+    --card-inverse-foreground: var(--nier-light-foreground);
+    --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+    --card-inverse-border: var(--nier-light-border);
+    --card-inverse-footer: var(--nier-light-hover);
     --nier-disabled: #858373;
     --nier-selection: #c9c6b2;
     --nier-selection-text: #24241e;
@@ -121,6 +143,20 @@
     --sidebar-accent-foreground: var(--nier-foreground);
     --sidebar-border: var(--nier-border);
     --sidebar-ring: var(--nier-foreground);
+}
+
+/* Project card bodies borrow the opposite preset, including secondary text and separators. */
+[data-theme="inverse-card"] {
+    --card: var(--card-inverse);
+    --card-foreground: var(--card-inverse-foreground);
+    --foreground: var(--card-inverse-foreground);
+    --muted-foreground: var(--card-inverse-muted-foreground);
+    --nier-border: var(--card-inverse-border);
+    --border: var(--card-inverse-border);
+}
+
+[data-theme="inverse-card"] [data-slot="card-footer"] {
+    background: var(--card-inverse-footer);
 }
 
 ::selection {

@@ -1,0 +1,31 @@
+/* Each focus area's subject-specific accent, placed where that subject would put it:
+   on the title, behind the text, after it, or along the strip's top edge. Quiet at rest,
+   alive while the item is hovered. */
+.hero-focus-item {
+    position: relative;
+}
+
+.hero-focus-body {
+    position: relative;
+}
+
+/* Hug the text so the design accent can select exactly the title. */
+.hero-focus-title {
+    position: relative;
+    align-self: flex-start;
+}
+
+/* Dwelling on Games switches just this item to the opposite theme, borrowing the inverse palette the
+   project cards use. */
+.hero-focus-item[data-inverted="true"] {
+    --background: var(--card-inverse);
+    --foreground: var(--card-inverse-foreground);
+    --muted-foreground: var(--card-inverse-muted-foreground);
+    --border: var(--card-inverse-border);
+    background: var(--background);
+    color: var(--foreground);
+}
+
+/* Each accent's own styles sit beside its component. Quiet idle motion keeps the strip alive
+   without drawing the eye; each runs on its own length so they never move in step, and hovering
+   hands over to the accent's active animation. */
