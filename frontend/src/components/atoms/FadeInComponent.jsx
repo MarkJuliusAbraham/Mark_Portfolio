@@ -1,6 +1,7 @@
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useHorizontalDelay } from "@/hooks/useHorizontalDelay.js";
+import { useEntranceInView } from "@/hooks/useEntranceInView.js";
 
 // Where the element starts before sliding in, per entrance direction.
 const offsets = {
@@ -14,7 +15,7 @@ const offsets = {
 export const FadeInComponent = ({ className, children, direction = "up" }) => {
   const ref = useRef(null);
   const reducedMotion = useReducedMotion();
-  const isInView = useInView(ref, { once: false });
+  const isInView = useEntranceInView(ref);
   const delay = useHorizontalDelay(ref, 0.4);
   const offset = offsets[direction] ?? offsets.up;
   const shown = reducedMotion || isInView;

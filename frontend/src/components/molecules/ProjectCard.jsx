@@ -23,7 +23,7 @@ export const ProjectCard = ({
 
     <Link
       to={`/projects/${id}`}
-      className="block h-full min-w-0 w-full rounded-none focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="block h-full min-w-0 w-full rounded-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-foreground"
       viewTransition
     >
       <div className="h-full p-2">

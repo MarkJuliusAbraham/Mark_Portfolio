@@ -5,6 +5,12 @@ export const fullName = nameLines.join(" ");
 
 export const email = "mjabraham00@gmail.com";
 
+// Sample content for the navbar layout; the CV button has no download action yet.
+export const sidebarPreview = {
+  availability: "Available for work",
+  cvLabel: "Download CV",
+};
+
 export const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/mark-julius-abraham/" },
   { label: "GitHub", href: "https://github.com/MarkJuliusAbraham" },

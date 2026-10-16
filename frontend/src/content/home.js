@@ -6,12 +6,18 @@ export const heroProfile = {
   description: "Designer / Developer",
   // Draft line for the layout; replace with your own introduction.
   intro: "I design and build polished interfaces, the AI systems behind them, and the software that ties them together.",
-  photo: {
-    src: bannerImage,
-    alt: "A camera held up against a blue sky",
-    caption: "Looking up, always.",
-    position: "50% 60%",
-  },
+  // The hero card turns over through these in order; entries without a `src` show as black.
+  photos: [
+    {
+      src: bannerImage,
+      alt: "A camera held up against a blue sky",
+      caption: "Looking up, always.",
+      position: "50% 60%",
+    },
+    { caption: "Coming soon." },
+    { caption: "Coming soon." },
+    { caption: "Coming soon." },
+  ],
 };
 
 // The focus strip under the hero. `accent` picks each area's flourish (see FocusAccents.jsx).

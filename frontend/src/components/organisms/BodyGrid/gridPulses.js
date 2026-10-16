@@ -24,6 +24,23 @@ const maxBurnoutShare = 0.6;
 // Share of a pulse's life spent brightening from nothing, so the light eases in.
 const fadeInShare = 0.15;
 
+/** A line-bound light that cruises, then slows as it burns out. */
+function createPath({ axis, direction, origin, line, travel, thickness, cruiseTime, burnout }) {
+  const burnoutTime = Math.min(burnout, (cruiseTime * maxBurnoutShare) / (1 - maxBurnoutShare / 2));
+  const duration = cruiseTime + burnoutTime / 2;
+  const start = direction > 0 ? origin : origin - travel;
+  return {
+    left: axis === "x" ? start : line,
+    top: axis === "x" ? line : start,
+    width: axis === "x" ? travel : thickness,
+    height: axis === "x" ? thickness : travel,
+    travel,
+    duration,
+    timeline: { burnStart: 1 - burnoutTime / duration, cruise: duration / cruiseTime },
+    heading: headings[axis][direction],
+  };
+}
+
 /**
  * Picks a random visible point in the band along one screen edge, as an offset from the
  * center. Edges are chosen in proportion to their length so the band is evenly covered.
@@ -68,28 +85,10 @@ export function createPulse(random, { width, height, layerSize, cellSize, angle 
   const travel = randomInt(random, cells) * cellSize;
   const cruiseTime = (travel / randomBetween(random, speed)) * 1000;
 
-  // Slowing steadily to a halt covers half the distance cruising would in the same time.
-  // Short pulses scale the burnout down so the light still gets to run at full brightness.
-  const burnoutTime = Math.min(burnout, (cruiseTime * maxBurnoutShare) / (1 - maxBurnoutShare / 2));
-  const duration = cruiseTime + burnoutTime / 2;
-  const burnStart = 1 - burnoutTime / duration;
-  const cruise = duration / cruiseTime; // Share of the path covered per unit of timeline while cruising.
-
   // Snap onto a line and start at an intersection so the path is centered on the point.
   const line = Math.round(point[cross] / cellSize) * cellSize;
   const origin = Math.round((point[axis] - (direction * travel) / 2) / cellSize) * cellSize;
-  const start = direction > 0 ? origin : origin - travel;
-
-  return {
-    left: axis === "x" ? start : line,
-    top: axis === "x" ? line : start,
-    width: axis === "x" ? travel : thickness,
-    height: axis === "x" ? thickness : travel,
-    travel,
-    duration,
-    timeline: { burnStart, cruise },
-    heading: headings[axis][direction],
-  };
+  return createPath({ axis, direction, origin, line, travel, thickness, cruiseTime, burnout });
 }
 
 /** What is left of the light at `offset`: 1 until the burnout, then falling steadily to 0. */

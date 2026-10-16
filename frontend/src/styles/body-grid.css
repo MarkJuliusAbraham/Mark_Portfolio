@@ -1,4 +1,4 @@
-/* Decorative grid behind the page content; the sidebar and mobile header stay clear of it. */
+/* One uninterrupted background from loading onward; the arriving navbar paints over it. */
 @property --body-grid-angle {
     syntax: "<angle>";
     inherits: true;
@@ -37,22 +37,43 @@
 
 .body-grid {
     position: fixed;
-    inset: var(--mobile-header-height) 0 0 0;
+    inset: 0;
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
-    /* Fades the grid gradually toward the center; the eased stops avoid a visible ring. */
-    mask-image: radial-gradient(
-        ellipse farthest-corner at center,
-        rgb(0 0 0 / var(--body-grid-center)) 0%,
-        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.08)) 20%,
-        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.3)) 40%,
-        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.62)) 60%,
-        rgb(0 0 0 / calc(var(--body-grid-center) + (1 - var(--body-grid-center)) * 0.9)) 80%,
-        #000 100%
-    );
+    background: var(--background);
+    /* The center fade is shared with the loading canvas through gridLighting.js. */
     /* Resolved here so a density override on any ancestor still applies. */
     --body-grid-size: calc(var(--body-grid-base-size) / var(--body-grid-density));
+}
+
+.body-grid-canvas,
+.body-grid-ambient {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* The canvas reveals the light below it only through strokes that have already formed. */
+.body-grid-canvas { z-index: 1; }
+.body-grid-ambient { z-index: 0; }
+
+/* A round light in viewport space. The canvas above it exposes only the formed grid strokes. */
+.body-grid-opening {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    background: radial-gradient(
+        circle closest-side,
+        transparent calc(100% - var(--grid-opening-width)),
+        color-mix(in srgb, var(--body-grid-pulse) 35%, transparent) calc(100% - var(--grid-opening-width) * 0.75),
+        var(--body-grid-pulse) calc(100% - var(--grid-opening-width) * 0.5),
+        color-mix(in srgb, var(--body-grid-pulse) 35%, transparent) calc(100% - var(--grid-opening-width) * 0.25),
+        transparent 100%
+    );
 }
 
 /* Oversized square rotated about the viewport center so it covers every corner at any angle. */
@@ -63,10 +84,6 @@
     width: 150vmax;
     height: 150vmax;
     transform: translate(-50%, -50%) rotate(var(--body-grid-angle));
-    background-image:
-        linear-gradient(to right, var(--body-grid-line) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--body-grid-line) 1px, transparent 1px);
-    background-size: var(--body-grid-size) var(--body-grid-size);
 }
 
 /* Where the light is along a pulse's path, animated by BodyGrid. */
@@ -117,9 +134,3 @@
 [data-heading="to left"] > .body-grid-pulse-glow { right: var(--offset); top: var(--center); }
 [data-heading="to bottom"] > .body-grid-pulse-glow { top: var(--offset); left: var(--center); }
 [data-heading="to top"] > .body-grid-pulse-glow { bottom: var(--offset); left: var(--center); }
-
-@media (min-width: 1100px) {
-    .body-grid {
-        inset: 0 0 0 var(--sidebar-width);
-    }
-}

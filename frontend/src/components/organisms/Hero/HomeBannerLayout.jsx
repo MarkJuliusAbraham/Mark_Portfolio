@@ -18,7 +18,7 @@ export const HomeBannerLayout = ({ ref, profile, focusAreas = [], actions = [] }
           intro={profile.intro}
           actions={actions}
         />
-        <ImageBanner photo={profile.photo} />
+        <ImageBanner photos={profile.photos} />
         {focusAreas.length > 0 && <FocusStrip items={focusAreas} />}
       </div>
     </div>

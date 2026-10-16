@@ -100,20 +100,39 @@
     justify-self: start;
 }
 
-/* The frame owns geometry; source dimensions and loading cannot resize it. */
+/* The frame owns geometry; source dimensions and loading cannot resize it. It stays still and
+   gives depth to the card inside, which turns over whole: border, brackets and photo. */
 .hero-photo-frame {
     --photo-inset: 8px;
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 5;
+    perspective: 1400px;
+}
+
+.hero-photo-card {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+}
+
+/* Each side is a complete frame of its own. */
+.hero-photo-side {
+    position: absolute;
+    inset: 0;
     overflow: hidden;
     border: 1px solid var(--border);
     background: var(--nier-panel);
+    backface-visibility: hidden;
+}
+
+.hero-photo-side.is-back {
+    transform: rotateY(180deg);
 }
 
 /* Corner brackets, drawn over the photo's inset border. */
-.hero-photo-frame::before,
-.hero-photo-frame::after {
+.hero-photo-side::before,
+.hero-photo-side::after {
     content: "";
     position: absolute;
     z-index: 1;
@@ -123,32 +142,65 @@
     pointer-events: none;
 }
 
-.hero-photo-frame::before {
+.hero-photo-side::before {
     top: 3px;
     left: 3px;
     border-top-width: 2px;
     border-left-width: 2px;
 }
 
-.hero-photo-frame::after {
+.hero-photo-side::after {
     right: 3px;
     bottom: 3px;
     border-right-width: 2px;
     border-bottom-width: 2px;
 }
 
-.hero-photo {
+.hero-photo-face {
     position: absolute;
     inset: var(--photo-inset);
-    display: block;
     width: calc(100% - 2 * var(--photo-inset));
     height: calc(100% - 2 * var(--photo-inset));
+}
+
+/* Each half of the card turns it toward that side when clicked. */
+.hero-photo-turn {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    cursor: pointer;
+}
+
+.hero-photo-turn.is-left {
+    left: 0;
+}
+
+.hero-photo-turn.is-right {
+    right: 0;
+}
+
+.hero-photo-turn:focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+}
+
+/* Photos that aren't current stay loaded underneath, just not painted. */
+.hero-photo-face:not(.is-current) {
+    visibility: hidden;
+}
+
+.hero-photo {
+    display: block;
     background: var(--nier-field);
 }
 
+.hero-photo-blank {
+    background: #000;
+}
+
 .hero-photo-placeholder {
-    position: absolute;
-    inset: var(--photo-inset);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,6 +221,46 @@
     letter-spacing: 0.06em;
 }
 
+/* The automatic turn's status, at the caption's far end: a short track that fills over the hold
+   before each turn, or "Paused" while the card is held. */
+.hero-photo-caption .hero-photo-autospin {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+    align-self: center;
+    width: 28px;
+    height: 2px;
+    margin-left: auto;
+    background: var(--border);
+}
+
+.hero-photo-caption .hero-photo-autospin.is-held {
+    width: auto;
+    height: auto;
+    background: none;
+    color: var(--foreground);
+}
+
+.hero-photo-autospin-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--foreground);
+    transform-origin: left;
+    animation: hero-photo-autospin-fill var(--spin-hold) linear both;
+}
+
+@keyframes hero-photo-autospin-fill {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
 .hero-photo-caption span:first-child {
     flex-shrink: 0;
     color: var(--foreground);
@@ -178,21 +270,39 @@
 
 /* One numbered strip of focus areas, divided by thin rules. */
 .hero-focus {
+    --focus-divider-color: var(--border);
+    position: relative;
     grid-area: focus;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--focus-divider-color);
     list-style: none;
+}
+
+/* One continuous top rule for the strip, rather than a separate segment on every column. It
+   paints beneath the panels so the Games background can still cover it after a theme shift. */
+.hero-focus::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: var(--focus-divider-color);
+    pointer-events: none;
 }
 
 .hero-focus-item {
     min-width: 0;
     padding: 20px 0;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--focus-divider-color);
 }
 
-/* Use the same single border as the other items. Marker backings interrupt it;
-   once shifted, the panel edge supplies the boundary instead. */
+.hero-focus-item:first-child {
+    border-top-color: transparent;
+}
+
+/* Internal row rules share the strip's tone. Marker backings interrupt them; once shifted,
+   the Games panel edge supplies the boundary instead. */
 .hero-focus-item[data-accent="game"][data-inverted="true"] {
     border-top-color: transparent;
 }
@@ -244,7 +354,11 @@
     }
 
     .hero-focus-item:nth-child(even) {
-        border-left: 1px solid var(--border);
+        border-left: 1px solid var(--focus-divider-color);
+    }
+
+    .hero-focus-item:nth-child(-n+2) {
+        border-top-color: transparent;
     }
 }
 
@@ -280,6 +394,7 @@
     .hero-focus-item,
     .hero-focus-item:nth-child(odd) {
         padding: 24px 24px 8px;
+        border-top-color: transparent;
     }
 
     .hero-focus-item:first-child {
@@ -287,7 +402,7 @@
     }
 
     .hero-focus-item:not(:first-child) {
-        border-left: 1px solid var(--border);
+        border-left: 1px solid var(--focus-divider-color);
     }
 }
 
