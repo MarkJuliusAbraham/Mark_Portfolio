@@ -1,12 +1,17 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { cancelFrame, frame } from "motion";
 import { motion, useReducedMotion } from "motion/react";
+import { getPageReady, usePageReady } from "@/lib/pageReady.js";
 import { cursorEffects, getCursorGhost, getCursorMovement, getCursorSplit } from "./cursorEffects.js";
 
 export function SidebarCursor({ chromatic = cursorEffects.chromatic, ghosting = cursorEffects.ghosting }) {
   const ref = useRef(null);
   const watchMovement = useRef(() => {});
   const reducedMotion = useReducedMotion();
+  // The pointer on screen while the page loads flickers once as the loading screen leaves, to
+  // catch the eye; pointers mounted later, on moving between sections, don't.
+  const ready = usePageReady();
+  const [intro, setIntro] = useState(() => !getPageReady());
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -73,11 +78,13 @@ export function SidebarCursor({ chromatic = cursorEffects.chromatic, ghosting = 
       ref={ref}
       aria-hidden="true"
       className="sidebar-active-indicator"
+      data-intro={(intro && ready) || undefined}
       layoutId="active-section-indicator"
       initial={false}
       style={{ "--cursor-chromatic-opacity": chromatic.opacity ?? cursorEffects.chromatic.opacity }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
       onLayoutAnimationStart={() => watchMovement.current()}
+      onAnimationEnd={(event) => event.animationName === "sidebar-cursor-intro" && setIntro(false)}
     >
       <span className="sidebar-cursor-ghost" />
       <span className="sidebar-cursor-core" />

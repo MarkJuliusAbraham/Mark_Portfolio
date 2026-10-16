@@ -1,12 +1,13 @@
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useHorizontalDelay } from "@/hooks/useHorizontalDelay.js";
+import { useEntranceInView } from "@/hooks/useEntranceInView.js";
 
 /** Rises its children up into a clipped box whenever they scroll into view, staggered left to right. */
 export const PopInComponent = ({ className, children }) => {
   const ref = useRef(null);
   const reducedMotion = useReducedMotion();
-  const isInView = useInView(ref, { once: false });
+  const isInView = useEntranceInView(ref);
   const delay = useHorizontalDelay(ref, 1);
   const shown = reducedMotion || isInView;
 

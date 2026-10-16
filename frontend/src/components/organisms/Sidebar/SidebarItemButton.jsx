@@ -5,10 +5,11 @@ export const SidebarItemButton = ({label, index, onClick, active = false, childr
         <button
             type="button"
             onClick = {onClick}
-            className="sidebar-item"
+            className="sidebar-item sidebar-enter"
             style={{
                 "--item-progress": `var(--section-progress-${index}, 0)`,
                 "--item-fixed": `var(--section-fixed-${index}, 0)`,
+                "--enter-index": index,
             }}
             data-active={active}
             aria-current={active ? "location" : undefined}

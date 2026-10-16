@@ -123,6 +123,62 @@
     opacity: var(--cursor-ghost-opacity, 0);
 }
 
+/* As the loading screen fades, the pointer flickers fast while its colour channels jump apart,
+   then settles for good. The short delay lets the fade clear first. */
+.sidebar-active-indicator[data-intro] .sidebar-cursor-core {
+    animation: sidebar-cursor-intro 900ms steps(1) forwards;
+}
+
+.sidebar-active-indicator[data-intro]::before {
+    animation: sidebar-cursor-intro-red 900ms steps(1) forwards;
+}
+
+.sidebar-active-indicator[data-intro]::after {
+    animation: sidebar-cursor-intro-blue 900ms steps(1) forwards;
+}
+
+/* Waits a beat after the loading screen has gone, or with a navbar entrance, until the pointer's
+   own button lands. */
+.sidebar-active-indicator[data-intro] .sidebar-cursor-core,
+.sidebar-active-indicator[data-intro]::before,
+.sidebar-active-indicator[data-intro]::after {
+    animation-delay: calc(var(--pointer-intro-wait, 250ms) + var(--enter-index, 0) * var(--pointer-intro-stagger, 0ms));
+}
+
+@keyframes sidebar-cursor-intro {
+    0%, 16%, 30%, 44%, 56%, 66%, 80% { opacity: 1; }
+    8%, 22%, 37%, 50%, 61%, 72% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes sidebar-cursor-intro-red {
+    0% { opacity: 0.85; transform: translate(-4px, 0); }
+    8% { opacity: 0.9; transform: translate(-7px, -1px); }
+    16% { opacity: 0.75; transform: translate(-2px, 1px); }
+    30% { opacity: 0.85; transform: translate(-5px, 0); }
+    44% { opacity: 0.6; transform: translate(-3px, -1px); }
+    56% { opacity: 0.5; transform: translate(-1.5px, 0); }
+    66%, 100% { opacity: 0; transform: none; }
+}
+
+@keyframes sidebar-cursor-intro-blue {
+    0% { opacity: 0.85; transform: translate(4px, 0); }
+    8% { opacity: 0.9; transform: translate(6px, 1px); }
+    16% { opacity: 0.75; transform: translate(3px, -1px); }
+    30% { opacity: 0.85; transform: translate(5px, 1px); }
+    44% { opacity: 0.6; transform: translate(2px, 0); }
+    56% { opacity: 0.5; transform: translate(1.5px, 0); }
+    66%, 100% { opacity: 0; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-active-indicator[data-intro] .sidebar-cursor-core,
+    .sidebar-active-indicator[data-intro]::before,
+    .sidebar-active-indicator[data-intro]::after {
+        animation: none;
+    }
+}
+
 .sidebar-item[data-active="true"] {
     background: var(--sidebar-primary);
     color: var(--sidebar-primary-foreground);
@@ -321,13 +377,20 @@
     transition: color 160ms ease, background-color 160ms ease;
 }
 
-.sidebar-item:focus-visible,
 .sidebar-wordmark:focus-visible,
 .sidebar-social-link:focus-visible,
 .sidebar-email:focus-visible,
 .sidebar-menu-toggle:focus-visible {
     outline: 2px solid var(--foreground);
     outline-offset: 4px;
+    border-radius: 0;
+}
+
+/* Keep the keyboard frame inside the row: an outer outline overlaps the next row's background
+   in this tightly spaced stack. currentColor also stays legible on the selected section. */
+.sidebar-item:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -5px;
     border-radius: 0;
 }
 

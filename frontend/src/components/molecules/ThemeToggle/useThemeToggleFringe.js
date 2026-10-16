@@ -1,13 +1,16 @@
 import { useEffect, useRef } from "react";
+import { usePageReady } from "@/lib/pageReady.js";
 
 export const fringeTiming = { duration: 650, firstDelay: 2400, quietMin: 12000, quietMax: 20000 };
 
 export function useThemeToggleFringe() {
   const ref = useRef(null);
+  // The first pulse is timed from the loading screen leaving, not from mounting beneath it.
+  const ready = usePageReady();
 
   useEffect(() => {
     const button = ref.current;
-    if (!button || typeof IntersectionObserver !== "function") return;
+    if (!ready || !button || typeof IntersectionObserver !== "function") return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let inView = false;
@@ -52,7 +55,7 @@ export function useThemeToggleFringe() {
       reducedMotion.removeEventListener("change", sync);
       pause();
     };
-  }, []);
+  }, [ready]);
 
   return ref;
 }

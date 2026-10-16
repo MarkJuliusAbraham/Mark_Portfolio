@@ -60,8 +60,11 @@
     --mobile-header-height: 4rem;
 }
 
+/* The scrollbar's space is always held, even while scrolling is locked (as under the loading
+   screen), so locking and unlocking never changes the page's width. */
 html {
     overflow-y: scroll;
+    scrollbar-gutter: stable;
 }
 
 /* Phone layouts fill the viewport without reserving a desktop scrollbar track. */

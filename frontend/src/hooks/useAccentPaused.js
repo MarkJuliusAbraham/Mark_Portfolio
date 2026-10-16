@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useInView } from "motion/react";
+import { usePageReady } from "@/lib/pageReady.js";
 
-/** Decorative loops run only while their panel and the page are visible. */
+/** Decorative loops run only while their panel and the page are visible, after the loading screen. */
 export const useAccentPaused = (itemRef) => {
   const inView = useInView(itemRef);
+  const ready = usePageReady();
   const [hidden, setHidden] = useState(() => document.hidden);
 
   useEffect(() => {
@@ -12,5 +14,5 @@ export const useAccentPaused = (itemRef) => {
     return () => document.removeEventListener("visibilitychange", updateVisibility);
   }, []);
 
-  return !inView || hidden;
+  return !ready || !inView || hidden;
 };
