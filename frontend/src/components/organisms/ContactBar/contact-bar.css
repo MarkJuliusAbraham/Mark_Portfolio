@@ -1,0 +1,42 @@
+/* A slim bar pinned to the foot of the screen on phones, in the opposite theme like the project
+   figures, sliding up into view and back down out of it. */
+.contact-bar {
+    position: fixed;
+    inset-inline: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 40;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.18);
+    transform: translateY(calc(100% + 32px));
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-bar[data-shown="true"] {
+    transform: none;
+}
+
+.contact-bar-button {
+    display: flex;
+    width: 100%;
+    min-height: 52px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-inline: 20px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+}
+
+.contact-bar-button:focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .contact-bar {
+        transition: none;
+    }
+}

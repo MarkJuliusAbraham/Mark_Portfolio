@@ -1,0 +1,217 @@
+/* [04] Games, behind the text: a katana planted in still water among glowing star flowers, after
+   NieR: Automata's planted swords. Everything draws in the text color, so it follows the item
+   through its local theme switch, and reads best on dark like its source. */
+.focus-sword-scene {
+    position: absolute;
+    inset: 0 24px 0 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.focus-sword {
+    position: absolute;
+    right: -14px;
+    bottom: -16px;
+    width: 100px;
+    height: 150px;
+    overflow: visible;
+    color: var(--foreground);
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+}
+
+.hero-focus-item[data-active="true"] .focus-sword {
+    opacity: 0.7;
+}
+
+/* The katana is VirtuousContract.svg: its white shapes draw in the text color and its black
+   details in the background color, so it follows the theme. */
+.focus-sword-light {
+    fill: currentColor;
+}
+
+.focus-sword-dark {
+    fill: var(--background);
+}
+
+/* The silhouette, drawn twice beneath the sword: a wide ring in the background color, then a
+   narrower one in the text color. That outlines the sword in the opposite color, so dark details
+   on its edge never melt into the background, and leaves a thin gap that keeps it clear of the
+   glowing flowers. Widths are in the drawing's units (about an eighth of a scene unit each). */
+.focus-sword-katana .focus-sword-gap *,
+.focus-sword-katana .focus-sword-outline * {
+    stroke-linejoin: round;
+}
+
+.focus-sword-katana .focus-sword-gap * {
+    fill: var(--background);
+    stroke: var(--background);
+    stroke-width: 20;
+}
+
+.focus-sword-katana .focus-sword-outline * {
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 9;
+}
+
+.focus-sword-flower path {
+    fill: currentColor;
+}
+
+/* Lunar tears bloom only in the dark: on the dark page, or on the dark panel the item flips to
+   when it changes theme in light mode. Elsewhere only the katana and water remain. */
+.focus-sword-flowers-back,
+.focus-sword-flowers-front,
+.focus-sword-halo {
+    display: none;
+}
+
+.dark .hero-focus-item:not([data-inverted="true"]) :is(.focus-sword-flowers-back, .focus-sword-flowers-front, .focus-sword-halo),
+:root:not(.dark) .hero-focus-item[data-inverted="true"] :is(.focus-sword-flowers-back, .focus-sword-flowers-front, .focus-sword-halo) {
+    display: inline;
+}
+
+/* Dim flowers behind give the glowing cluster depth. */
+.focus-sword-flowers-back {
+    opacity: 0.4;
+}
+
+.focus-sword-water {
+    fill: currentColor;
+    opacity: 0.3;
+}
+
+.focus-sword-ripple {
+    --ripple-duration: 6s;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 0.5;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: focus-water-ripple var(--ripple-duration) linear infinite;
+    animation-delay: calc(var(--ripple-phase) * var(--ripple-duration));
+}
+
+@keyframes focus-water-ripple {
+    0% { opacity: 0; transform: scale(0.7, 0.7); }
+    18% { opacity: 0.35; }
+    75% { opacity: 0.1; }
+    100% { opacity: 0; transform: scale(5.4, 2.8); }
+}
+
+.focus-sword-scene[data-paused="true"] :is(.focus-sword-ripple, .focus-sword-tassel, .focus-sword-tassel-body, .focus-sword-flower, .focus-sword-halo) {
+    animation-play-state: paused;
+}
+
+.focus-sword-reflection {
+    opacity: 0.5;
+}
+
+/* The lens flare stays faintly across the guard, as in the source, and flashes on hover. */
+.focus-sword-flare {
+    opacity: 0.3;
+}
+
+.focus-sword-halo {
+    animation: focus-sword-halo 5s ease-in-out infinite;
+}
+
+@keyframes focus-sword-halo {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* The horsetail tassel: ring and cord as lines, binding and tail filled in the text color, with
+   faint partings in the background color. */
+.focus-sword-tassel-ring,
+.focus-sword-tassel-cord {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 0.6;
+    stroke-linecap: round;
+}
+
+.focus-sword-tassel-knot,
+.focus-sword-tassel-hair {
+    fill: currentColor;
+}
+
+.focus-sword-tassel-parting {
+    fill: none;
+    stroke: var(--background);
+    stroke-width: 0.25;
+    stroke-linecap: round;
+    opacity: 0.35;
+}
+
+/* It sways from the ring at the top, and the tail ripples slowly beneath the binding. */
+.focus-sword-tassel {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: focus-sword-tassel-sway 4.6s ease-in-out infinite;
+}
+
+@keyframes focus-sword-tassel-sway {
+    0%, 100% { transform: rotate(-7deg); }
+    50% { transform: rotate(7deg); }
+}
+
+.focus-sword-tassel-body {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: focus-sword-tassel-ripple 2.9s ease-in-out infinite;
+}
+
+@keyframes focus-sword-tassel-ripple {
+    0%, 100% { transform: skewX(-6deg) scaleX(1); }
+    50% { transform: skewX(6deg) scaleX(0.9); }
+}
+
+/* Idle: the flowers' glow breathes and motes of light drift upward. */
+.focus-sword-glow .focus-sword-flower {
+    animation: focus-sword-breathe 5s ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
+}
+
+@keyframes focus-sword-breathe {
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
+}
+
+/* Hover: the glow intensifies and a lens flare streaks across the guard. */
+.hero-focus-item[data-active="true"] .focus-sword-glow {
+    filter: brightness(1.3);
+}
+
+.hero-focus-item[data-active="true"] .focus-sword-flare {
+    animation: focus-sword-flare 1.1s ease-out 120ms;
+}
+
+@keyframes focus-sword-flare {
+    0% { opacity: 0.3; transform: scaleX(0.6); }
+    25% { opacity: 1; transform: scaleX(1.1); }
+    100% { opacity: 0.3; transform: scaleX(1); }
+}
+
+.focus-sword-flare {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .focus-sword-tassel,
+    .focus-sword-tassel-body,
+    .focus-sword-glow .focus-sword-flower,
+    .focus-sword-halo,
+    .focus-sword-ripple,
+    .hero-focus-item[data-active="true"] .focus-sword-flare {
+        animation: none;
+    }
+
+    .focus-sword-ripple {
+        opacity: 0;
+    }
+}

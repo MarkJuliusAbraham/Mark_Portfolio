@@ -1,0 +1,72 @@
+.typeset-title {
+
+    --typeset-size: clamp(2rem, 4vw, 3.25rem);
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0em;
+
+
+    font-family: var(--nier-font-family);
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 700;
+}
+
+.typeset-card-title {
+
+    --typeset-size: clamp(1.375rem, 2.2vw, 1.75rem);
+    --typeset-leading: 1.15;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0em;
+
+
+    font-family: var(--nier-font-family);
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 600;
+}
+
+.typeset-section-title {
+
+    --typeset-size: clamp(2rem, 6vw, 6.25rem);
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0em;
+
+
+    font-family: var(--nier-font-family);
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+    font-weight: 600;
+}
+
+.typeset-card-toner {
+
+    --typeset-size: 14px;
+    --typeset-leading: 1;
+    --typeset-flow: 1.25em;
+    --typeset-spacing: 0.085em;
+
+
+    font-family: var(--nier-font-family);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}
+
+.typeset-card-readable {
+
+    --typeset-size: 16px;
+    --typeset-leading: 1.5;
+    --typeset-spacing: 0;
+
+    font-family: var(--nier-font-family);
+    font-size: var(--typeset-size);
+    font-weight: 400;
+    line-height: var(--typeset-leading);
+    letter-spacing: var(--typeset-spacing);
+}

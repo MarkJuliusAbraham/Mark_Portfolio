@@ -1,0 +1,180 @@
+/* Saved NieR presets, captured 2026-10-13. Web text retains a 16px base. */
+:root {
+    color-scheme: light;
+    --nier-font-family: "Bahnschrift", "Segoe UI", Arial, sans-serif;
+    /* Shared palette values let surfaces use either preset without duplicating colors. */
+    --nier-light-panel: #e2dfce;
+    --nier-light-field: #eeebdd;
+    --nier-light-alert: #8f3f2c;
+    --nier-light-foreground: #45443b;
+    --nier-light-muted: #6a685d;
+    --nier-light-border: #a5a291;
+    --nier-light-hover: #cbc8b7;
+    --nier-dark-panel: #303028;
+    --nier-dark-field: #20201b;
+    --nier-dark-alert: #e6a389;
+    --nier-dark-foreground: #dedbc8;
+    --nier-dark-muted: #999786;
+    --nier-dark-border: #68685a;
+    --nier-dark-hover: #414137;
+    --nier-light-surface: #dad7c6;
+    --nier-dark-surface: #25251f;
+    --nier-surface: var(--nier-light-surface);
+    --nier-panel: var(--nier-light-panel);
+    --nier-field: var(--nier-light-field);
+    --nier-hover: var(--nier-light-hover);
+    --nier-border: var(--nier-light-border);
+    --nier-foreground: var(--nier-light-foreground);
+    --nier-muted: var(--nier-light-muted);
+    --card-inverse: var(--nier-dark-panel);
+    --card-inverse-foreground: var(--nier-dark-foreground);
+    --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+    --card-inverse-border: var(--nier-dark-border);
+    --card-inverse-footer: var(--nier-dark-field);
+    --nier-disabled: #858274;
+    --nier-selection: #45443b;
+    --nier-selection-text: #f2efdf;
+    --nier-track: #eeebdd;
+    --nier-alert: var(--nier-light-alert);
+    --nier-alert-surface: #efdbcc;
+    --nier-straight-fill: #899277;
+    --nier-straight-text: #495541;
+    --nier-partial-fill: #b6a562;
+    --nier-partial-text: #706024;
+    --nier-curled-fill: #a88f6e;
+    --nier-curled-text: #745837;
+    --nier-very-curled-fill: #929287;
+    --nier-very-curled-text: #55564c;
+    --nier-nearly-closed-fill: #b59098;
+    --nier-nearly-closed-text: #78525c;
+    --nier-closed-fill: #b98268;
+    --nier-closed-text: #7f4933;
+    --nier-destructive: #9d5944;
+    --nier-destructive-text: #f2efdf;
+    --nier-destructive-hover: #8c4e3d;
+    --nier-destructive-pressed: #7b4234;
+    --nier-destructive-highlight: #ba7860;
+    --nier-destructive-shadow: #693b2d;
+    --nier-destructive-outline: #704031;
+    --nier-button-highlight: #f4f1e2;
+    --nier-button-shadow: #999583;
+    --nier-button-outline: #999583;
+    --nier-popup: #cbc7b4;
+    --nier-popup-border: #878372;
+}
+
+.dark {
+    color-scheme: dark;
+    --nier-surface: var(--nier-dark-surface);
+    --nier-panel: var(--nier-dark-panel);
+    --nier-field: var(--nier-dark-field);
+    --nier-hover: var(--nier-dark-hover);
+    --nier-border: var(--nier-dark-border);
+    --nier-foreground: var(--nier-dark-foreground);
+    --nier-muted: var(--nier-dark-muted);
+    --card-inverse: var(--nier-light-panel);
+    --card-inverse-foreground: var(--nier-light-foreground);
+    --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+    --card-inverse-border: var(--nier-light-border);
+    --card-inverse-footer: var(--nier-light-hover);
+    --nier-disabled: #858373;
+    --nier-selection: #c9c6b2;
+    --nier-selection-text: #24241e;
+    --nier-track: #4f4f41;
+    --nier-alert: var(--nier-dark-alert);
+    --nier-alert-surface: #4a3128;
+    --nier-straight-fill: #b2b89d;
+    --nier-straight-text: #b2b89d;
+    --nier-partial-fill: #d8ce9e;
+    --nier-partial-text: #d8ce9e;
+    --nier-curled-fill: #c7b599;
+    --nier-curled-text: #c7b599;
+    --nier-very-curled-fill: #aaa99a;
+    --nier-very-curled-text: #aaa99a;
+    --nier-nearly-closed-fill: #c9a8b0;
+    --nier-nearly-closed-text: #c9a8b0;
+    --nier-closed-fill: #d0a48b;
+    --nier-closed-text: #d0a48b;
+    --nier-destructive: #c99179;
+    --nier-destructive-text: #27221d;
+    --nier-destructive-hover: #d7a48b;
+    --nier-destructive-pressed: #b9806a;
+    --nier-destructive-highlight: #e0b69f;
+    --nier-destructive-shadow: #875b4c;
+    --nier-destructive-outline: #956b56;
+    --nier-button-highlight: #777463;
+    --nier-button-shadow: #171711;
+    --nier-button-outline: #777463;
+    --nier-popup: #39392f;
+    --nier-popup-border: #898572;
+}
+
+/* Adapt the portable palette to the existing Tailwind/shadcn theme roles. */
+:root,
+.dark {
+    /* The hero name only: a wide, technical grotesque, like a sci-fi interface's display type. */
+    --font-portfolio-display: "Archivo Variable", Archivo, var(--nier-font-family);
+    --background: var(--nier-surface);
+    --foreground: var(--nier-foreground);
+    --card: var(--nier-panel);
+    --card-foreground: var(--nier-foreground);
+    --popover: var(--nier-popup);
+    --popover-foreground: var(--nier-foreground);
+    --primary: var(--nier-selection);
+    --primary-foreground: var(--nier-selection-text);
+    --secondary: var(--nier-panel);
+    --secondary-foreground: var(--nier-foreground);
+    --muted: var(--nier-hover);
+    /* Strengthen small secondary text for contrast on the saved page surface. */
+    --muted-foreground: color-mix(in srgb, var(--nier-muted) 70%, var(--nier-foreground));
+    --accent: var(--nier-hover);
+    --accent-foreground: var(--nier-foreground);
+    --destructive: var(--nier-destructive);
+    --destructive-foreground: var(--nier-destructive-text);
+    --border: var(--nier-border);
+    --input: var(--nier-border);
+    --ring: var(--nier-foreground);
+    --chart-1: var(--nier-straight-fill);
+    --chart-2: var(--nier-partial-fill);
+    --chart-3: var(--nier-curled-fill);
+    --chart-4: var(--nier-very-curled-fill);
+    --chart-5: var(--nier-nearly-closed-fill);
+    --chart-6: var(--nier-closed-fill);
+    --radius: 0rem;
+    --sidebar: var(--nier-panel);
+    --sidebar-foreground: var(--nier-foreground);
+    --sidebar-primary: var(--nier-selection);
+    --sidebar-primary-foreground: var(--nier-selection-text);
+    --sidebar-accent: var(--nier-hover);
+    --sidebar-accent-foreground: var(--nier-foreground);
+    --sidebar-border: var(--nier-border);
+    --sidebar-ring: var(--nier-foreground);
+}
+
+/* Project card bodies borrow the opposite preset, including secondary text and separators. */
+[data-theme="inverse-card"] {
+    --card: var(--card-inverse);
+    --card-foreground: var(--card-inverse-foreground);
+    --foreground: var(--card-inverse-foreground);
+    --muted-foreground: var(--card-inverse-muted-foreground);
+    --nier-border: var(--card-inverse-border);
+    --border: var(--card-inverse-border);
+}
+
+[data-theme="inverse-card"] [data-slot="card-footer"] {
+    background: var(--card-inverse-footer);
+}
+
+::selection {
+    background: var(--nier-selection);
+    color: var(--nier-selection-text);
+}
+
+html {
+    scrollbar-color: var(--nier-hover) var(--nier-surface);
+}
+
+input,
+textarea {
+    caret-color: var(--nier-foreground);
+}

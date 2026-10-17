@@ -1,0 +1,33 @@
+/* Capture the painted page together, preserving clipping and occlusion. */
+:root[data-theme-transition] * {
+    view-transition-name: none !important;
+    transition-duration: 0s !important;
+}
+
+:root[data-theme-transition]::view-transition {
+    pointer-events: none;
+}
+
+:root[data-theme-transition]::view-transition-group(*),
+:root[data-theme-transition]::view-transition-old(*),
+:root[data-theme-transition]::view-transition-new(*) {
+    animation: none;
+    mix-blend-mode: normal;
+    opacity: 1;
+}
+
+:root[data-theme-transition]::view-transition-image-pair(*) {
+    isolation: auto;
+}
+
+:root[data-theme-transition]::view-transition-old(root) {
+    z-index: 1;
+}
+
+:root[data-theme-transition]::view-transition-new(root) {
+    z-index: 2;
+}
+
+:root[data-theme-transition="chromatic"]::view-transition-new(root) {
+    opacity: 0;
+}

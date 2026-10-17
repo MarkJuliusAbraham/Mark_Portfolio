@@ -1,0 +1,41 @@
+/* Limb darkening: the screen dims toward its edges and most in its corners, as a convex display
+   does (ScreenLimb.jsx). It sits in front of everything, loader included, and lets every click
+   through. Each theme has its own canvas, painted ahead of time; only the current one shows. */
+:root {
+    /* How dark the screen's corners get in each theme, as a share of black: a beige screen dims
+       gently, a dark one needs more to show at all. */
+    --screen-limb-light: 22%;
+    --screen-limb-dark: 42%; /* 28 default */
+
+    /* The darkening's shape, from the screen's corners in toward its centre; the same in both
+       themes. Distances are shares of the way from the centre (0) to a corner (1). Reload the
+       page to see a change: the darkening is painted once, as the page loads. */
+
+    /* Where the darkening begins: nothing inside this. Lower reaches further in toward the
+       centre; higher keeps the middle of the screen clear. */
+    --screen-limb-start: 0.15;
+    /* Where it reaches full strength. 1 is the very corners; lower brings full strength in from
+       them, so more of the edges sit at the darkest. Keep it above the start. */
+    --screen-limb-end: 1;
+    /* How aggressively it falls off from the outermost edge to the innermost. 1 eases in evenly
+       between the start and the end; higher holds the darkness back in the corners and lets it
+       drop away fast inward (2 to 3 is a tight, hard vignette); lower spreads it further in, so
+       even the inner part dims noticeably. Keep it above 0.5: at 0.5 or below, the darkening
+       starts abruptly at the start and shows a line there. To reach further in, lower the start
+       instead. */
+    --screen-limb-curve: 4;
+}
+
+.screen-limb {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+:root:not(.dark) .screen-limb[data-theme="dark"],
+.dark .screen-limb[data-theme="light"] {
+    display: none;
+}

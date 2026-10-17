@@ -1,0 +1,4 @@
+/* The preserved blocky preset reveals the new snapshot through its square mask. */
+:root[data-theme-wave]::view-transition-new(root) {
+    clip-path: inset(50%);
+}

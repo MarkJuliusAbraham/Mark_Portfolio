@@ -1,0 +1,47 @@
+.sidebar-profile-actions {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-availability {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sidebar-foreground);
+    font-size: 0.6875rem;
+    line-height: 1.5;
+}
+
+.sidebar-status-mark {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    background: currentColor;
+    transform: rotate(45deg);
+}
+
+.sidebar-preview-label {
+    margin-inline-start: auto;
+    color: var(--muted-foreground);
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+}
+
+.sidebar-cv-button {
+    width: 100%;
+    min-height: 44px;
+    justify-content: space-between;
+    padding-inline: 12px;
+    font-size: 0.875rem;
+}
+
+.sidebar-cv-button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -5px;
+}
+
+.sidebar-mobile-panel .sidebar-profile-actions {
+    margin-top: 24px;
+}

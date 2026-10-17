@@ -1,0 +1,107 @@
+/* Shared control states are owned by the theme, including carousel buttons. */
+.theme-button {
+    border-radius: 0;
+    border-width: 2px;
+    border-color: var(--nier-button-outline);
+    background: var(--nier-panel);
+    color: var(--nier-foreground);
+    box-shadow: inset 1px 1px var(--nier-button-highlight), inset -1px -1px var(--nier-button-shadow);
+    letter-spacing: 0.04em;
+}
+
+.theme-button:hover {
+    background: var(--nier-hover);
+}
+
+.theme-button:active {
+    box-shadow: inset 1px 1px var(--nier-button-shadow), inset -1px -1px var(--nier-button-highlight);
+}
+
+.theme-button[data-variant="default"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: none;
+}
+
+.theme-button[data-variant="default"]:active {
+    box-shadow: inset 1px 1px var(--nier-button-shadow), inset -1px -1px var(--nier-button-highlight);
+}
+
+.theme-button[data-variant="destructive"] {
+    border-color: var(--nier-destructive-outline);
+    background: var(--nier-destructive);
+    color: var(--nier-destructive-text);
+    box-shadow: inset 1px 1px var(--nier-destructive-highlight), inset -1px -1px var(--nier-destructive-shadow);
+}
+
+.theme-button[data-variant="destructive"]:hover {
+    background: var(--nier-destructive-hover);
+}
+
+.theme-button[data-variant="destructive"]:active {
+    background: var(--nier-destructive-pressed);
+    box-shadow: inset 1px 1px var(--nier-destructive-shadow), inset -1px -1px var(--nier-destructive-highlight);
+}
+
+.theme-button[data-variant="ghost"],
+.theme-button[data-variant="link"] {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+
+.theme-button[data-variant="ghost"]:hover {
+    background: var(--nier-hover);
+}
+
+.theme-button:focus-visible {
+    outline: 2px solid var(--nier-foreground);
+    outline-offset: 3px;
+}
+
+.theme-button[data-variant="destructive"]:focus-visible {
+    outline-color: var(--nier-destructive);
+}
+
+.theme-button[data-variant]:disabled {
+    border-color: var(--nier-border);
+    background: var(--nier-surface);
+    color: var(--nier-disabled);
+    box-shadow: none;
+    opacity: 1;
+}
+
+[data-slot="input"],
+[data-slot="textarea"] {
+    border-radius: 0;
+    border-color: var(--nier-border);
+    background: var(--nier-field);
+    color: var(--nier-foreground);
+    box-shadow: none;
+}
+
+[data-slot="input"]:focus-visible,
+[data-slot="textarea"]:focus-visible {
+    border-color: var(--nier-foreground);
+    outline: 1px solid var(--nier-foreground);
+    outline-offset: 2px;
+}
+
+[data-slot="input"][aria-invalid="true"],
+[data-slot="textarea"][aria-invalid="true"] {
+    border-color: var(--nier-alert);
+    background: var(--nier-alert-surface);
+    outline-color: var(--nier-alert);
+}
+
+[data-slot="input"]:disabled,
+[data-slot="textarea"]:disabled {
+    background: var(--nier-surface);
+    color: var(--nier-disabled);
+    opacity: 1;
+}
+
+[data-slot="card"] {
+    border: 1px solid var(--nier-border);
+    box-shadow: none;
+}

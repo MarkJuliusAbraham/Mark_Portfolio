@@ -1,0 +1,55 @@
+/* Text cursor shared by typed text: a bar that blinks while idle and holds while typing.
+   The caret itself has no height, so it never enlarges the line box and nudges the text; the bar
+   is drawn from the baseline by a pseudo-element. */
+.type-caret {
+    position: relative;
+    display: inline-block;
+    width: max(2px, 0.09em);
+    height: 0;
+    margin-left: 0.08em;
+    vertical-align: baseline;
+    animation: type-caret-blink 1.06s steps(1) infinite;
+}
+
+.type-caret::before {
+    content: "";
+    position: absolute;
+    bottom: -0.1em;
+    left: 0;
+    width: 100%;
+    height: 0.95em;
+    background: currentColor;
+}
+
+.type-caret[data-typing="true"] {
+    animation: none;
+}
+
+@keyframes type-caret-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .type-caret {
+        animation: none;
+    }
+}
+
+/* Holds the full text's space so typing never shifts the layout: an invisible copy stays in the
+   flow and the typed text is drawn over its top-left corner (see TypedText.jsx). */
+.typed-slot {
+    position: relative;
+    display: block;
+}
+
+.typed-slot-sizer {
+    visibility: hidden;
+}
+
+.typed-slot-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
