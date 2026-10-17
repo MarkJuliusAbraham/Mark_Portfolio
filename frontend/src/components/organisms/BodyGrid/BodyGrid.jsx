@@ -4,12 +4,18 @@ import { gridLightMask } from "@/lib/gridLighting.js";
 import { gridOpening } from "@/lib/gridCanvas.js";
 import { createPulse, gridPulses, pulseGlowKeyframes, pulseKeyframes, randomBetween } from "./gridPulses.js";
 import { createOpeningWave, gridOpeningWave } from "./gridOpeningWave.js";
+import { useGridTraces } from "./useGridTraces.js";
+
+// The light over the whole background shines through the screen's darkening (limbPierce.js).
+const backgroundTraces = { pierce: true };
 
 export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpeningWave }) {
   const layerRef = useRef(null);
   const lightRef = useRef(null);
   const openingRef = useRef(null);
+  const tracesRef = useRef(null);
   const reducedMotion = useReducedMotion();
+  useGridTraces(tracesRef, backgroundTraces);
 
   useEffect(() => {
     const element = openingRef.current;
@@ -110,6 +116,8 @@ export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpe
           <div ref={lightRef} className="body-grid-light" />
         </div>
       </div>
+      {/* Lines lit around the pointer. */}
+      <canvas ref={tracesRef} className="body-grid-traces" />
     </div>
   );
 }

@@ -1,0 +1,15 @@
+/* Content brought in and out of view through the theme switch's chromatic aberration
+   (AberrateIn.jsx): hidden until it arrives, shown while the effect splits it, and hidden again
+   at the peak of the effect as it leaves. */
+.aberrate-in-frame {
+    display: inline-block;
+}
+
+.aberrate-in {
+    display: inline-block;
+    opacity: 0;
+}
+
+.aberrate-in[data-visible="true"] {
+    opacity: 1;
+}

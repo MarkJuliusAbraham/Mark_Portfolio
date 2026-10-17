@@ -1,61 +1,41 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card.jsx";
-import runGif from "@/gifs/MitsuhaRun.gif";
-import rollGif from "@/gifs/MitsuhaRoll.gif";
-import tragedyGif from "@/gifs/Tragedy.gif";
-import meteorGif from "@/gifs/TakiGazeMeteor.gif";
-import loversGif from "@/gifs/StarCrossedLovers.gif";
-import chaseGif from "@/gifs/MitsuhaChaseMeteor.gif";
+import { figureNumber } from "@/lib/figures.js";
+import { ProjectPreview } from "./ProjectPreview.jsx";
+import "./project-card.css";
 
-const gifs = [runGif, rollGif, tragedyGif, meteorGif, loversGif, chaseGif];
-
-export const ProjectCard = ({
-    id,
-    title = "Default Title",
-    description = "Using anime gifs as placeholders on the website.\n",
-    techStack = ["default", "tech"],
-  }) => {
-
-  const [randomGif] = useState(() => gifs[Math.floor(Math.random() * gifs.length)]);
+/**
+ * A project as a numbered figure, like an entry in a technical manual: a framed preview, a caption
+ * with its figure number and title, a short description, and a spec table. It sits on a panel in
+ * the opposite theme, which sets the projects apart from the page. Specs without a value show a
+ * dash, so the table keeps its shape while details are being filled in.
+ */
+export const ProjectCard = ({ id, number, title, description, genre, techStack = [], year, placeholder }) => {
+  const specs = [
+    ["Genre", genre],
+    ["Stack", techStack.join(" · ")],
+    ["Year", year],
+  ];
 
   return (
-
-    <Link
-      to={`/projects/${id}`}
-      className="block h-full min-w-0 w-full rounded-none focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-foreground"
-      viewTransition
-    >
-      <div className="h-full p-2">
-        <Card data-theme="inverse-card" className="h-full min-h-112 overflow-hidden select-none gap-3 cursor-pointer transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-sm active:scale-[0.985]">
-          <img
-            src={randomGif}
-            alt="Project preview"
-            loading="lazy"
-            className="aspect-[16/10] w-full shrink-0 object-cover"
-            style={{
-              viewTransitionName: `project-${id}`,
-            }}
-          />
-
-          <CardTitle className="min-h-13 px-4 text-lg font-semibold wrap-break-word">
-            {title}
-          </CardTitle>
-
-          <CardContent className="flex flex-1 flex-col px-4">
-            <p className="text-sm text-muted-foreground wrap-break-word">
-              {description}
-            </p>
-          </CardContent>
-
-          <CardFooter className="mt-auto px-4 py-3">
-            <p className="text-xs font-bold text-card-foreground wrap-break-word">
-              {techStack.join(" · ")}
-            </p>
-          </CardFooter>
-        </Card>
-      </div>
+    <Link to={`/projects/${id}`} className="project-figure-link">
+      <figure className="project-figure" data-theme="inverse-card">
+        <div className="project-figure-frame">
+          <ProjectPreview id={id} placeholder={placeholder} className="project-figure-image" />
+        </div>
+        <figcaption className="project-figure-caption">
+          <span className="project-figure-number">{figureNumber(number)}</span>
+          <span className="project-figure-title">{title}</span>
+        </figcaption>
+        <p className="project-figure-summary">{description}</p>
+        <dl className="project-figure-specs">
+          {specs.map(([label, value]) => (
+            <div key={label} className="project-figure-spec">
+              <dt>{label}</dt>
+              <dd>{value || "—"}</dd>
+            </div>
+          ))}
+        </dl>
+      </figure>
     </Link>
-
   );
 };

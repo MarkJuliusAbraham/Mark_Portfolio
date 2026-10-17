@@ -2,6 +2,7 @@ import { createRef, useMemo, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "@/components/organisms/Sidebar/Sidebar.jsx";
 import { BodyGrid } from "@/components/organisms/BodyGrid/BodyGrid.jsx";
+import { ScreenLimb } from "@/components/organisms/ScreenLimb/ScreenLimb.jsx";
 import { PageLoader } from "@/components/organisms/PageLoader/PageLoader.jsx";
 import { useActiveSection } from "@/hooks/useActiveSection.js";
 import { scrollToElement } from "@/lib/scroll.js";
@@ -22,7 +23,7 @@ export const BasePage = () => {
     () => navigationLabels.map((label) => ({ label, ref: sections[label] })),
     [sections],
   );
-  const { activeSection, selectSection } = useActiveSection(navigationItems, location.pathname);
+  const { activeSection, scrolledSection, navigating, selectSection } = useActiveSection(navigationItems, location.pathname);
 
   const handleNavigate = (item) => {
     selectSection(item.label);
@@ -38,9 +39,10 @@ export const BasePage = () => {
         <a href="#main-content" className="fixed top-2 left-2 z-[60] -translate-y-20 bg-background px-4 py-3 focus:translate-y-0">
           Skip to content
         </a>
-        <Sidebar items={navigationItems} onNavigate={handleNavigate} activeSection={activeSection} />
+        <Sidebar items={navigationItems} onNavigate={handleNavigate} activeSection={activeSection} scrolledSection={scrolledSection} navigating={navigating} />
         <Outlet context={{ sections }} />
       </div>
+      <ScreenLimb />
     </div>
   );
 };

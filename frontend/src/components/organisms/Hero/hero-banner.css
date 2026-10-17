@@ -4,7 +4,8 @@
     width: 100%;
 }
 
-/* Stacked on narrow screens: meta, name, photo, then the focus strip. */
+/* Stacked by default: meta, name, photo, then the focus strip. Phones and wider screens each
+   rearrange it below. */
 .hero-banner-content {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -34,6 +35,12 @@
     background: var(--border);
 }
 
+/* Letter spacing trails after the last letter too; taken back so the year's last digit, not the
+   space after it, meets the right edge the photo shares. */
+.hero-meta > span:last-child {
+    margin-right: -0.16em;
+}
+
 .hero-name {
     grid-area: name;
     container-type: inline-size;
@@ -43,36 +50,53 @@
     gap: 20px;
 }
 
+/* The role and the name are trimmed to their letters, cap height to baseline, so the gaps around
+   them are the space you see between letters, not the empty top and foot of their line boxes. */
+.hero-name-traces {
+    display: none;
+}
+
 .hero-role {
     color: var(--muted-foreground);
     font-size: 0.875rem;
     line-height: 1.5;
     letter-spacing: 0.16em;
     text-transform: uppercase;
+    text-box: trim-both cap alphabetic;
+}
+
+/* The role as a tag in a dashed box, hugging its words. The letters are trimmed to cap height, so
+   even padding all round centres them; the right side gives back the spacing after the last letter. */
+.hero-role {
+    align-self: flex-start;
+    justify-self: start;
+    padding: 8px calc(10px - 0.16em) 8px 10px;
+    border: 1px dashed var(--border);
 }
 
 .hero-name-heading {
     font-family: var(--font-portfolio-display);
-    font-size: clamp(2.75rem, 16cqw, 8rem);
+    /* Expanded capitals run wide: the longest line, "MARK JULIUS", is about 8.6em, so this keeps
+       it inside the name's column. */
+    font-size: clamp(1.875rem, 11cqw, 6rem);
     font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: 0.005em;
+    font-stretch: 125%;
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-box: trim-both cap alphabetic;
 }
 
+/* Each line is hung by the side space built into its first letter (--line-hang, measured in
+   NameBanner.jsx), so its letters, not its box, meet the edge the role and buttons start on. */
 .hero-name-line {
     display: block;
+    margin-left: var(--line-hang, 0);
     white-space: nowrap;
 }
 
 .hero-name-line div {
     vertical-align: top;
-}
-
-.hero-intro {
-    max-width: 34rem;
-    color: var(--muted-foreground);
-    font-size: 1.0625rem;
-    line-height: 1.6;
 }
 
 .hero-actions {
@@ -100,34 +124,32 @@
     justify-self: start;
 }
 
-/* The frame owns geometry; source dimensions and loading cannot resize it. It stays still and
-   gives depth to the card inside, which turns over whole: border, brackets and photo. */
+/* The frame owns geometry; source dimensions and loading cannot resize it. */
 .hero-photo-frame {
     --photo-inset: 8px;
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 5;
-    perspective: 1400px;
 }
 
-.hero-photo-card {
-    position: absolute;
-    inset: 0;
-    transform-style: preserve-3d;
+/* The photo's strip of film: only a layout that frames the photo as film (hero-layouts.css) shows
+   it as a box of its own, with its edge; elsewhere the frame stands as if it weren't there. */
+.hero-photo-film {
+    display: contents;
 }
 
-/* Each side is a complete frame of its own. */
+.hero-photo-edge {
+    display: none;
+}
+
+/* The frame's face: border, corner marks and the photos, split whole by the aberration as the
+   photo is changed by hand (usePhotoAdvance.js). */
 .hero-photo-side {
     position: absolute;
     inset: 0;
     overflow: hidden;
     border: 1px solid var(--border);
     background: var(--nier-panel);
-    backface-visibility: hidden;
-}
-
-.hero-photo-side.is-back {
-    transform: rotateY(180deg);
 }
 
 /* Corner brackets, drawn over the photo's inset border. */
@@ -136,24 +158,23 @@
     content: "";
     position: absolute;
     z-index: 1;
-    width: 14px;
-    height: 14px;
-    border: 0 solid var(--foreground);
+    width: var(--frame-corner-triangle);
+    height: var(--frame-corner-triangle);
+    color: var(--foreground);
     pointer-events: none;
 }
 
+/* Triangle corner marks (see frame-corners.css). */
 .hero-photo-side::before {
-    top: 3px;
-    left: 3px;
-    border-top-width: 2px;
-    border-left-width: 2px;
+    top: 2px;
+    left: 2px;
+    background: var(--frame-corner-start);
 }
 
 .hero-photo-side::after {
-    right: 3px;
-    bottom: 3px;
-    border-right-width: 2px;
-    border-bottom-width: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: var(--frame-corner-end);
 }
 
 .hero-photo-face {
@@ -186,9 +207,14 @@
     outline-offset: 2px;
 }
 
-/* Photos that aren't current stay loaded underneath, just not painted. */
-.hero-photo-face:not(.is-current) {
+/* Photos that aren't shown stay loaded underneath, just not painted; the one just left stays
+   painted, to be seen leaving as the film moves on. */
+.hero-photo-face:not(.is-current, .is-previous) {
     visibility: hidden;
+}
+
+.hero-photo-face.is-current {
+    z-index: 1;
 }
 
 .hero-photo {
@@ -268,43 +294,24 @@
     text-transform: uppercase;
 }
 
-/* One numbered strip of focus areas, divided by thin rules. */
+/* Dividers follow the composition: stacked rules, a cross, then vertical rules. */
 .hero-focus {
-    --focus-divider-color: var(--border);
     position: relative;
     grid-area: focus;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    border-bottom: 1px solid var(--focus-divider-color);
+    gap: 0;
     list-style: none;
-}
-
-/* One continuous top rule for the strip, rather than a separate segment on every column. It
-   paints beneath the panels so the Games background can still cover it after a theme shift. */
-.hero-focus::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 1px;
-    background: var(--focus-divider-color);
-    pointer-events: none;
 }
 
 .hero-focus-item {
     min-width: 0;
-    padding: 20px 0;
-    border-top: 1px solid var(--focus-divider-color);
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
 }
 
 .hero-focus-item:first-child {
-    border-top-color: transparent;
-}
-
-/* Internal row rules share the strip's tone. Marker backings interrupt them; once shifted,
-   the Games panel edge supplies the boundary instead. */
-.hero-focus-item[data-accent="game"][data-inverted="true"] {
-    border-top-color: transparent;
+    border-top: 0;
 }
 
 .hero-focus-title {
@@ -319,8 +326,8 @@
     line-height: 1.5;
 }
 
-/* Bleed only the mobile Games background into the page gutter. The copy, illustration,
-   breathing seal, and bottom separator retain their original content-width alignment. */
+/* Bleed only the mobile Games background into the page gutter. Copy and illustration
+   retain their original content-width alignment. */
 @container hero (width < 560px) {
     .hero-focus-item[data-accent="game"] {
         isolation: isolate;
@@ -343,6 +350,7 @@
 @container hero (min-width: 560px) {
     .hero-focus {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
     }
 
     .hero-focus-item {
@@ -353,12 +361,125 @@
         padding-left: 0;
     }
 
-    .hero-focus-item:nth-child(even) {
-        border-left: 1px solid var(--focus-divider-color);
+    .hero-focus-item:nth-child(-n + 2) {
+        border-top: 0;
     }
 
-    .hero-focus-item:nth-child(-n+2) {
-        border-top-color: transparent;
+    .hero-focus-item:nth-child(even) {
+        border-left: 1px solid var(--border);
+    }
+
+}
+
+/* On phones the photo sits in the top-right corner beside the header, caption, and role.
+   The name and actions run full width beneath. Both wrappers join the hero's grid directly
+   so the caption can sit apart from the photo while the photo renders just once. */
+@container hero (width < 640px) {
+    .hero-banner-content {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "meta    photo"
+            "caption photo"
+            "role    photo"
+            "heading heading"
+            "actions actions"
+            "focus   focus";
+        /* The role sits at the foot of the space beside the photo. */
+        grid-template-rows: auto auto 1fr;
+        column-gap: 16px;
+        row-gap: 0;
+    }
+
+    .hero-name,
+    .hero-photo-figure {
+        display: contents;
+    }
+
+    .hero-meta {
+        align-self: start;
+        padding-top: 2px;
+    }
+
+    /* Right-aligned against the badge it labels, the figure line over the spin's status, hanging
+       under the header so the header, the figure line and the status bar are three evenly spaced
+       lines. */
+    .hero-photo-caption {
+        grid-area: caption;
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: end;
+        align-self: start;
+        row-gap: 8px;
+    }
+
+    .hero-photo-caption .hero-photo-autospin {
+        grid-column: 1 / -1;
+        justify-self: end;
+        margin-left: 0;
+    }
+
+    /* A touch smaller here, so the boxed role still fits on one line beside the photo. */
+    .hero-role {
+        grid-area: role;
+        align-self: end;
+        padding: 7px calc(8px - 0.16em) 7px 8px;
+        font-size: 0.8125rem;
+    }
+
+    /* One word to a line here, the longest "ABRAHAM" at about 6.6em, so it can run larger. */
+    .hero-name-heading {
+        grid-area: heading;
+        margin-top: 24px;
+        font-size: clamp(2.25rem, 14.5cqw, 6rem);
+    }
+
+    /* The actions share the full width, side by side, as the page's main way forward. */
+    .hero-actions {
+        grid-area: actions;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .hero-action {
+        width: 100%;
+        min-height: 52px;
+    }
+
+    .hero-focus {
+        margin-top: 40px;
+    }
+
+    .hero-photo-frame {
+        --photo-inset: 5px;
+        grid-area: photo;
+        /* Keep narrow phones compact, then grow more generously as the header gains room. */
+        width: clamp(96px, max(34cqw, calc(65cqw - 135px)), 18rem);
+        align-self: start;
+        justify-self: end;
+    }
+
+    .hero-photo-side::before,
+    .hero-photo-side::after {
+        width: 16px;
+        height: 16px;
+    }
+
+    .hero-photo-side::before {
+        top: 1px;
+        left: 1px;
+    }
+
+    .hero-photo-side::after {
+        right: 1px;
+        bottom: 1px;
+    }
+}
+
+/* On the narrowest phones only the figure number fits beside the badge, not its caption. */
+@container hero (width < 330px) {
+    .hero-photo-caption span:nth-child(2) {
+        display: none;
     }
 }
 
@@ -366,7 +487,7 @@
 @container hero (min-width: 640px) {
     .hero-banner-content {
         grid-template-columns: minmax(0, 1fr) clamp(13rem, 30cqw, 23rem);
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: auto auto auto;
         grid-template-areas:
             "meta  meta"
             "name  photo"
@@ -375,26 +496,35 @@
         row-gap: clamp(32px, 5cqw, 56px);
     }
 
+    /* The photo's frame and the buttons share a bottom edge; the caption hangs below the frame,
+       outside the alignment, as a figure's caption does. */
     .hero-name {
         align-self: end;
     }
 
     .hero-photo-figure {
-        align-self: center;
+        position: relative;
+        align-self: end;
         justify-self: end;
+    }
+
+    .hero-photo-caption {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        left: 0;
     }
 }
 
 @container hero (min-width: 1000px) {
     .hero-focus {
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        border-bottom: 0;
     }
 
     .hero-focus-item,
     .hero-focus-item:nth-child(odd) {
         padding: 24px 24px 8px;
-        border-top-color: transparent;
+        border-top: 0;
     }
 
     .hero-focus-item:first-child {
@@ -402,13 +532,7 @@
     }
 
     .hero-focus-item:not(:first-child) {
-        border-left: 1px solid var(--focus-divider-color);
+        border-left: 1px solid var(--border);
     }
-}
 
-/* With room to spare, the opening fills the first screen. */
-@media (min-width: 1100px) and (min-height: 700px) {
-    .hero-banner-content {
-        min-height: min(calc(100dvh - 6rem), 64rem);
-    }
 }

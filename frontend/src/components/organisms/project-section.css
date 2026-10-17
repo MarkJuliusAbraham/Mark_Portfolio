@@ -1,0 +1,135 @@
+/* The view switch: small toggle buttons, sharing the section title's row at its right. */
+.project-views {
+    display: flex;
+    gap: 4px;
+}
+
+.project-view-button {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 6px;
+    padding-inline: 12px;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.project-view-button[aria-pressed="true"] {
+    border-color: var(--foreground);
+    background: var(--foreground);
+    color: var(--background);
+}
+
+@media (hover: hover) {
+    .project-view-button[aria-pressed="false"]:hover {
+        border-color: var(--foreground);
+        color: var(--foreground);
+    }
+}
+
+.project-view-button:focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+}
+
+/* The grid view: brief tiles, as many to a row as fit; smaller on phones so two share a row. A
+   featured project breaks the even rhythm: a wide tile on phones, a two-by-two one beside the
+   others on wider screens, with the rest packing in around it. */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+    grid-auto-flow: dense;
+    list-style: none;
+}
+
+.project-grid > .is-featured {
+    grid-column: span 2;
+}
+
+@container projects (min-width: 640px) {
+    .project-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .project-grid > .is-featured {
+        grid-row: span 2;
+    }
+
+    /* Two rows tall, its preview fills the height the other tiles give it. */
+    .project-grid > .is-featured .project-figure-frame {
+        flex: 1;
+        min-height: 0;
+        aspect-ratio: auto;
+    }
+}
+
+/* The list view: an index of rows on a panel in the opposite theme, under a row of column labels
+   that share the rows' columns. Narrow, the rows keep only the preview, name and genre. */
+.project-list {
+    margin: 0 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+}
+
+.project-list ul {
+    list-style: none;
+}
+
+.project-list li:last-child .project-row {
+    border-bottom: 0;
+}
+
+.project-list-head {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.4fr) 3.5rem;
+    gap: 16px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card-inverse-footer);
+    color: var(--muted-foreground);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+@container projects (width < 640px) {
+    .project-list-head,
+    .project-list .project-row {
+        grid-template-columns: 56px minmax(0, 1fr) minmax(0, 0.7fr);
+        gap: 12px;
+    }
+
+    .project-list .project-row-stack,
+    .project-list .project-row-year {
+        display: none;
+    }
+}
+
+/* Brought into view from the navigation, the whole section fits the screen: the grid and the
+   list's rows keep within the room left below the title row (measured in ProjectSection.jsx),
+   scrolling inside if there are more projects than fit. */
+.project-grid {
+    max-height: var(--projects-room, none);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.project-list {
+    display: flex;
+    max-height: var(--projects-room, none);
+    flex-direction: column;
+}
+
+.project-list ul {
+    min-height: 0;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+

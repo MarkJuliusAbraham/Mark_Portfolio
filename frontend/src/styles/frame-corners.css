@@ -1,0 +1,8 @@
+/* Corner marks for framed images (the hero photo, project figures): a small solid triangle in the
+   corner. Set one as the background of a corner pseudo-element; it draws in `color`.
+   --frame-corner-start is the top-left corner, --frame-corner-end its mirror at the bottom right. */
+:root {
+    --frame-corner-triangle: 6px;
+    --frame-corner-start: linear-gradient(135deg, currentColor 50%, transparent 50%) 0 0 / var(--frame-corner-triangle) var(--frame-corner-triangle) no-repeat;
+    --frame-corner-end: linear-gradient(-45deg, currentColor 50%, transparent 50%) 100% 100% / var(--frame-corner-triangle) var(--frame-corner-triangle) no-repeat;
+}

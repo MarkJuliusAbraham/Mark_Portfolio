@@ -4,6 +4,20 @@ import { appendSvg, svgNamespace } from "./svgFilters.js";
 
 let sequence = 0;
 
+/**
+ * The color actually behind an element: the nearest background above it, or the page's. Never its
+ * own, which is already part of what gets split, and would show as a box past a rounded shape.
+ */
+export const backgroundBehind = (element, view = window) => {
+  // Without computed styles (outside a browser) there's nothing to read; split over nothing.
+  if (typeof view.getComputedStyle !== "function") return "transparent";
+  for (let node = element.parentElement; node; node = node.parentElement) {
+    const color = view.getComputedStyle(node).backgroundColor;
+    if (color && color !== "transparent" && !/rgba?\([^)]*,\s*0\)$/.test(color) && !/\/\s*0\)$/.test(color)) return color;
+  }
+  return view.getComputedStyle(element.ownerDocument.body).backgroundColor;
+};
+
 const levels = [...new Set(pulse.map(([, level]) => level).filter(Boolean))];
 
 // The moment the page-wide switch shows the new theme; a single element flips here too.
@@ -22,8 +36,14 @@ export const createElementFrames = (prefix) => pulse.map(([offset, level]) => ({
  * than a displacement map, and each filter region is sized to exactly the element plus its
  * furthest shift. Filters are built once and reused; each run only re-aims the offsets, and
  * `prepare` can do that ahead of time so the first frame pays for nothing.
+ *
+ * Like the page-wide switch, which splits the whole page background and all, the element is laid
+ * over the color behind it before its channels split (`backdrop`, by default whatever is actually
+ * behind it). Bare text split on its own would leave each slid channel alone, dark and muddy,
+ * rather than a bright fringe against the background. The backdrop is kept only within reach of
+ * the element's own shapes, so its edges never show.
  */
-export function createElementGlitch(element, { doc = document, view = window, settings = chromatic, random = Math.random } = {}) {
+export function createElementGlitch(element, { doc = document, view = window, settings = chromatic, random = Math.random, backdrop = () => backgroundBehind(element, view) } = {}) {
   const prefix = `element-chromatic-${++sequence}`;
   const strength = Math.max(0, Math.min(24, Number.isFinite(settings.strength) ? settings.strength : 8));
   const duration = 360 / (settings.speed ?? 1);
@@ -48,17 +68,23 @@ export function createElementGlitch(element, { doc = document, view = window, se
         "color-interpolation-filters": "sRGB",
       });
       const shifted = {};
+      const flood = appendSvg(doc, filter, "feFlood", { result: "backdrop" });
+      appendSvg(doc, filter, "feComposite", { in: "SourceGraphic", in2: "backdrop", operator: "over", result: "source" });
       for (const [channel, values] of Object.entries(channelMatrices)) {
-        appendSvg(doc, filter, "feColorMatrix", { in: "SourceGraphic", type: "matrix", values, result: channel });
+        appendSvg(doc, filter, "feColorMatrix", { in: "source", type: "matrix", values, result: channel });
         if (channel !== "green") shifted[channel] = appendSvg(doc, filter, "feOffset", { in: channel, result: `${channel}-shifted` });
       }
       appendSvg(doc, filter, "feComposite", {
         in: "red-shifted", in2: "green", operator: "arithmetic", k2: 1, k3: 1, result: "red-green",
       });
       appendSvg(doc, filter, "feComposite", {
-        in: "red-green", in2: "blue-shifted", operator: "arithmetic", k2: 1, k3: 1,
+        in: "red-green", in2: "blue-shifted", operator: "arithmetic", k2: 1, k3: 1, result: "rgb",
       });
-      return { level, filter, ...shifted };
+      // Kept only as far from the element's own shapes as a channel can shift, so the backdrop's
+      // edges, split like everything else, never show as colored lines around a box.
+      appendSvg(doc, filter, "feMorphology", { in: "SourceAlpha", operator: "dilate", radius: Math.ceil(strength) + 1, result: "reach" });
+      appendSvg(doc, filter, "feComposite", { in: "rgb", in2: "reach", operator: "in" });
+      return { level, filter, flood, ...shifted };
     });
     doc.body.append(svg);
   };
@@ -71,7 +97,9 @@ export function createElementGlitch(element, { doc = document, view = window, se
     const padding = Math.ceil(strength) + 8;
     const { width, height } = element.getBoundingClientRect();
     const directions = createChannelDirections(settings, random);
-    for (const { level, filter, red, blue } of filters) {
+    const behind = backdrop();
+    for (const { level, filter, flood, red, blue } of filters) {
+      flood.setAttribute("flood-color", behind);
       filter.setAttribute("x", -padding);
       filter.setAttribute("y", -padding);
       filter.setAttribute("width", Math.ceil(width) + padding * 2);

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The hero name's face: Archivo, with the width axis for its expanded cut. */
+@import "@fontsource-variable/archivo/wdth.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./nier-theme.css";
@@ -8,6 +10,8 @@
 @import "./typset.css";
 @import "./typing.css";
 @import "./body-grid.css";
+@import "./page-layout.css";
+@import "./frame-corners.css";
 
 @custom-variant dark (&:is(.dark *));
 

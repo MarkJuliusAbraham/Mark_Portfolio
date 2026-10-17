@@ -4,19 +4,24 @@
     --nier-font-family: "Bahnschrift", "Segoe UI", Arial, sans-serif;
     /* Shared palette values let surfaces use either preset without duplicating colors. */
     --nier-light-panel: #e2dfce;
+    --nier-light-field: #eeebdd;
+    --nier-light-alert: #8f3f2c;
     --nier-light-foreground: #45443b;
     --nier-light-muted: #6a685d;
     --nier-light-border: #a5a291;
     --nier-light-hover: #cbc8b7;
     --nier-dark-panel: #303028;
     --nier-dark-field: #20201b;
+    --nier-dark-alert: #e6a389;
     --nier-dark-foreground: #dedbc8;
     --nier-dark-muted: #999786;
     --nier-dark-border: #68685a;
     --nier-dark-hover: #414137;
-    --nier-surface: #dad7c6;
+    --nier-light-surface: #dad7c6;
+    --nier-dark-surface: #25251f;
+    --nier-surface: var(--nier-light-surface);
     --nier-panel: var(--nier-light-panel);
-    --nier-field: #eeebdd;
+    --nier-field: var(--nier-light-field);
     --nier-hover: var(--nier-light-hover);
     --nier-border: var(--nier-light-border);
     --nier-foreground: var(--nier-light-foreground);
@@ -30,7 +35,7 @@
     --nier-selection: #45443b;
     --nier-selection-text: #f2efdf;
     --nier-track: #eeebdd;
-    --nier-alert: #8f3f2c;
+    --nier-alert: var(--nier-light-alert);
     --nier-alert-surface: #efdbcc;
     --nier-straight-fill: #899277;
     --nier-straight-text: #495541;
@@ -60,7 +65,7 @@
 
 .dark {
     color-scheme: dark;
-    --nier-surface: #25251f;
+    --nier-surface: var(--nier-dark-surface);
     --nier-panel: var(--nier-dark-panel);
     --nier-field: var(--nier-dark-field);
     --nier-hover: var(--nier-dark-hover);
@@ -76,7 +81,7 @@
     --nier-selection: #c9c6b2;
     --nier-selection-text: #24241e;
     --nier-track: #4f4f41;
-    --nier-alert: #e6a389;
+    --nier-alert: var(--nier-dark-alert);
     --nier-alert-surface: #4a3128;
     --nier-straight-fill: #b2b89d;
     --nier-straight-text: #b2b89d;
@@ -107,7 +112,8 @@
 /* Adapt the portable palette to the existing Tailwind/shadcn theme roles. */
 :root,
 .dark {
-    --font-portfolio-display: var(--nier-font-family);
+    /* The hero name only: a wide, technical grotesque, like a sci-fi interface's display type. */
+    --font-portfolio-display: "Archivo Variable", Archivo, var(--nier-font-family);
     --background: var(--nier-surface);
     --foreground: var(--nier-foreground);
     --card: var(--nier-panel);

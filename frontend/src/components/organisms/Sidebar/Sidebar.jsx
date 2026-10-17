@@ -16,7 +16,7 @@ import "./sidebar-entrance.css";
 // Places an element of the navbar's lower group in its entrance order (see sidebar-entrance.css).
 const enterSoft = (index) => ({ className: "sidebar-enter-soft", style: { "--enter-index": index } });
 
-export const Sidebar = ({ items, onNavigate, activeSection }) => {
+export const Sidebar = ({ items, onNavigate, activeSection, scrolledSection = activeSection, navigating = false }) => {
   const menuRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
   const { entrance, waiting } = useSidebarEntrance();
@@ -47,11 +47,16 @@ export const Sidebar = ({ items, onNavigate, activeSection }) => {
   };
   const goHome = () => navigate(items[0]);
 
+  // The progress bar heads for the section being shown: one chosen from the list straight away,
+  // otherwise the one scrolled to. Its fill follows where the page actually is.
+  const progressIndex = items.findIndex((item) => item.label === (navigating ? activeSection : scrolledSection));
+  const scrolledIndex = items.findIndex((item) => item.label === scrolledSection);
+
   const navigation = (label) => (
     <LayoutGroup id={label}>
       <nav aria-label={label} className="sidebar-navigation">
         {items.map((item, index) => (
-          <SidebarItemButton key={item.label} label={item.label} index={index} active={item.label === activeSection} onClick={() => navigate(item)}>
+          <SidebarItemButton key={item.label} label={item.label} index={index} progressIndex={progressIndex} scrolledIndex={scrolledIndex} active={item.label === activeSection} onClick={() => navigate(item)}>
             {item.label === activeSection && <SidebarCursor />}
           </SidebarItemButton>
         ))}
@@ -80,7 +85,7 @@ export const Sidebar = ({ items, onNavigate, activeSection }) => {
           <details ref={menuRef} {...enterSoft(1)}>
             <summary className="sidebar-menu-toggle flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-medium [&::-webkit-details-marker]:hidden">
               <Menu className="size-[18px]" strokeWidth={1.5} aria-hidden="true" />
-              Menu
+              <span className="sidebar-menu-label">Menu</span>
             </summary>
             <div className="sidebar-mobile-panel absolute inset-x-0 top-full max-h-[calc(100dvh-var(--mobile-header-height))] overflow-y-auto border-b bg-background px-6 py-6">
               {navigation("Mobile navigation")}
@@ -93,8 +98,10 @@ export const Sidebar = ({ items, onNavigate, activeSection }) => {
 
       <aside data-entrance={entrance} data-entrance-waiting={waiting || undefined} className="sidebar-desktop fixed inset-y-0 left-0 z-40 hidden w-(--sidebar-width) overflow-y-auto min-[1100px]:block">
         <div className="sidebar-shell">
-          <SidebarHeader onClick={goHome} />
-          {navigation("Desktop navigation")}
+          <div className="sidebar-top">
+            <SidebarHeader onClick={goHome} />
+            {navigation("Desktop navigation")}
+          </div>
           <div className="sidebar-bottom">
             <div {...enterSoft(0)}>
               <SidebarProfileActions />

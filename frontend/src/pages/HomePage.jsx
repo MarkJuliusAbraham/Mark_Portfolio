@@ -6,6 +6,7 @@ import { HomeBannerLayout } from "@/components/organisms/Hero/HomeBannerLayout.j
 import { AboutSection } from "@/components/organisms/About/AboutSection.jsx";
 import { ProjectSection } from "@/components/organisms/ProjectSection.jsx";
 import { ContactSection } from "@/components/organisms/ContactSection.jsx";
+import { ContactBar } from "@/components/organisms/ContactBar/ContactBar.jsx";
 import { focusAreas, heroProfile } from "@/content/home.js";
 import { scrollToElement } from "@/lib/scroll.js";
 
@@ -19,23 +20,25 @@ export const HomePage = () => {
     scrollToElement(sections[location.state?.scrollTo]?.current);
   }, [location.state, sections]);
 
+  const goToContact = () => scrollToElement(contactRef.current);
+
   return (
     <ScrollingContent ref={homeRef}>
       <HomeBannerLayout
+        layout="inverse"
         profile={heroProfile}
         focusAreas={focusAreas}
         actions={[
           { label: "View projects", onClick: () => scrollToElement(projectsRef.current) },
-          { label: "Get in touch", variant: "outline", onClick: () => scrollToElement(contactRef.current) },
+          { label: "Get in touch", variant: "outline", onClick: goToContact },
         ]}
       />
       <AboutSection ref={aboutRef} educationRef={educationRef} />
-      <PortfolioSection ref={projectsRef} title="Solo Projects">
-        <ProjectSection />
-      </PortfolioSection>
+      <ProjectSection ref={projectsRef} title="Solo Projects" />
       <PortfolioSection ref={contactRef} title="Contact Me">
         <ContactSection />
       </PortfolioSection>
+      <ContactBar contactRef={contactRef} onContact={goToContact} />
     </ScrollingContent>
   );
 };
