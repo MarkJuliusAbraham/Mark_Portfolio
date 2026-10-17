@@ -3,7 +3,7 @@
    through its local theme switch, and reads best on dark like its source. */
 .focus-sword-scene {
     position: absolute;
-    inset: 0;
+    inset: 0 24px 0 0;
     overflow: hidden;
     pointer-events: none;
 }

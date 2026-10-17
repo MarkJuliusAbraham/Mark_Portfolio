@@ -1,0 +1,38 @@
+/* The page's spacing (ScrollingContent.jsx), one fluid scale across every width rather than steps
+   at breakpoints: each value eases from its phone size to its widest between the two clamps, so
+   no window size falls between steps and sits too tight or too loose. */
+:root {
+    /* Between the content and the window's sides (or the navbar). */
+    --page-gutter: clamp(1rem, 0.5rem + 3vw, 4.5rem);
+    /* Above the first section and below the last: grows with the window's height too, so a tall
+       screen gives the hero room to breathe instead of pinning it to the top. */
+    --page-top: clamp(1.5rem, 0.5rem + 2vw + 3svh, 6rem);
+    /* Below the last section; never less than the phone's floating contact bar needs. */
+    --page-bottom: clamp(4rem, 2rem + 2vw + 4svh, 8rem);
+    /* Between sections. */
+    --section-gap: clamp(5rem, 3rem + 5vw, 10rem);
+    /* What the page's own chrome takes from the top of the window: the mobile header, until the
+       navbar moves to the side. */
+    --page-chrome-top: var(--mobile-header-height);
+}
+
+@media (min-width: 1100px) {
+    :root {
+        --page-chrome-top: 0px;
+    }
+}
+
+.page-content {
+    gap: var(--section-gap);
+    padding: var(--page-top) var(--page-gutter) var(--page-bottom);
+}
+
+/* A hero opening the page fills the first screen when it's shorter than it, centred in the room
+   left by the page's top spacing, so on a tall screen the spare height sits evenly above and below
+   it rather than all beneath. A hero taller than the screen just starts at the top spacing. */
+.page-content > .hero-banner:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100svh - var(--page-chrome-top) - 2 * var(--page-top));
+}

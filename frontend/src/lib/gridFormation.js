@@ -1,4 +1,4 @@
-import { createLinePaint, createOpeningLines, gridOpening, gridOpeningDuration, readGrid, resolveColor } from "./gridCanvas.js";
+import { createLinePaint, createOpeningLines, gridOpening, gridOpeningDuration, readGrid, resolveColor, traceGridLine } from "./gridCanvas.js";
 
 export { gridOpening };
 
@@ -49,12 +49,13 @@ export const createGridFormation = (canvas, { animate = true } = {}) => {
     context.fillStyle = face;
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.translate(grid.centerX, grid.centerY);
-    context.rotate(grid.angle);
     // This canvas is the cover above the moving lights. Open it only where a line has grown,
-    // so a glow cannot reveal parts of the grid that haven't formed yet.
+    // so a glow cannot reveal parts of the grid that haven't formed yet. Each line is opened as
+    // it shows on the bulging screen (gridCanvas.js), a one-pixel stroke along its cell boundary.
     context.globalCompositeOperation = "destination-out";
-    context.fillStyle = "#000";
+    context.strokeStyle = "#000";
+    context.lineWidth = 1;
+    context.beginPath();
     let hasLines = false;
     for (const line of lines) {
       const age = time - gridOpening.blank - line.delay;
@@ -64,10 +65,11 @@ export const createGridFormation = (canvas, { animate = true } = {}) => {
       const forward = easeInOut(clamp01(age / line.forward));
       const from = line.from - backward * (line.from - first);
       const to = line.from + forward * (last - line.from);
-      // CSS grid strokes begin at the cell boundary and are exactly one CSS pixel wide.
-      if (line.vertical) context.fillRect(line.at, from, 1, to - from);
-      else context.fillRect(from, line.at, to - from, 1);
+      traceGridLine(context, grid, line.vertical, line.at + 0.5, from, to);
     }
+    context.stroke();
+    context.translate(grid.centerX, grid.centerY);
+    context.rotate(grid.angle);
     if (hasLines) {
       // Paint into the open strokes once, keeping intersections at the same strength. The
       // transparent line tint lets the existing CSS light pass through underneath.

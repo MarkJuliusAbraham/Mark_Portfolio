@@ -4,8 +4,6 @@ import { nameLines } from "./profile.js";
 export const heroProfile = {
   nameLines,
   description: "Designer / Developer",
-  // Draft line for the layout; replace with your own introduction.
-  intro: "I design and build polished interfaces, the AI systems behind them, and the software that ties them together.",
   // The hero card turns over through these in order; entries without a `src` show as black.
   photos: [
     {

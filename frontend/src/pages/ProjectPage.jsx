@@ -21,9 +21,6 @@ export const ProjectPage = () => {
           src={projectPreview}
           alt="Project preview"
           className="block h-auto w-full max-w-3xl"
-          style={{
-            viewTransitionName: `project-${projectId}`,
-          }}
         />
       </div>
       <WebGpuCanvas/>

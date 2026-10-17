@@ -61,15 +61,38 @@ export const createOpeningLines = ({ count, span, grid, width, height, seed }) =
   return lines;
 };
 
-/** A CSS color expression resolved to something a canvas can paint with. */
-export const resolveColor = (expression) => {
+/**
+ * A CSS color expression resolved to something a canvas can paint with, inside `scope` so its
+ * variables apply there.
+ */
+export const resolveColor = (expression, scope = document.body) => {
   const probe = document.createElement("span");
   probe.style.color = expression;
   probe.style.display = "none";
-  document.body.append(probe);
+  scope.append(probe);
   const color = getComputedStyle(probe).color;
   probe.remove();
   return color;
+};
+
+/**
+ * A resolved color (`rgb(…)`, `rgba(…)` or `color(…)`, as the browser gives them) split into the
+ * same color fully opaque and its opacity, from 0 to 1.
+ */
+export const splitAlpha = (color) => {
+  const parts = String(color).match(/^(rgba?|color)\((.*)\)$/);
+  if (!parts) return { opaque: color, alpha: 1 };
+  const [, name, body] = parts;
+  const read = (value) => (value.trim().endsWith("%") ? parseFloat(value) / 100 : parseFloat(value));
+  if (body.includes("/")) {
+    const [channels, alpha] = body.split("/");
+    return { opaque: `${name}(${channels.trim()})`, alpha: Number.isFinite(read(alpha)) ? read(alpha) : 1 };
+  }
+  const commas = body.split(",");
+  if (commas.length === 4) {
+    return { opaque: `rgb(${commas.slice(0, 3).map((part) => part.trim()).join(", ")})`, alpha: read(commas[3]) };
+  }
+  return { opaque: color, alpha: 1 };
 };
 
 /** Where the background grid sits, so the squares line up with its lines. */
@@ -93,6 +116,50 @@ export const readGrid = () => {
     centerStrength: Number.isFinite(centerStrength) ? clamp01(centerStrength) : 0.05,
     lineStrength: parseFloat(style?.getPropertyValue("--body-grid-line-strength")) || 10,
   };
+};
+
+// How much the screen bulges, as a convex display does: a point at the screen's corner is drawn
+// this share closer to the centre, and less so nearer the middle, so straight lines bow outward.
+export const gridBulge = 0.11;
+
+/** Where a point on the flat grid (screen px) shows on the bulging screen. */
+export const bend = (grid, x, y) => {
+  const dx = x - grid.centerX;
+  const dy = y - grid.centerY;
+  const reach = Math.hypot(grid.width, grid.height) / 2;
+  const scale = 1 - gridBulge * (dx * dx + dy * dy) / (reach * reach);
+  return [grid.centerX + dx * scale, grid.centerY + dy * scale];
+};
+
+/** Where a point seen on the bulging screen (screen px) lies on the flat grid. */
+export const unbend = (grid, x, y) => {
+  let [flatX, flatY] = [x, y];
+  // A few rounds of correcting by what the bend does there is plenty for so gentle a bulge.
+  for (let round = 0; round < 4; round += 1) {
+    const [shownX, shownY] = bend(grid, flatX, flatY);
+    flatX += x - shownX;
+    flatY += y - shownY;
+  }
+  return [flatX, flatY];
+};
+
+/**
+ * Adds one of the grid's lines to `context`'s path, in screen px, as it shows on the bulging
+ * screen: the line `at` across the rotated grid (a column if `vertical`, else a row), from `from`
+ * to `to` along it, sampled every `step` px so the bend reads as a curve.
+ */
+export const traceGridLine = (context, grid, vertical, at, from, to, step = 24) => {
+  const cosine = Math.cos(grid.angle);
+  const sine = Math.sin(grid.angle);
+  const steps = Math.max(1, Math.ceil(Math.abs(to - from) / step));
+  for (let index = 0; index <= steps; index += 1) {
+    const along = from + (to - from) * (index / steps);
+    const x = vertical ? at : along;
+    const y = vertical ? along : at;
+    const [shownX, shownY] = bend(grid, grid.centerX + x * cosine - y * sine, grid.centerY + x * sine + y * cosine);
+    if (index === 0) context.moveTo(shownX, shownY);
+    else context.lineTo(shownX, shownY);
+  }
 };
 
 /** The shared light falloff, optionally transparent so moving light can show behind the lines. */

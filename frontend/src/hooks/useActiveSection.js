@@ -106,9 +106,10 @@ export const useActiveSection = (items, pathname) => {
   }, [items, pathname, requested]);
 
   const routeSection = pathname.startsWith("/projects/") ? "Projects" : section;
-  const activeSection = requested && (pathname === "/" || pathname === requested.originPathname)
-    ? requested.label
-    : routeSection;
+  const navigating = Boolean(requested && (pathname === "/" || pathname === requested.originPathname));
+  const activeSection = navigating ? requested.label : routeSection;
 
-  return { activeSection, selectSection };
+  // `scrolledSection` is where the page actually is, even while scrolling to a chosen section;
+  // `navigating` is whether it's still on its way there.
+  return { activeSection, scrolledSection: routeSection, navigating, selectSection };
 };

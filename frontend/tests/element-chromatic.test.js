@@ -36,6 +36,7 @@ function setup({ reducedMotion = false, randoms = [0.1, 0.3, 0.5, 0.7, 0.9, 0.2]
 
 const attr = (node, name) => node.attributes.get(name);
 const primitives = (filter) => filter.children.map((child) => child.tag);
+const offsets = (filter) => filter.children.filter((child) => child.tag === "feOffset");
 
 test("builds filters only for the levels the pulse uses, with offsets instead of a displacement map", () => {
   const { glitch, filters } = setup();
@@ -43,7 +44,11 @@ test("builds filters only for the levels the pulse uses, with offsets instead of
   const used = new Set(pulse.map(([, level]) => level).filter(Boolean));
   assert.equal(filters().length, used.size);
   for (const filter of filters()) {
-    assert.deepEqual(primitives(filter), ["feColorMatrix", "feOffset", "feColorMatrix", "feColorMatrix", "feOffset", "feComposite", "feComposite"]);
+    assert.deepEqual(primitives(filter), [
+      "feFlood", "feComposite",
+      "feColorMatrix", "feOffset", "feColorMatrix", "feColorMatrix", "feOffset", "feComposite", "feComposite",
+      "feMorphology", "feComposite",
+    ]);
   }
 });
 
@@ -61,12 +66,12 @@ test("filters are built once and reused; each run only re-aims the offsets", () 
   const { env, glitch, filters, animations } = setup({ randoms: [0.1, 0.35, 0.6, 0.85, 0.15, 0.4, 0.65, 0.9, 0.25, 0.5, 0.75, 0.05] });
   glitch.prepare();
   const svg = env.doc.body.children[0];
-  const before = filters().map((filter) => attr(filter.children[1], "dx"));
+  const before = filters().map((filter) => attr(offsets(filter)[0], "dx"));
   glitch.run(() => {});
   animations[0].finish();
   assert.equal(env.doc.body.children.length, 1);
   assert.equal(env.doc.body.children[0], svg);
-  const after = filters().map((filter) => attr(filter.children[1], "dx"));
+  const after = filters().map((filter) => attr(offsets(filter)[0], "dx"));
   assert.notDeepEqual(after, before);
 });
 
@@ -74,12 +79,41 @@ test("red and blue move in opposite directions, scaled by level", () => {
   const { glitch, filters } = setup();
   glitch.prepare();
   for (const filter of filters()) {
-    const [red, blue] = [filter.children[1], filter.children[4]];
+    const [red, blue] = offsets(filter);
     assert.ok(Math.abs(attr(red, "dx") + attr(blue, "dx")) < 1e-9);
     assert.ok(Math.abs(attr(red, "dy") + attr(blue, "dy")) < 1e-9);
     const level = Number(attr(filter, "id").split("-").at(-1));
     assert.ok(Math.abs(Math.hypot(attr(red, "dx"), attr(red, "dy")) - (8 * level) / 6) < 1e-9);
   }
+});
+
+test("splits the element over the color behind it, kept only within reach of its own shapes", () => {
+  const { glitch, filters } = setup();
+  glitch.prepare();
+  for (const filter of filters()) {
+    const [flood, laid] = filter.children;
+    // Outside a browser there are no computed styles to read, so the backdrop is transparent.
+    assert.equal(attr(flood, "flood-color"), "transparent");
+    assert.equal(attr(laid, "in"), "SourceGraphic");
+    assert.equal(attr(laid, "operator"), "over");
+    const reach = filter.children.at(-2);
+    assert.equal(attr(reach, "in"), "SourceAlpha");
+    assert.equal(Number(attr(reach, "radius")), 9);
+    assert.equal(attr(filter.children.at(-1), "operator"), "in");
+  }
+});
+
+test("a given backdrop is read fresh each time the filters are prepared", () => {
+  const env = environment({});
+  let color = "rgb(1, 2, 3)";
+  const item = { getBoundingClientRect: () => ({ width: 10, height: 10 }), animate: () => ({ finished: new Promise(() => {}), cancel() {} }) };
+  const glitch = createElementGlitch(item, { doc: env.doc, view: env.view, settings: { speed: 1, strength: 8 }, backdrop: () => color });
+  const flood = () => env.doc.body.children[0].children[0].children[0].children[0];
+  glitch.prepare();
+  assert.equal(attr(flood(), "flood-color"), "rgb(1, 2, 3)");
+  color = "rgb(4, 5, 6)";
+  glitch.prepare();
+  assert.equal(attr(flood(), "flood-color"), "rgb(4, 5, 6)");
 });
 
 test("switches at the same peak as the page-wide transition and ends unfiltered", () => {

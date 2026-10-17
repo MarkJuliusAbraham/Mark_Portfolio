@@ -6,14 +6,15 @@
 }
 
 .sidebar-shell {
+    position: relative;
     display: flex;
     min-height: 100dvh;
     flex-direction: column;
-    padding: 40px 28px 28px;
+    /* The side insets leave room for the pointer and progress track outside each row. */
+    padding: 32px 28px 24px;
 }
 
-/* Holds the typed name, one hero line per line. Its size is always the full name's, so typing
-   never moves anything around it; with nothing typed it is empty space. */
+/* A stable header slot keeps typing and backspacing from moving the navigation. */
 .sidebar-wordmark {
     align-self: flex-start;
     min-height: 44px;
@@ -28,6 +29,36 @@
     transition: opacity 160ms ease;
 }
 
+.sidebar-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.sidebar-desktop .sidebar-wordmark {
+    align-self: stretch;
+    min-width: 0;
+    min-height: 32px;
+    padding-inline: 12px;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.sidebar-name-run {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-desktop .sidebar-name-run {
+    min-height: 32px;
+}
+
 /* Text selected for a one-keystroke delete, styled like the site's text selection. */
 .sidebar-wordmark-selection {
     background: var(--nier-selection);
@@ -35,31 +66,32 @@
 }
 
 .sidebar-desktop .sidebar-navigation {
-    margin-top: clamp(48px, 14vh, 144px);
-    margin-bottom: 32px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .sidebar-navigation {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    padding-block: 8px;
+    border-block: 1px solid var(--sidebar-border);
 }
 
 .sidebar-item {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 16px;
+    grid-template-columns: 1fr;
     align-items: center;
-    gap: 12px;
     width: 100%;
     min-height: 48px;
     padding-inline: 12px;
-    border: 1px solid var(--nier-border);
-    background: var(--sidebar-accent);
+    border: 1px solid transparent;
+    background: transparent;
     color: var(--sidebar-foreground);
-    font-size: 1rem;
+    font-size: 0.875rem;
     line-height: 1.5;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     text-align: start;
     cursor: pointer;
 }
@@ -179,6 +211,20 @@
     }
 }
 
+/* The selection (the selected row, its progress bar and dot) in the palette's strongest tones, the
+   same pair as the hero's name square: its deepest dark in light mode, its brightest light in dark
+   mode, with the other for its text. Exempt from the screen's darkening (ScreenLimb.jsx), it stands
+   clear of the shadow gathering at the screen's edge. */
+.sidebar-item {
+    --sidebar-primary: var(--nier-dark-field);
+    --sidebar-primary-foreground: var(--nier-light-field);
+}
+
+.dark .sidebar-item {
+    --sidebar-primary: var(--nier-light-field);
+    --sidebar-primary-foreground: var(--nier-dark-field);
+}
+
 .sidebar-item[data-active="true"] {
     background: var(--sidebar-primary);
     color: var(--sidebar-primary-foreground);
@@ -189,140 +235,102 @@
     transition: transform 160ms ease;
 }
 
-/* Scroll progress through the active section: a track on the inner right edge, filled top down. */
+/* Scroll progress through the active section: a track of its own just outside the row's right
+   edge, mirroring the pointer on its left, filled top down in the selected row's colour. Kept
+   apart from the row, it leaves the row's own edges even for the corner marks. */
+.sidebar-item {
+    --progress-gap: 4px;
+    --progress-width: 3px;
+}
+
 .sidebar-item-progress {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 3px;
-    background: color-mix(in srgb, var(--sidebar-primary-foreground) 22%, transparent);
+    overflow: hidden;
+    top: -1px;
+    right: calc(-1px - var(--progress-gap) - var(--progress-width));
+    bottom: -1px;
+    width: var(--progress-width);
+    background: color-mix(in srgb, var(--sidebar-primary) 18%, transparent);
     opacity: 0;
     pointer-events: none;
 }
 
+/* The fill: the section's progress, from the top. While the bar travels between rows
+   (progressTravel.js), --bar-fill-from shifts where it starts, in bar lengths, and --bar-fill-size
+   sets how much of a bar it fills, so it can be carried along with the track. */
 .sidebar-item-progress::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--sidebar-primary-foreground);
-    transform: scaleY(var(--item-progress));
+    background: var(--sidebar-primary);
+    transform: translateY(calc(var(--bar-fill-from, 0) * 100%)) scaleY(var(--bar-fill-size, var(--item-progress)));
     transform-origin: top;
 }
 
-.sidebar-item[data-active="true"] .sidebar-item-progress {
+/* Shown beside the section the page is scrolled to, once the bar has arrived there
+   (SidebarItemButton.jsx). While the page scrolls to a chosen section it trails the selected row. */
+.sidebar-item[data-arrived] .sidebar-item-progress {
     opacity: calc(1 - var(--item-fixed));
 }
 
-/* A dot with red and blue fringes either side, for sections that can't be scrolled through. */
+/* A dot for sections that can't be scrolled through, brought in and out through the site's
+   chromatic aberration (SidebarItemButton.jsx): shown from when it arrives until the peak of the
+   effect as it leaves. */
 .sidebar-item-dot {
-    --dot-fringe: 2px;
     position: absolute;
     top: calc(50% - 3.5px);
-    right: 5px;
+    /* Centred on the progress track it stands in for. */
+    right: calc(-1px - var(--progress-gap) - var(--progress-width) / 2 - 3.5px);
     width: 7px;
     height: 7px;
+    border-radius: 50%;
+    background: var(--sidebar-primary);
     opacity: 0;
     pointer-events: none;
 }
 
-.sidebar-item-dot::before,
-.sidebar-item-dot::after,
-.sidebar-item-dot-core {
+.sidebar-item-dot[data-visible="true"] {
+    opacity: var(--item-fixed);
+}
+
+/* A reticle of the framed images' corner triangles (frame-corners.css): they wait wide of the row
+   and faded, snap in onto it with a slight overshoot, and drift back out as it's left. */
+.sidebar-item-lock {
+    --lock-reach: 9px;
+    position: absolute;
+    inset: 4px;
+    pointer-events: none;
+}
+
+.sidebar-item-lock::before,
+.sidebar-item-lock::after {
     content: "";
     position: absolute;
-    inset: 0;
-    border-radius: 50%;
-}
-
-.sidebar-item-dot::before {
-    background: #f33d4a;
-    opacity: 0.9;
-    transform: translateX(calc(var(--dot-fringe) * -1));
-}
-
-.sidebar-item-dot::after {
-    background: #397bfa;
-    opacity: 0.9;
-    transform: translateX(var(--dot-fringe));
-}
-
-.sidebar-item-dot-core {
-    z-index: 1;
-    background: var(--sidebar-primary-foreground);
-}
-
-.sidebar-item[data-active="true"] .sidebar-item-dot {
-    opacity: var(--item-fixed);
-    animation: sidebar-dot-pop 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* The fringes flare wide as the dot pops out, then glitch: they hold, then snap far out and back
-   with no easing in between. Red and blue jump to different distances so the split looks uneven. */
-.sidebar-item[data-active="true"] .sidebar-item-dot::before {
-    animation:
-        sidebar-dot-fringe-red 480ms ease-out,
-        sidebar-dot-glitch-red 2.6s steps(1, end) 480ms infinite;
-}
-
-.sidebar-item[data-active="true"] .sidebar-item-dot::after {
-    animation:
-        sidebar-dot-fringe-blue 480ms ease-out,
-        sidebar-dot-glitch-blue 2.6s steps(1, end) 480ms infinite;
-}
-
-@keyframes sidebar-dot-pop {
-    from {
-        transform: scale(0);
-    }
-}
-
-@keyframes sidebar-dot-fringe-red {
-    from {
-        transform: translateX(-9px);
-    }
-}
-
-@keyframes sidebar-dot-fringe-blue {
-    from {
-        transform: translateX(9px);
-    }
-}
-
-@keyframes sidebar-dot-glitch-red {
-    0%, 58% { transform: translate(-2px, 0); opacity: 0.9; }
-    60% { transform: translate(-7px, 0); opacity: 1; }
-    63% { transform: translate(-3px, 1px); opacity: 0.5; }
-    66% { transform: translate(-9px, -1px); opacity: 1; }
-    69%, 84% { transform: translate(-2px, 0); opacity: 0.9; }
-    86% { transform: translate(-6px, 1px); opacity: 1; }
-    89%, 100% { transform: translate(-2px, 0); opacity: 0.9; }
-}
-
-@keyframes sidebar-dot-glitch-blue {
-    0%, 58% { transform: translate(2px, 0); opacity: 0.9; }
-    60% { transform: translate(5px, -1px); opacity: 1; }
-    63% { transform: translate(8px, 0); opacity: 0.6; }
-    66% { transform: translate(4px, 1px); opacity: 1; }
-    69%, 84% { transform: translate(2px, 0); opacity: 0.9; }
-    86% { transform: translate(8px, -1px); opacity: 1; }
-    89%, 100% { transform: translate(2px, 0); opacity: 0.9; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .sidebar-item[data-active="true"] .sidebar-item-dot,
-    .sidebar-item[data-active="true"] .sidebar-item-dot::before,
-    .sidebar-item[data-active="true"] .sidebar-item-dot::after {
-        animation: none;
-    }
-}
-
-.sidebar-item-arrow {
-    width: 16px;
-    height: 16px;
+    width: var(--frame-corner-triangle);
+    height: var(--frame-corner-triangle);
     opacity: 0;
-    transform: translateX(-3px);
-    transition: opacity 160ms ease, transform 160ms ease;
+    transition: opacity 140ms ease, transform 180ms ease-in;
+}
+
+.sidebar-item-lock::before {
+    top: 0;
+    left: 0;
+    background: var(--frame-corner-start);
+    transform: translate(calc(var(--lock-reach) * -1), calc(var(--lock-reach) * -1));
+}
+
+.sidebar-item-lock::after {
+    right: 0;
+    bottom: 0;
+    background: var(--frame-corner-end);
+    transform: translate(var(--lock-reach), var(--lock-reach));
+}
+
+.sidebar-item:focus-visible .sidebar-item-lock::before,
+.sidebar-item:focus-visible .sidebar-item-lock::after {
+    opacity: 1;
+    transform: none;
+    transition: opacity 90ms ease, transform 260ms cubic-bezier(0.34, 1.7, 0.6, 1);
 }
 
 .sidebar-footer {
@@ -333,7 +341,7 @@
 .sidebar-bottom {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     margin-top: auto;
 }
 
@@ -352,7 +360,7 @@
     display: flex;
     min-height: 44px;
     align-items: center;
-    color: var(--muted-foreground);
+    color: var(--sidebar-foreground);
     font-size: 0.75rem;
     line-height: 1.5;
     overflow-wrap: anywhere;
@@ -361,20 +369,51 @@
 }
 
 .sidebar-socials {
-    display: flex;
-    gap: 4px;
-    margin-inline-start: -12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(44px, 1fr));
+    border: 1px solid var(--sidebar-border);
 }
 
 .sidebar-social-link {
     display: flex;
-    width: 44px;
+    width: 100%;
     height: 44px;
     align-items: center;
     justify-content: center;
     border-radius: 0;
-    color: var(--muted-foreground);
+    color: var(--sidebar-foreground);
     transition: color 160ms ease, background-color 160ms ease;
+}
+
+.sidebar-social-link + .sidebar-social-link {
+    border-inline-start: 1px solid var(--sidebar-border);
+}
+
+/* Utilities use the same flat, ruled surface as the navigation and name spine.
+   Scoped here so controls elsewhere in the portfolio retain their own treatment. */
+:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button, .sidebar-menu-toggle) {
+    min-height: 44px;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--sidebar-foreground);
+    box-shadow: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+}
+
+:is(.sidebar-desktop, .sidebar-mobile-header) .theme-toggle-track {
+    height: 16px;
+    padding: 2px;
+    background: transparent;
+    border-color: var(--sidebar-border);
+    box-shadow: none;
+}
+
+:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button):focus-visible {
+    outline: 2px solid var(--sidebar-foreground);
+    outline-offset: 3px;
+    box-shadow: none;
 }
 
 .sidebar-wordmark:focus-visible,
@@ -386,22 +425,58 @@
     border-radius: 0;
 }
 
-/* Keep the keyboard frame inside the row: an outer outline overlaps the next row's background
-   in this tightly spaced stack. currentColor also stays legible on the selected section. */
+/* The corner marks lock on to show keyboard focus instead of an outline; drawn in currentColor,
+   they stay legible on the selected section too. */
 .sidebar-item:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: -5px;
-    border-radius: 0;
-}
-
-.sidebar-item:focus-visible .sidebar-item-arrow {
-    opacity: 1;
-    transform: translateX(0);
+    outline: none;
 }
 
 .sidebar-mobile-header .sidebar-wordmark {
     align-self: auto;
-    font-size: 1rem;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.sidebar-mobile-header .sidebar-name-run {
+    gap: 8px;
+}
+
+.sidebar-mobile-header .sidebar-name-run > :first-child {
+    flex-shrink: 0;
+}
+
+.sidebar-mobile-header {
+    gap: 16px;
+}
+
+.sidebar-mobile-actions {
+    flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+    .sidebar-mobile-header {
+        padding-inline: 16px;
+        gap: 12px;
+    }
+
+    .sidebar-menu-toggle {
+        width: 44px;
+        justify-content: center;
+    }
+
+    /* Keep the menu's accessible name while freeing space for the typed name. */
+    .sidebar-menu-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
 }
 
 .sidebar-mobile-panel .sidebar-footer {
@@ -428,9 +503,6 @@
 
 .sidebar-menu-toggle {
     padding-inline: 10px;
-    border: 2px solid var(--nier-button-outline);
-    background: var(--nier-panel);
-    box-shadow: inset 1px 1px var(--nier-button-highlight), inset -1px -1px var(--nier-button-shadow);
 }
 
 .sidebar-mobile-header details[open] .sidebar-menu-toggle {
@@ -440,6 +512,10 @@
 }
 
 @media (hover: hover) {
+    :is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button, .sidebar-menu-toggle):hover {
+        background: var(--nier-hover);
+        color: var(--sidebar-foreground);
+    }
     .sidebar-item[data-active="false"]:hover {
         background: var(--nier-panel);
     }
@@ -448,9 +524,11 @@
         transform: translateX(3px);
     }
 
-    .sidebar-item:hover .sidebar-item-arrow {
+    .sidebar-item:hover .sidebar-item-lock::before,
+    .sidebar-item:hover .sidebar-item-lock::after {
         opacity: 1;
-        transform: translateX(0);
+        transform: none;
+        transition: opacity 90ms ease, transform 260ms cubic-bezier(0.34, 1.7, 0.6, 1);
     }
 
     .sidebar-wordmark:hover {
@@ -477,9 +555,15 @@
 
     .sidebar-item,
     .sidebar-item-label,
-    .sidebar-item-arrow,
+    .sidebar-item-lock::before,
+    .sidebar-item-lock::after,
     .sidebar-social-link,
     .sidebar-wordmark {
         transition: none;
+    }
+
+    /* The marks simply appear where they lock, without flying in. */
+    .sidebar-item-lock {
+        --lock-reach: 0px;
     }
 }
