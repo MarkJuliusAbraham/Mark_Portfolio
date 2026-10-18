@@ -48,6 +48,7 @@
     --color-popover: var(--popover);
     --color-card-foreground: var(--card-foreground);
     --color-card: var(--card);
+    --color-strong-foreground: var(--strong-foreground);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
     --radius-sm: calc(var(--radius) * 0.6);
@@ -107,6 +108,10 @@ html {
     }
   body {
     @apply bg-background text-foreground;
+    }
+  /* Headings and titles take the strongest text, a step above what they head. */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--strong-foreground);
     }
   html {
     @apply font-sans;

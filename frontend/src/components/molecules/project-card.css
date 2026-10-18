@@ -84,7 +84,7 @@
 }
 
 .project-figure-title {
-    color: var(--foreground);
+    color: var(--strong-foreground);
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.25;

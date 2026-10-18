@@ -39,6 +39,7 @@
 
 .hero-banner[data-layout="inverse"] .hero-panel {
     --background: var(--hero-panel);
+    --strong-foreground: var(--card-inverse-strong);
     --foreground: var(--card-inverse-foreground);
     --muted-foreground: var(--card-inverse-muted-foreground);
     --border: var(--card-inverse-border);

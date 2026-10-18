@@ -17,6 +17,10 @@
     --nier-dark-muted: #999786;
     --nier-dark-border: #68685a;
     --nier-dark-hover: #414137;
+    /* Each preset's strongest text, for headings and titles over the everyday foreground: the far
+       end of its own palette, the other preset's field. */
+    --nier-light-strong: var(--nier-dark-field);
+    --nier-dark-strong: var(--nier-light-field);
     --nier-light-surface: #dad7c6;
     --nier-dark-surface: #25251f;
     --nier-surface: var(--nier-light-surface);
@@ -26,8 +30,10 @@
     --nier-border: var(--nier-light-border);
     --nier-foreground: var(--nier-light-foreground);
     --nier-muted: var(--nier-light-muted);
+    --nier-strong: var(--nier-light-strong);
     --card-inverse: var(--nier-dark-panel);
     --card-inverse-foreground: var(--nier-dark-foreground);
+    --card-inverse-strong: var(--nier-dark-strong);
     --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
     --card-inverse-border: var(--nier-dark-border);
     --card-inverse-footer: var(--nier-dark-field);
@@ -72,8 +78,10 @@
     --nier-border: var(--nier-dark-border);
     --nier-foreground: var(--nier-dark-foreground);
     --nier-muted: var(--nier-dark-muted);
+    --nier-strong: var(--nier-dark-strong);
     --card-inverse: var(--nier-light-panel);
     --card-inverse-foreground: var(--nier-light-foreground);
+    --card-inverse-strong: var(--nier-light-strong);
     --card-inverse-muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
     --card-inverse-border: var(--nier-light-border);
     --card-inverse-footer: var(--nier-light-hover);
@@ -115,6 +123,9 @@
     /* The hero name only: a wide, technical grotesque, like a sci-fi interface's display type. */
     --font-portfolio-display: "Archivo Variable", Archivo, var(--nier-font-family);
     --background: var(--nier-surface);
+    /* Text in three strengths: strong for headings and titles, the foreground for reading, and
+       muted for what supports them. */
+    --strong-foreground: var(--nier-strong);
     --foreground: var(--nier-foreground);
     --card: var(--nier-panel);
     --card-foreground: var(--nier-foreground);
@@ -155,6 +166,7 @@
 [data-theme="inverse-card"] {
     --card: var(--card-inverse);
     --card-foreground: var(--card-inverse-foreground);
+    --strong-foreground: var(--card-inverse-strong);
     --foreground: var(--card-inverse-foreground);
     --muted-foreground: var(--card-inverse-muted-foreground);
     --nier-border: var(--card-inverse-border);
