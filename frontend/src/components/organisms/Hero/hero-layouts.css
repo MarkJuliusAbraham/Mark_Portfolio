@@ -1,7 +1,7 @@
-/* Alternative arrangements of the hero (HomeBannerLayout's `layout`), each used only where there's
-   room for it; anywhere else the hero keeps its own arrangement (hero-banner.css). */
+/* Alternative arrangements of the hero (HomeBannerLayout's `layout`); without one, the hero keeps
+   its own arrangement (hero-banner.css). */
 .hero-banner[data-layout] {
-    /* The inverse split's name panel, and the film edge that echoes it, at the far end of the
+    /* The inverse layout's panel, and the film edge that echoes it, at the far end of the
        palette from the page so it stands apart from every panel and control: its deepest dark in
        light mode (the one under the project cards' figures), its brightest light in dark mode. */
     --hero-panel: var(--nier-dark-field);
@@ -16,7 +16,7 @@
     --hero-panel: var(--nier-light-field);
 }
 
-/* The strip of film inside the gathered panel on phones (below): the page's own field tone, the
+/* The strip of film inside the gathered panel (below): the page's own field tone, the
    desktop strip's colour mirrored, as everything in the panel is. */
 .hero-banner[data-layout] {
     --hero-film: var(--nier-light-field);
@@ -27,276 +27,100 @@
 }
 
 /* ---------------------------------------------------------------------------------------------
-   Inverse split: two equal squares side by side over a row of four focus areas. The name block is
-   a panel in the opposite theme, with the role tag in its top right corner, the name beneath and
-   the buttons at its foot on the left. Beside it, the photo is framed like a print: a square mat,
-   the header line printed along its top and the caption along its foot, holding a strip of film,
-   the photo whole beside the film's edge. The focus areas keep the same gap as the two squares, so
-   two sit under each.
-   Only once the hero is wide enough for the square to hold the name. The hero narrows by the
-   navbar's width as the navbar appears (at 1100px), and is about 780px just after (less with a
-   wider scrollbar), so the bar is set well below that: otherwise a band of window widths there
-   would fall back to the plain layout.
-   Together they fill the first screen (the hero's height, page-layout.css): the squares grow
-   taller to take whatever the focus areas leave, never shorter than square.
+   Inverse layout: the header line, name, buttons and photo all gather into one panel in the
+   opposite theme, with the page's grid lit inside it, and the focus areas follow beneath. The
+   photo is shown as a strip of film, its sprocket holes along its edge.
    --------------------------------------------------------------------------------------------- */
-@container hero (min-width: 760px) {
-    .hero-banner[data-layout="inverse"] .hero-banner-content {
-        flex: 1;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: 1fr auto;
-        grid-template-areas:
-            "name  photo"
-            "focus focus";
-        column-gap: var(--space-4);
-        row-gap: var(--space-5);
-    }
-
-    /* Printed along the top of the mat, laid over it in the same cell. */
-    .hero-banner[data-layout="inverse"] .hero-meta {
-        position: relative;
-        z-index: 1;
-        grid-area: photo;
-        align-self: start;
-        margin: var(--space-3) var(--space-3) 0;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-name {
-        --background: var(--hero-panel);
-        --foreground: var(--card-inverse-foreground);
-        --muted-foreground: var(--card-inverse-muted-foreground);
-        --border: var(--card-inverse-border);
-        --primary: var(--card-inverse-foreground);
-        --primary-foreground: var(--hero-panel);
-        /* At least as tall as its column is wide: a square, stretched taller to fill. */
-        min-height: calc((100cqw - var(--space-4)) / 2);
-        align-self: stretch;
-        justify-content: space-between;
-        padding: var(--space-4);
-        background: var(--background);
-        color: var(--foreground);
-    }
-
-    /* The page's grid carries on inside the square, lit only around the pointer (NameBanner.jsx),
-       behind the role, name and buttons. */
-    .hero-banner[data-layout="inverse"] .hero-name {
-        position: relative;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-name-traces {
-        position: absolute;
-        inset: 0;
-        display: block;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-name > :not(.hero-name-traces) {
-        position: relative;
-    }
-
-    /* The role tag sits in the square's top right corner; the name and buttons keep the left edge. */
-    .hero-banner[data-layout="inverse"] .hero-role {
-        align-self: flex-end;
-    }
-
-    /* The outline button, drawn in the panel's own colours: an outline on the dark ground. */
-    .hero-banner[data-layout="inverse"] .hero-name .theme-button[data-variant="outline"] {
-        border-color: var(--card-inverse-foreground);
-        background: transparent;
-        color: var(--card-inverse-foreground);
-        box-shadow: none;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-name .theme-button[data-variant="outline"]:hover {
-        background: color-mix(in srgb, var(--card-inverse-foreground) 12%, transparent);
-    }
-
-    /* The mat: as tall as the name square beside it, the header line's room kept at its head and
-       the caption at its foot, the strip of film filling the space between. */
-    .hero-banner[data-layout="inverse"] .hero-photo-figure {
-        position: static;
-        grid-area: photo;
-        max-width: none;
-        align-self: stretch;
-        justify-self: stretch;
-        gap: var(--space-2);
-        padding: calc(var(--space-3) + 1.125rem + var(--space-2)) var(--space-3) var(--space-3);
-        border: 1px solid var(--border);
-        background: var(--nier-panel);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-photo-caption {
-        position: static;
-    }
-
-    /* The strip of film, centred on the mat: the photo whole, at the strip's full height, then the
-       film's edge. */
-    .hero-banner[data-layout="inverse"] .hero-photo-film {
-        display: flex;
-        flex: 1;
-        min-height: 0;
-        justify-content: center;
-    }
-
-    /* As the mat grows taller than square, the photo grows with it until it meets the mat's
-       sides, then only taller. */
-    .hero-banner[data-layout="inverse"] .hero-photo-frame {
-        width: auto;
-        max-width: calc(100% - 30px);
-        height: auto;
-        align-self: stretch;
-    }
-
-    /* The film's edge, in the name panel's colours: a column of sprocket holes and the frame's
-       number running down beside them. */
-    .hero-banner[data-layout="inverse"] .hero-photo-edge {
-        position: relative;
-        display: flex;
-        width: 30px;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 5px;
-        background: var(--hero-panel);
-        color: var(--card-inverse-muted-foreground);
-        font-size: 0.625rem;
-        letter-spacing: 0.14em;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-photo-edge::before {
-        content: "";
-        position: absolute;
-        top: 5px;
-        bottom: 5px;
-        left: 5px;
-        width: 7px;
-        background: repeating-linear-gradient(to bottom, var(--nier-panel) 0 6px, transparent 6px 14px);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-photo-edge span {
-        writing-mode: vertical-rl;
-        white-space: nowrap;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-focus {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        column-gap: var(--space-4);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-focus-item,
-    .hero-banner[data-layout="inverse"] .hero-focus-item:nth-child(n) {
-        padding: var(--space-3) 0 var(--space-1) var(--space-3);
-        border: 0;
-        border-left: 1px solid var(--border);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-focus-item:first-child {
-        padding-left: 0;
-        border-left: 0;
-    }
+.hero-banner[data-layout="inverse"] .hero-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
 }
 
-/* ---------------------------------------------------------------------------------------------
-   Inverse layout on phones and narrow screens, where the two squares don't fit side by side: the
-   header line, name, buttons and photo all gather into the name square's panel, in its colours
-   and with the page's grid lit inside it, and the focus areas follow beneath. The photo is shown
-   as a strip of film here too, its sprocket holes along its edge.
-   --------------------------------------------------------------------------------------------- */
-@container hero (width < 760px) {
-    .hero-banner[data-layout="inverse"] .hero-banner-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel {
-        --background: var(--hero-panel);
-        --foreground: var(--card-inverse-foreground);
-        --muted-foreground: var(--card-inverse-muted-foreground);
-        --border: var(--card-inverse-border);
-        --primary: var(--card-inverse-foreground);
-        --primary-foreground: var(--hero-panel);
-        /* The photo's mat and backing, in the panel's palette too, so the photo sits in the panel's
-           colours rather than the page's. */
-        --nier-panel: var(--card-inverse);
-        --nier-field: var(--hero-panel);
-        position: relative;
-        display: grid;
-        padding: var(--space-3);
-        background: var(--background);
-        color: var(--foreground);
-    }
-
-    /* The grid's light across the whole panel (NameBanner.jsx): the name block is left unpositioned
-       so the light spans the panel, not just the name, and everything shown sits above it. */
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-name {
-        position: static;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-name-traces {
-        position: absolute;
-        inset: 0;
-        display: block;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel :is(.hero-meta, .hero-role, .hero-name-heading, .hero-actions, .hero-photo-film, .hero-photo-caption) {
-        position: relative;
-    }
-
-    /* The outline button in the panel's own colours, as in the square. */
-    .hero-banner[data-layout="inverse"] .hero-panel .theme-button[data-variant="outline"] {
-        border-color: var(--card-inverse-foreground);
-        background: transparent;
-        color: var(--card-inverse-foreground);
-        box-shadow: none;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel .theme-button[data-variant="outline"]:hover {
-        background: color-mix(in srgb, var(--card-inverse-foreground) 12%, transparent);
-    }
-
-    /* The strip of film: the photo, then the film's edge beside it. */
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-film {
-        display: flex;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge {
-        position: relative;
-        display: block;
-        width: 16px;
-        background: var(--hero-film);
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge::before {
-        content: "";
-        position: absolute;
-        top: 4px;
-        bottom: 4px;
-        left: 5px;
-        width: 5px;
-        /* The holes in the panel's mat tone: the desktop strip's light holes in a dark strip, mirrored
-           to dark holes in a light one. */
-        background: repeating-linear-gradient(to bottom, var(--card-inverse) 0 5px, transparent 5px 11px);
-    }
-
-    /* Only the holes fit on so narrow an edge, not the frame's number. */
-    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge span {
-        display: none;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-focus {
-        margin-top: 0;
-    }
+.hero-banner[data-layout="inverse"] .hero-panel {
+    --background: var(--hero-panel);
+    --foreground: var(--card-inverse-foreground);
+    --muted-foreground: var(--card-inverse-muted-foreground);
+    --border: var(--card-inverse-border);
+    --primary: var(--card-inverse-foreground);
+    --primary-foreground: var(--hero-panel);
+    /* The photo's mat and backing, in the panel's palette too, so the photo sits in the panel's
+       colours rather than the page's. */
+    --nier-panel: var(--card-inverse);
+    --nier-field: var(--hero-panel);
+    position: relative;
+    display: grid;
+    padding: var(--space-3);
+    background: var(--background);
+    color: var(--foreground);
 }
 
-/* Phones: the photo in the panel's top right corner beside the header, caption and role, the name
-   and buttons across its full width beneath (as hero-banner.css lays out the hero on phones). */
+/* The grid's light across the whole panel (NameBanner.jsx): the name block is left unpositioned
+   so the light spans the panel, not just the name, and everything shown sits above it. */
+.hero-banner[data-layout="inverse"] .hero-panel .hero-name {
+    position: static;
+}
+
+.hero-banner[data-layout="inverse"] .hero-panel .hero-name-traces {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hero-banner[data-layout="inverse"] .hero-panel :is(.hero-meta, .hero-role, .hero-name-heading, .hero-actions, .hero-photo-film, .hero-photo-caption) {
+    position: relative;
+}
+
+/* The outline button in the panel's own colours, as in the square. */
+.hero-banner[data-layout="inverse"] .hero-panel .theme-button[data-variant="outline"] {
+    border-color: var(--card-inverse-foreground);
+    background: transparent;
+    color: var(--card-inverse-foreground);
+    box-shadow: none;
+}
+
+.hero-banner[data-layout="inverse"] .hero-panel .theme-button[data-variant="outline"]:hover {
+    background: color-mix(in srgb, var(--card-inverse-foreground) 12%, transparent);
+}
+
+/* The strip of film: the photo, then the film's edge beside it. */
+.hero-banner[data-layout="inverse"] .hero-panel .hero-photo-film {
+    display: flex;
+}
+
+.hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge {
+    position: relative;
+    display: block;
+    width: 16px;
+    background: var(--hero-film);
+}
+
+.hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 5px;
+    width: 5px;
+    /* The holes in the panel's mat tone: the desktop strip's light holes in a dark strip, mirrored
+       to dark holes in a light one. */
+    background: repeating-linear-gradient(to bottom, var(--card-inverse) 0 5px, transparent 5px 11px);
+}
+
+/* Only the holes fit on so narrow an edge, not the frame's number. */
+.hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge span {
+    display: none;
+}
+
+.hero-banner[data-layout="inverse"] .hero-focus {
+    margin-top: 0;
+}
+
 /* Phones only: the photo in the panel's top right corner beside the header, the figure caption
-   and its frame count, and the role; the name and buttons across its full width beneath (as
+   and its switching status, and the role; the name and buttons across its full width beneath (as
    hero-banner.css lays out the hero on phones). */
 @container hero (width < 640px) {
     .hero-banner[data-layout="inverse"] .hero-panel {
@@ -324,19 +148,19 @@
     }
 }
 
-/* Narrow screens: the header line across the top, the name beside the photo with the buttons at
-   its foot level with the photo's, and the figure caption with its frame count at the top of the
-   name's side. */
-@container hero (min-width: 640px) and (width < 760px) {
-    /* The panel and the focus areas fill the first screen together (the hero's height,
-       page-layout.css): the panel takes whatever the focus areas leave. */
+/* Wider screens: the header line across the top, the name beside the photo with the buttons at
+   its foot, and the figure caption with its switching status at the top of the name's side,
+   where its changing length can't move anything. The panel fills the first screen with the focus
+   areas beneath it (the hero's height, page-layout.css), taking whatever they leave; the photo
+   keeps its size at the top of its side, and the name and buttons keep the panel's foot. */
+@container hero (min-width: 640px) {
     .hero-banner[data-layout="inverse"] .hero-banner-content {
         flex: 1;
     }
 
     .hero-banner[data-layout="inverse"] .hero-panel {
         flex: 1;
-        grid-template-columns: minmax(0, 1fr) clamp(13rem, 30cqw, 23rem);
+        grid-template-columns: minmax(0, 1fr) clamp(13rem, 30cqw, 26rem);
         grid-template-areas:
             "meta    meta"
             "caption photo"
@@ -352,24 +176,13 @@
         display: contents;
     }
 
-    /* The film stands as tall as the panel lets it: never squatter than its 4:5 frame, and never
-       more slender than 3:5, past which it rests at the panel's foot, level with the buttons. */
     .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-film {
-        container-type: inline-size;
         grid-area: photo;
-        align-self: stretch;
-        align-items: flex-end;
-    }
-
-    .hero-banner[data-layout="inverse"] .hero-panel :is(.hero-photo-frame, .hero-photo-edge) {
-        height: 100%;
-        min-height: calc((100cqw - 16px) * 5 / 4);
-        max-height: calc((100cqw - 16px) * 5 / 3);
+        align-self: start;
     }
 
     .hero-banner[data-layout="inverse"] .hero-photo-frame {
         width: 100%;
-        aspect-ratio: auto;
     }
 
     .hero-banner[data-layout="inverse"] .hero-photo-caption {
@@ -384,7 +197,7 @@
         row-gap: 8px;
     }
 
-    .hero-banner[data-layout="inverse"] .hero-photo-caption .hero-photo-count {
+    .hero-banner[data-layout="inverse"] .hero-photo-caption .hero-photo-autospin {
         grid-column: 1 / -1;
         justify-self: end;
         margin-left: 0;
@@ -393,5 +206,33 @@
     .hero-banner[data-layout="inverse"] .hero-name {
         grid-area: name;
         align-self: end;
+    }
+}
+
+/* Wide enough for the film's full edge: wider sprocket holes and the frame's number running down
+   beside them, as printed along a strip of film. */
+@container hero (min-width: 900px) {
+    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge {
+        display: flex;
+        width: 30px;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 5px;
+        color: var(--muted-foreground);
+        font-size: 0.625rem;
+        letter-spacing: 0.14em;
+    }
+
+    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge::before {
+        top: 5px;
+        bottom: 5px;
+        width: 7px;
+        background: repeating-linear-gradient(to bottom, var(--card-inverse) 0 6px, transparent 6px 14px);
+    }
+
+    .hero-banner[data-layout="inverse"] .hero-panel .hero-photo-edge span {
+        display: block;
+        writing-mode: vertical-rl;
+        white-space: nowrap;
     }
 }
