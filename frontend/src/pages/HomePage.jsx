@@ -35,7 +35,7 @@ export const HomePage = () => {
       />
       <AboutSection ref={aboutRef} educationRef={educationRef} />
       <ProjectSection ref={projectsRef} title="Solo Projects" />
-      <PortfolioSection ref={contactRef} title="Contact Me">
+      <PortfolioSection ref={contactRef} title="Contact Me" titleEntrance="none">
         <ContactSection />
       </PortfolioSection>
       <ContactBar contactRef={contactRef} onContact={goToContact} />

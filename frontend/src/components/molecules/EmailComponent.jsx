@@ -1,4 +1,3 @@
-import { FadeInComponent } from "@/components/atoms/FadeInComponent.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field.jsx";
 import { Input } from "@/components/ui/input.jsx";
@@ -9,7 +8,7 @@ const fieldText = "text-base md:text-base";
 /** The contact form: name, email and message, each with a screen-reader label. */
 export const EmailComponent = ({ className }) => (
   <div className={className}>
-    <FadeInComponent className="pb-4">
+    <div className="pb-4">
       <div className="py-4">Got Anything to say? Email Me!</div>
       <FieldGroup>
         <Field>
@@ -22,6 +21,6 @@ export const EmailComponent = ({ className }) => (
           <Button className="min-h-11">Submit</Button>
         </Field>
       </FieldGroup>
-    </FadeInComponent>
+    </div>
   </div>
 );
