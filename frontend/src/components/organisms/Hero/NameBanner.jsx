@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { TypedText } from "@/components/atoms/TypedText.jsx";
 import { PhrasePopIn } from "@/components/molecules/PhrasePopIn.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { useMediaQuery } from "@/hooks/useMediaQuery.js";
@@ -72,18 +71,15 @@ const useHangingLines = (lineRefs, texts) => {
 };
 
 /**
- * The name, line by line. Each line pops in on first load and, once it has scrolled away, types
- * itself back in instead. Whatever has scrolled away is passed to the navbar, regrouped into the
- * name's own lines (`nameLines`) however the hero splits it, so the navbar's layout never changes.
+ * The name, line by line. Its letters rise in once, as part of the hero's opening
+ * (hero-intro.css), and then stay put. Whatever has scrolled away is passed to the navbar,
+ * regrouped into the name's own lines (`nameLines`) however the hero splits it, so the navbar's
+ * layout never changes.
  */
 const NameLines = ({ lines, nameLines }) => {
   const lineRefs = useRef([]);
   const hidden = useHiddenLines(lineRefs, lines.length);
   useHangingLines(lineRefs, lines.map(({ text }) => text).join("\n"));
-  const [scrolledAway, setScrolledAway] = useState(() => lines.map(() => false));
-  if (hidden.some((value, index) => value && !scrolledAway[index])) {
-    setScrolledAway(scrolledAway.map((value, index) => value || hidden[index]));
-  }
 
   const hiddenName = nameLines
     .map((_, group) => lines.filter((line, index) => line.group === group && hidden[index]).map(({ text }) => text).join(" "))
@@ -100,12 +96,12 @@ const NameLines = ({ lines, nameLines }) => {
           aria-hidden="true"
           className="hero-name-line"
         >
-          {scrolledAway[index] ? (
-            // Remounted on each return to view, so the line types itself in from empty.
-            <TypedText key={hidden[index] ? "hidden" : "shown"} text={hidden[index] ? "" : text} reserve={text} typeDelay={45} />
-          ) : (
-            <PhrasePopIn word={text} />
-          )}
+          <PhrasePopIn
+            className="hero-name-letter"
+            word={text}
+            still
+            firstLetter={lines.slice(0, index).reduce((total, line) => total + line.text.length, 0)}
+          />
         </span>
       ))}
     </h1>

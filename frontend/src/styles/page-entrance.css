@@ -1,63 +1,20 @@
 /* Layout stays mounted for measurement and image decoding, while keyboard and screen-reader
-   access wait with the visual UI. The background alone owns the opening moment. */
+   access wait with the visual UI. The background alone owns the opening moment; the hero's own
+   opening follows it (hero-intro.css). */
 .page-scene[data-page-ready="false"] > .page-ui {
     visibility: hidden;
 }
 
 .page-scene[data-page-ready="true"] > .page-ui {
-    --page-ui-fade-duration: 240ms;
-    animation: page-ui-arrive var(--page-ui-fade-duration) ease-out;
-}
-
-/* Supporting pieces enter in a short sequence around the existing name and navbar animations.
-   Move these pieces, rather than their common parent, so the fixed navbar stays viewport-bound. */
-.page-scene[data-page-ready="true"] :is(.hero-role, .hero-intro, .hero-actions, .hero-photo-figure) {
-    animation: page-piece-arrive 500ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    animation-delay: var(--page-piece-delay, 0ms);
-}
-
-.hero-role { --page-piece-delay: 60ms; }
-.hero-intro { --page-piece-delay: 140ms; }
-.hero-actions { --page-piece-delay: 200ms; }
-.hero-photo-figure { --page-piece-delay: 240ms; }
-
-/* Fade the labels independently. Reveal the rule after the common UI fade so its
-   theme color stays at full opacity throughout the center-out draw. */
-.page-scene[data-page-ready="true"] .hero-meta > :not(.hero-meta-rule) {
-    animation: page-ui-arrive 350ms ease-out;
-}
-
-.page-scene[data-page-ready="true"] .hero-meta-rule {
-    animation: hero-rule-draw 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--page-ui-fade-duration) backwards;
-}
-
-/* The divider geometry stays put: translating one-pixel rules across fractional pixels makes
-   them look doubled and flicker. The existing text entrances still move inside each panel. */
-.page-scene[data-page-ready="true"] .hero-focus {
-    animation: page-focus-arrive 350ms ease-out 300ms backwards;
+    animation: page-ui-arrive 240ms ease-out;
 }
 
 @keyframes page-ui-arrive {
     from { opacity: 0; }
 }
 
-@keyframes page-piece-arrive {
-    from { opacity: 0; transform: translateY(8px); }
-}
-
-@keyframes page-focus-arrive {
-    from { opacity: 0; }
-}
-
-@keyframes hero-rule-draw {
-    from { clip-path: inset(0 50%); }
-    to { clip-path: inset(0 0); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-    .page-scene[data-page-ready="true"] > .page-ui,
-    .page-scene[data-page-ready="true"] .hero-meta > :not(.hero-meta-rule),
-    .page-scene[data-page-ready="true"] :is(.hero-meta, .hero-meta-rule, .hero-role, .hero-intro, .hero-actions, .hero-photo-figure, .hero-focus) {
+    .page-scene[data-page-ready="true"] > .page-ui {
         animation: none;
     }
 }
