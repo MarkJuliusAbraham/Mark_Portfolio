@@ -253,13 +253,44 @@
     letter-spacing: 0.06em;
 }
 
-/* Which frame is shown, of how many, at the caption's far end: the card turns only when clicked,
-   so this is what says there are more. */
-.hero-photo-caption .hero-photo-count {
+/* The automatic turn's status, at the caption's far end: a short track that fills over the hold
+   before each turn, or "Paused" while the card is held. */
+.hero-photo-caption .hero-photo-autospin {
+    position: relative;
+    display: inline-flex;
     flex: none;
+    align-items: center;
+    gap: 4px;
+    align-self: center;
+    width: 28px;
+    height: 2px;
     margin-left: auto;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.16em;
+    background: var(--border);
+}
+
+.hero-photo-caption .hero-photo-autospin.is-held {
+    width: auto;
+    height: auto;
+    background: none;
+    color: var(--foreground);
+}
+
+.hero-photo-autospin-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--foreground);
+    transform-origin: left;
+    animation: hero-photo-autospin-fill var(--spin-hold) linear both;
+}
+
+@keyframes hero-photo-autospin-fill {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
 }
 
 .hero-photo-caption span:first-child {
@@ -375,8 +406,8 @@
         padding-top: 2px;
     }
 
-    /* Right-aligned against the badge it labels, the figure line over the frame count, hanging
-       under the header so the header, the figure line and the count are three evenly spaced
+    /* Right-aligned against the badge it labels, the figure line over the spin's status, hanging
+       under the header so the header, the figure line and the status bar are three evenly spaced
        lines. */
     .hero-photo-caption {
         grid-area: caption;
@@ -387,7 +418,7 @@
         row-gap: 8px;
     }
 
-    .hero-photo-caption .hero-photo-count {
+    .hero-photo-caption .hero-photo-autospin {
         grid-column: 1 / -1;
         justify-self: end;
         margin-left: 0;

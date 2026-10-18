@@ -19,10 +19,10 @@ const advanceTime = 500;
  * every switch and `advanced` says whether the latest moved the film, so the movement can start
  * over with each. `auto` says what the automatic switch is doing: "counting" down the hold,
  * "held", "waiting" (mid-advance, off screen or before the page is ready) or "off" with reduced
- * motion or without `autoplay`. With `wind`, the first time the frame can be seen after loading,
+ * motion. With `wind`, the first time the frame can be seen after loading,
  * its photo is wound into place, once.
  */
-export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, autoplay = true, wind = true } = {}) => {
+export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, wind = true } = {}) => {
   const reduceMotion = useReducedMotion();
   const paused = useAccentPaused(frameRef);
   const [state, setState] = useState({ current: 0, previous: null, change: 0, advanced: false });
@@ -76,7 +76,7 @@ export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, au
     windFirst();
   }, [paused, reduceMotion, wind]);
 
-  const auto = reduceMotion || !autoplay ? "off" : held ? "held" : paused || moving ? "waiting" : "counting";
+  const auto = reduceMotion ? "off" : held ? "held" : paused || moving ? "waiting" : "counting";
 
   useEffect(() => {
     if (auto !== "counting") return;
