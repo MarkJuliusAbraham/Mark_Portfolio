@@ -37,10 +37,6 @@
     animation: page-focus-arrive 350ms ease-out 300ms backwards;
 }
 
-.page-scene[data-page-ready="true"] :is(.hero-actions, .hero-photo-figure):focus-within {
-    animation: none;
-}
-
 @keyframes page-ui-arrive {
     from { opacity: 0; }
 }
