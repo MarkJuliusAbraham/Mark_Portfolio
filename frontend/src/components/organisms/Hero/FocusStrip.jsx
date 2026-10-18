@@ -18,6 +18,9 @@ const useGameTheme = (itemRef, enabled, active) => {
     if (!enabled || !item) return;
     const glitch = createElementGlitch(item);
     glitchRef.current = glitch;
+    // Ready before it's first needed: the item mounts under the loading screen, so its filters are
+    // built there rather than on the first hover. Hovering prepares them again, for the size then.
+    glitch.prepare();
     return () => {
       glitch.dispose();
       glitchRef.current = null;

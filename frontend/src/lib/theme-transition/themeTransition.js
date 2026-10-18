@@ -7,6 +7,11 @@ const defaults = { preset: transitionPreset, speed, volume, chromatic, frameGlit
 export function createThemeTransition({ doc = document, view = window, settings = defaults } = {}) {
   const root = doc.documentElement;
   let active = null;
+  // An effect built ahead of the next switch (`warm`), so a click finds its filters ready.
+  let warmed = null;
+  let warming;
+  // Whether the owner asked for switches to be kept warm; until it does, none are built ahead.
+  let keepWarm = false;
 
   const cleanUp = () => {
     root.removeAttribute("data-theme-wave");
@@ -48,7 +53,10 @@ export function createThemeTransition({ doc = document, view = window, settings 
     }
 
     const preset = settings.preset === "chromatic" ? "chromatic" : "blocky";
-    const effect = (preset === "chromatic" ? createChromaticEffect : createBlockyEffect)({ doc, view, settings, origin });
+    // The warmed effect if there is one (its filters rebuild themselves if the window has changed
+    // size since), otherwise a new one.
+    const effect = (preset === "chromatic" && warmed) || (preset === "chromatic" ? createChromaticEffect : createBlockyEffect)({ doc, view, settings, origin });
+    warmed = null;
     if (!effect.supported || !Number.isFinite(effect.speed) || effect.speed <= 0) {
       update();
       return;
@@ -97,8 +105,46 @@ export function createThemeTransition({ doc = document, view = window, settings 
         active = null;
         cleanUp();
       }
+      // Ready for the next switch.
+      warmSoon();
     }
   };
 
-  return { run, dispose: () => cancel(false) };
+  /**
+   * Builds the next switch's effect ahead of time, as the page loads and again after each switch,
+   * so a click doesn't build its filters on the spot. Only the chromatic effect has any to build.
+   */
+  const warm = () => {
+    warming = undefined;
+    keepWarm = true;
+    if (warmed || settings.preset !== "chromatic") return;
+    const effect = createChromaticEffect({ doc, view, settings });
+    if (!effect.supported) return;
+    effect.build();
+    warmed = effect;
+  };
+
+  const warmSoon = () => {
+    if (!keepWarm || warming !== undefined) return;
+    if (view.requestIdleCallback) {
+      const handle = view.requestIdleCallback(warm, { timeout: 1000 });
+      warming = () => view.cancelIdleCallback?.(handle);
+    } else {
+      const handle = setTimeout(warm, 200);
+      warming = () => clearTimeout(handle);
+    }
+  };
+
+  return {
+    run,
+    warm,
+    dispose: () => {
+      cancel(false);
+      warming?.();
+      warming = undefined;
+      keepWarm = false;
+      warmed?.dispose();
+      warmed = null;
+    },
+  };
 }

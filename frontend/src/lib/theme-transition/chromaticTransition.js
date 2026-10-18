@@ -122,15 +122,28 @@ export function createChromaticEffect({ doc, view, settings, random = Math.rando
   const directions = createChannelDirections(options, random);
   const inlineNames = [];
   let svg = null;
+  // The window size the filters were built for.
+  let builtFor = "";
+
+  // Builds the filters for the window as it is now, unless they're already built for that size.
+  const build = () => {
+    const size = `${view.innerWidth}x${view.innerHeight}`;
+    if (svg && builtFor === size) return;
+    svg?.remove();
+    svg = createFilters(doc, {
+      width: view.innerWidth, height: view.innerHeight, strength, prefix, frameGlitch,
+      renderer: options.renderer, directions,
+    });
+    builtFor = size;
+  };
 
   return {
     speed,
     supported: typeof doc.createElementNS === "function" && view.CSS?.supports("filter", 'url("#chromatic")'),
+    // Builds the filters ahead of time (themeTransition.js warms one while the page loads).
+    build,
     prepare() {
-      svg = createFilters(doc, {
-        width: view.innerWidth, height: view.innerHeight, strength, prefix, frameGlitch,
-        renderer: options.renderer, directions,
-      });
+      build();
       // Keep the complete painted page in one snapshot, including media and its
       // occluding UI. Inline !important names must also yield to this capture.
       for (const element of doc.querySelectorAll("[style]")) {
@@ -159,6 +172,7 @@ export function createChromaticEffect({ doc, view, settings, random = Math.rando
       }
       svg?.remove();
       svg = null;
+      builtFor = "";
     },
   };
 }

@@ -145,3 +145,19 @@ test("reduced motion, zero speed, hidden tabs, and failed captures release all c
     assert.equal(env.media[0].style.getPropertyValue("view-transition-name"), "project-1");
   }
 });
+
+test("a warmed switch builds its filters ahead, reuses them when run, and disposal cancels any warming", async () => {
+  const env = environment({ preset: "chromatic", holdCapture: true });
+  const transition = createThemeTransition(env);
+  transition.warm();
+  assert.equal(env.doc.body.children.length, 1, "the filters are built before any switch");
+  const pending = transition.run(() => {});
+  assert.equal(env.doc.body.children.length, 1, "the switch uses the filters already built, not a second set");
+  env.captures[0].commit();
+  await pending;
+  assert.equal(env.doc.body.children.length, 0, "and releases them when done");
+  // The next switch would be warmed in a moment; disposing first leaves nothing behind.
+  transition.dispose();
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  assert.equal(env.doc.body.children.length, 0);
+});

@@ -36,7 +36,11 @@ export function useTheme() {
     }
   }, [theme]);
 
-  useEffect(() => () => transition.dispose(), [transition]);
+  // The switch's effect is built while the page loads, so the first click finds it ready.
+  useEffect(() => {
+    transition.warm();
+    return () => transition.dispose();
+  }, [transition]);
 
   const toggleTheme = (event) => {
     const bounds = event?.currentTarget?.getBoundingClientRect();

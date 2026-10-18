@@ -39,6 +39,8 @@ export function ScreenLimb() {
     const canvases = canvasRefs.current;
     let frame;
     let idle;
+    // The first paint, as the page loads: both themes at once, behind the loading screen.
+    let first = true;
     const currentTheme = () => (document.documentElement.classList.contains("dark") ? "dark" : "light");
     // The screen the canvases cover, in device pixels, measured on the one shown (the hidden one has
     // no size of its own), or failing that the window less any scrollbar.
@@ -69,6 +71,11 @@ export function ScreenLimb() {
       const current = currentTheme();
       paint(current);
       const other = themes.find((theme) => theme !== current);
+      if (first) {
+        first = false;
+        paint(other);
+        return;
+      }
       const later = window.requestIdleCallback ?? ((callback) => setTimeout(callback, 200));
       const cancel = window.cancelIdleCallback ?? clearTimeout;
       if (idle !== undefined) cancel(idle);
