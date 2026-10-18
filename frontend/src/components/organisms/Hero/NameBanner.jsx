@@ -71,10 +71,10 @@ const useHangingLines = (lineRefs, texts) => {
 };
 
 /**
- * The name, line by line. Its letters rise in once, as part of the hero's opening
- * (hero-intro.css), and then stay put. Whatever has scrolled away is passed to the navbar,
- * regrouped into the name's own lines (`nameLines`) however the hero splits it, so the navbar's
- * layout never changes.
+ * The name, line by line, its letters still in their boxes (PhrasePopIn.jsx): it arrives with
+ * the panel in the hero's opening (hero-intro.css) and stays put. Whatever has scrolled away is
+ * passed to the navbar, regrouped into the name's own lines (`nameLines`) however the hero splits
+ * it, so the navbar's layout never changes.
  */
 const NameLines = ({ lines, nameLines }) => {
   const lineRefs = useRef([]);
@@ -124,13 +124,14 @@ const panelTraces = {
   flat: true,
 };
 
-export const NameBanner = ({ nameLines, description, actions = [] }) => {
+export const NameBanner = ({ nameLines, description, actions = [], splitWords = false }) => {
   const tracesRef = useRef(null);
   useGridTraces(tracesRef, panelTraces);
 
   // On phones each word takes its own line: left-aligned, the words lengthen down the page into a
-  // staircase like the lines above them.
-  const split = useMediaQuery(phoneQuery);
+  // staircase like the lines above them. `splitWords` asks for the same anywhere (a hero variant
+  // that stacks the name, hero-variants.css).
+  const split = useMediaQuery(phoneQuery) || splitWords;
   const lines = split
     ? nameLines.flatMap((line, group) => line.split(" ").map((text) => ({ text, group })))
     : nameLines.map((text, group) => ({ text, group }));

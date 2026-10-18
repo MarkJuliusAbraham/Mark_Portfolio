@@ -1,0 +1,1183 @@
+/* The hero's variants (HomeBannerLayout.jsx): selecting an area of focus with a `variant` redesigns
+   the panel for it. The panel keeps its size whichever is shown, so nothing beneath it moves: the
+   photo stays in its place, only unseen, holding the room it always takes. */
+
+/* A variant that lays the panel out afresh is never shorter than the hero's own panel, which its
+   4:5 photo holds open: the photo's column (hero-layouts.css) less the film's edge it shares it
+   with, under the header line, inside the padding. So switching moves nothing beneath. */
+@container hero (min-width: 640px) {
+    .hero-banner[data-layout][data-variant] .hero-panel {
+        --hero-film-edge: 15px;
+        min-height: calc(2 * var(--space-4) + 1.125rem + var(--space-3) + (clamp(13rem, 30cqw, 26rem) - var(--hero-film-edge)) * 5 / 4);
+    }
+}
+
+/* The film's edge is wider here (hero-layouts.css), so the hero's photo is a little narrower. */
+@container hero (min-width: 900px) {
+    .hero-banner[data-layout][data-variant] .hero-panel {
+        --hero-film-edge: 28px;
+    }
+}
+
+/* Each letter of the name sits in a clipping box (PhrasePopIn.jsx). A variant's tighter tracking
+   and lowercase descenders would have those boxes cut the letters, so they let them show whole. */
+.hero-banner[data-layout][data-variant] .hero-name-heading .overflow-hidden {
+    overflow: visible;
+}
+
+/* The areas of focus choose them: each is clickable, the chosen one marked along its top edge. */
+.hero-focus-item {
+    cursor: pointer;
+}
+
+.hero-focus-item[data-selected="true"] {
+    box-shadow: inset 0 2px 0 var(--strong-foreground);
+}
+
+.hero-focus-item[data-selected="true"] .typeset-card-toner {
+    color: var(--strong-foreground);
+}
+
+.hero-focus-item:has(.hero-focus-select:focus-visible) {
+    outline: 2px solid var(--strong-foreground);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Album (UI/UX Design): the panel as a record sleeve. The name sits dead centre, the role in the
+   top right like the label's credit, the buttons at the bottom left, and the catalogue line along
+   the foot at the right. The photo gives way to the name alone. The heading and
+   photo keep their places unseen, so the panel is the size it always is; the name shown is laid
+   over the whole panel, centred on it whatever its rows.
+   --------------------------------------------------------------------------------------------- */
+.hero-banner[data-layout][data-variant="album"] .hero-photo-figure {
+    visibility: hidden;
+}
+
+/* Unseen but still read: the name shown over it is only for the eye. */
+.hero-banner[data-layout][data-variant="album"] h1.hero-name-heading {
+    opacity: 0;
+}
+
+/* The name shown: centred on the whole panel, inside its padding, each line on its own. Placed
+   in no grid area (the heading's class would give it one), so it spans the panel, not a row. */
+.hero-banner[data-layout] .hero-panel .hero-album-name {
+    position: absolute;
+    inset: 0;
+    grid-area: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.16em;
+    margin: 0;
+    padding: inherit;
+    color: var(--strong-foreground);
+    text-align: center;
+    text-box: normal;
+    pointer-events: none;
+}
+
+.hero-album-name span {
+    display: block;
+    text-box: trim-both cap alphabetic;
+}
+
+.hero-album-line {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Phones: the role in the top right under the header line. The catalogue line has no room beside
+   the buttons, so it's left to wider screens. */
+@container hero (width < 640px) {
+    .hero-banner[data-layout][data-variant="album"] .hero-role {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        align-self: start;
+        justify-self: end;
+        margin-top: var(--space-2);
+    }
+
+    .hero-album-line {
+        display: none;
+    }
+}
+
+/* Wider: the role in the top right corner under the header line and the catalogue line in the
+   bottom right, level with the buttons, both set against the panel's own corners. The name runs
+   larger here, as the cover's title. */
+@container hero (min-width: 640px) {
+    .hero-banner[data-layout][data-variant="album"] .hero-panel .hero-role {
+        position: absolute;
+        top: calc(var(--space-4) + 1.125rem + var(--space-3));
+        right: var(--space-4);
+    }
+
+    .hero-banner[data-layout] .hero-panel .hero-album-name {
+        font-size: clamp(2.5rem, 8.5cqw, 8rem);
+    }
+
+    .hero-album-line {
+        position: absolute;
+        right: var(--space-4);
+        bottom: var(--space-4);
+    }
+}
+
+
+/* ---------------------------------------------------------------------------------------------
+   Bauhaus (UI/UX Design, second): the hero as a poster from the school. The panel keeps the hero's
+   own ground, the opposite of the page's (near black by day, cream by night), so it still stands
+   apart from the page; a
+   red circle rises from its bottom right, a yellow bar crosses its left and a blue quarter circle
+   fills its top left corner. The name is set heavy and lowercase, after Bayer's universal
+   alphabet; the role is a solid block of ink, the buttons flat and square, and the photo is black
+   and white in a heavy frame. Everything keeps its place. The primaries are muted to sit with the
+   site's earthy palette: lifted on the dark ground by day, deepened on the cream one by night.
+   --------------------------------------------------------------------------------------------- */
+.hero-banner[data-layout][data-variant="bauhaus"] {
+    --bauhaus-ground: var(--hero-panel);
+    --bauhaus-ink: var(--card-inverse-strong);
+    --bauhaus-red: #c76a4f;
+    --bauhaus-yellow: #d3b35c;
+    --bauhaus-blue: #7393b6;
+}
+
+.dark .hero-banner[data-layout][data-variant="bauhaus"] {
+    --bauhaus-red: #a8462f;
+    --bauhaus-yellow: #c99b30;
+    --bauhaus-blue: #3f5c7c;
+}
+
+/* The panel on the poster's ground, in its ink: the hero's own colours, as ever. */
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-panel {
+    --background: var(--bauhaus-ground);
+    --strong-foreground: var(--bauhaus-ink);
+    --foreground: var(--bauhaus-ink);
+    --muted-foreground: color-mix(in srgb, var(--bauhaus-ink) 72%, var(--bauhaus-ground));
+    --border: var(--bauhaus-ink);
+    --primary: var(--bauhaus-red);
+    --primary-foreground: var(--bauhaus-ground);
+    --nier-panel: var(--bauhaus-ground);
+    --nier-field: var(--bauhaus-ground);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] :is(.hero-name-traces, .hero-photo-edge) {
+    display: none;
+}
+
+.hero-bauhaus-shapes {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-bauhaus-shapes span {
+    position: absolute;
+    display: block;
+}
+
+.hero-bauhaus-shapes .is-circle {
+    right: -8%;
+    bottom: -22%;
+    height: 78%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--bauhaus-red);
+}
+
+.hero-bauhaus-shapes .is-bar {
+    top: 38%;
+    left: 0;
+    width: 34%;
+    height: 9%;
+    background: var(--bauhaus-yellow);
+}
+
+.hero-bauhaus-shapes .is-quarter {
+    top: 0;
+    left: 0;
+    height: 30%;
+    aspect-ratio: 1;
+    border-bottom-right-radius: 100%;
+    background: var(--bauhaus-blue);
+}
+
+/* The header line over the blue corner, its rule a heavy bar of ink. */
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-meta {
+    color: var(--bauhaus-ink);
+    font-weight: 700;
+}
+
+/* The label stands in the blue corner, so it's set in the ground's colour, not the ink's. */
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-meta > span:first-child {
+    color: var(--bauhaus-ground);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-meta-rule {
+    height: 6px;
+    background: var(--bauhaus-ink);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-role {
+    border: 0;
+    background: var(--bauhaus-ink);
+    color: var(--bauhaus-ground);
+    font-weight: 700;
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-name-heading {
+    font-weight: 800;
+    font-stretch: 100%;
+    letter-spacing: -0.02em;
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .theme-button[data-variant] {
+    border: 3px solid var(--bauhaus-ink);
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .theme-button[data-variant="default"] {
+    border-color: var(--bauhaus-red);
+    background: var(--bauhaus-red);
+    color: var(--bauhaus-ground);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .theme-button[data-variant="outline"] {
+    background: var(--bauhaus-ground);
+    color: var(--bauhaus-ink);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .theme-button[data-variant]:hover {
+    background: var(--bauhaus-yellow);
+    border-color: var(--bauhaus-yellow);
+    color: var(--nier-light-strong);
+}
+
+/* The photo in black and white, in a heavy frame with no corner marks. */
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-side {
+    border: 4px solid var(--bauhaus-ink);
+    background: var(--bauhaus-ground);
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-side::before,
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-side::after {
+    display: none;
+}
+
+.hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-face {
+    --photo-inset: 0px;
+    filter: grayscale(1) contrast(1.15);
+}
+
+/* Phones: the header and the figure's caption fill the top left, so the blue corner moves to the
+   top right, behind the photo, and the label is set in ink again; the circle rises smaller from
+   the bottom right, clear of the name. */
+@container hero (width < 640px) {
+    /* Sized by the panel's width, so it stays within the photo's column, clear of the header. */
+    .hero-bauhaus-shapes .is-quarter {
+        right: 0;
+        left: auto;
+        width: 38%;
+        height: auto;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 100%;
+    }
+
+    .hero-bauhaus-shapes .is-circle {
+        right: -18%;
+        bottom: -20%;
+        height: 52%;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-meta > span:first-child {
+        color: var(--bauhaus-ink);
+    }
+}
+
+/* Bauhaus, wider: the panel as a poster. A red bar runs its full height down the left, bled off
+   its edges, with the role set upward inside it; the name stands stacked a word to a line, huge,
+   beside it, the header line over it and the buttons at its foot; and on the right the photo is
+   cut to a circle, a yellow disc of its size set off behind it to the lower left and a smaller
+   blue one to the upper right. The narrow poster's shapes give way to these. */
+@container hero (min-width: 640px) {
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-panel {
+        grid-template-columns: clamp(56px, 8cqw, 96px) minmax(0, 1fr) clamp(12rem, 26cqw, 24rem);
+        grid-template-areas:
+            "bar meta    meta"
+            "bar heading photo"
+            "bar actions caption";
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        column-gap: clamp(24px, 4cqw, 56px);
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-name,
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-figure {
+        display: contents;
+    }
+
+    .hero-bauhaus-shapes {
+        display: none;
+    }
+
+    /* The header line in ink again: there's no blue corner under it here. */
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-meta {
+        grid-area: meta;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-meta > span:first-child {
+        color: var(--bauhaus-ink);
+    }
+
+    /* The red bar, bled off the panel's top, bottom and left, the role reading upward from its
+       foot. */
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .hero-role {
+        grid-area: bar;
+        align-self: stretch;
+        justify-self: stretch;
+        margin: calc(-1 * var(--space-4)) 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-4));
+        padding: var(--space-4) 0;
+        background: var(--bauhaus-red);
+        color: var(--bauhaus-ground);
+        font-size: clamp(0.875rem, 1.4cqw, 1.25rem);
+        letter-spacing: 0.3em;
+        text-align: start;
+        text-box: normal;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        display: flex;
+        align-items: center;
+    }
+
+    /* The name a word to a line (NameBanner.jsx splits it), as large as the height allows. */
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-name-heading {
+        grid-area: heading;
+        align-self: center;
+        margin: 0;
+        font-size: clamp(2.5rem, min(10cqw, 11svh), 9rem);
+        line-height: 0.95;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-name-line {
+        margin-left: 0;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-actions {
+        grid-area: actions;
+        align-self: end;
+    }
+
+    /* The photo in a circle, a yellow disc of its size set off behind it and a smaller blue one. */
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-panel .hero-photo-film {
+        grid-area: photo;
+        align-self: center;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-frame {
+        width: 100%;
+        aspect-ratio: 1;
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-side {
+        border-radius: 50%;
+        /* Its own shadows, so the circle's clipping of the photo leaves them whole. */
+        --disc-shift: clamp(14px, 2cqw, 28px);
+        box-shadow:
+            calc(-1 * var(--disc-shift)) var(--disc-shift) 0 var(--bauhaus-yellow),
+            calc(2.6 * var(--disc-shift)) calc(-2.6 * var(--disc-shift)) 0 calc(-1.5 * var(--disc-shift)) var(--bauhaus-blue);
+    }
+
+    .hero-banner[data-layout][data-variant="bauhaus"] .hero-photo-caption {
+        grid-area: caption;
+        align-self: end;
+    }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Swiss (UI/UX Design, third): the hero as an International Typographic Style poster, after
+   Müller-Brockmann and Hofmann. On the hero's own ground and ink, the opposite of the page's as
+   ever, it's an objective, asymmetric composition on a six-column grid: one huge element, the
+   area's number in red, cropped by the panel's foot; small flush-left blocks of information along
+   the top, each under a short rule; the name lowercase and stacked; the photo black and white.
+   The grotesque comes in only a few sizes, and the red is a mass, never a word's colour.
+   --------------------------------------------------------------------------------------------- */
+.hero-banner[data-layout][data-variant="swiss"] {
+    --swiss-ground: var(--hero-panel);
+    --swiss-ink: var(--card-inverse-strong);
+    --swiss-red: #d4573a;
+    --swiss-small: 0.8125rem;
+}
+
+.dark .hero-banner[data-layout][data-variant="swiss"] {
+    --swiss-red: #b4442b;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-panel {
+    --strong-foreground: var(--swiss-ink);
+    --foreground: var(--swiss-ink);
+    --muted-foreground: color-mix(in srgb, var(--swiss-ink) 62%, var(--swiss-ground));
+    --border: var(--swiss-ink);
+}
+
+.hero-banner[data-layout][data-variant="swiss"] :is(.hero-name-traces, .hero-photo-edge) {
+    display: none;
+}
+
+/* Small text, lowercase, flush left: the header line, the role and the caption alike. */
+.hero-banner[data-layout][data-variant="swiss"] :is(.hero-meta, .hero-role, .hero-photo-caption) {
+    color: var(--swiss-ink);
+    font-size: var(--swiss-small);
+    letter-spacing: 0.01em;
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-photo-caption span:first-child {
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-meta-rule {
+    visibility: hidden;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-role {
+    padding: 0;
+    border: 0;
+    font-weight: 700;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-name-heading {
+    font-weight: 700;
+    font-stretch: 100%;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-name-line {
+    margin-left: 0;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-panel .theme-button[data-variant] {
+    border: 2px solid var(--swiss-ink);
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: lowercase;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-panel .theme-button[data-variant="default"] {
+    background: var(--swiss-ink);
+    color: var(--swiss-ground);
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-panel .theme-button[data-variant="outline"] {
+    background: transparent;
+    color: var(--swiss-ink);
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-panel .theme-button[data-variant]:hover {
+    border-color: var(--swiss-red);
+    background: var(--swiss-red);
+    color: var(--swiss-ground);
+}
+
+/* The photo unframed, in black and white. */
+.hero-banner[data-layout][data-variant="swiss"] .hero-photo-side {
+    border: 0;
+    background: var(--swiss-ground);
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-photo-side::before,
+.hero-banner[data-layout][data-variant="swiss"] .hero-photo-side::after {
+    display: none;
+}
+
+.hero-banner[data-layout][data-variant="swiss"] .hero-photo-face {
+    --photo-inset: 0px;
+    filter: grayscale(1) contrast(1.1);
+}
+
+/* The number and the area's words have room only on the poster (below). */
+.hero-swiss-number,
+.hero-swiss-info {
+    display: none;
+}
+
+/* Swiss, wider: the poster. Along the top, three blocks of information on the grid's columns,
+   each under a short rule: the header line, the role, and the area's own words. Below, the
+   number fills the first two columns, so large the panel's foot crops it; the name stands in the
+   middle two, the buttons under it; the photo fills the last two, its caption beneath. The
+   grid's columns are drawn faintly in the panel, as on a designer's sheet. */
+@container hero (min-width: 640px) {
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel {
+        --swiss-gap: clamp(16px, 2.4cqw, 32px);
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-areas:
+            "meta   meta   role   role   info    info"
+            "number number name   name   photo   photo"
+            "number number act    act    caption caption";
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        column-gap: var(--swiss-gap);
+        row-gap: var(--space-3);
+        overflow: hidden;
+        /* A hairline at the start of each column, set from the panel's padding at the column
+           pitch: a sixth of the content width plus a gap. */
+        background-image: linear-gradient(to right, color-mix(in srgb, var(--swiss-ink) 9%, transparent) 1px, transparent 1px);
+        background-size: calc((100% - 2 * var(--space-4) + var(--swiss-gap)) / 6) 100%;
+        background-position: var(--space-4) 0;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-name,
+    .hero-banner[data-layout][data-variant="swiss"] .hero-photo-figure {
+        display: contents;
+    }
+
+    /* The three blocks of information, each under a short rule. */
+    .hero-banner[data-layout][data-variant="swiss"] :is(.hero-meta, .hero-panel .hero-role, .hero-swiss-info) {
+        align-self: start;
+        padding-top: 10px;
+        border-top: 3px solid var(--swiss-ink);
+        line-height: 1.35;
+        text-box: normal;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta {
+        grid-area: meta;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        font-weight: 700;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta-rule {
+        display: none;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta > span:last-child {
+        margin-right: 0;
+        font-weight: 400;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel .hero-role {
+        grid-area: role;
+        justify-self: stretch;
+    }
+
+    .hero-swiss-info {
+        position: relative;
+        display: block;
+        grid-area: info;
+        max-width: 34ch;
+        margin: 0;
+        color: var(--swiss-ink);
+        font-size: var(--swiss-small);
+        text-transform: lowercase;
+    }
+
+    .hero-swiss-info strong {
+        display: block;
+        font-weight: 700;
+    }
+
+    /* The number: red, enormous, its foot cropped by the panel's. */
+    .hero-swiss-number {
+        position: relative;
+        display: block;
+        grid-area: number;
+        align-self: end;
+        justify-self: start;
+        margin-bottom: calc(-1 * var(--space-4) - 0.14em);
+        margin-left: -0.06em;
+        color: var(--swiss-red);
+        font-family: var(--font-portfolio-display);
+        font-size: clamp(9rem, min(30cqw, 62svh), 30rem);
+        font-weight: 700;
+        font-stretch: 100%;
+        letter-spacing: -0.06em;
+        line-height: 0.8;
+        pointer-events: none;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-name-heading {
+        grid-area: name;
+        align-self: start;
+        margin: 0;
+        font-size: clamp(2.25rem, min(6.4cqw, 9svh), 7rem);
+        line-height: 0.9;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-actions {
+        grid-area: act;
+        align-self: end;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel .hero-photo-film {
+        grid-area: photo;
+        align-self: stretch;
+        min-height: 0;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-photo-frame {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: auto;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-photo-caption {
+        grid-area: caption;
+        display: flex;
+        justify-content: flex-start;
+        align-self: end;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-photo-caption .hero-photo-autospin {
+        grid-column: auto;
+        margin-left: auto;
+    }
+}
+
+/* Swiss, phones: the poster again, on four columns drawn faintly in the panel. Along the top, two
+   blocks of information under short rules: the header line and the role. In the middle, the name
+   lowercase and stacked on the first three columns, over the number, a solid red mass on the
+   last two, cropped by the panel's right edge. At the foot, the buttons, small and set like type,
+   on the left, and the area's own words on the right. The photo has no room here. The panel is
+   held at the height the hero's own takes on a phone (hero-banner.css, hero-layouts.css: its
+   padding, the photo's 4:5 frame, the name's three lines and the buttons), so switching moves
+   nothing beneath. */
+@container hero (width < 640px) {
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel {
+        --swiss-gap: 12px;
+        --swiss-name-size: clamp(2rem, 12cqw, 3.5rem);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-areas:
+            "meta    meta    role   role"
+            "heading heading number number"
+            "actions actions info   info";
+        grid-template-rows: auto auto auto;
+        align-content: space-between;
+        column-gap: var(--swiss-gap);
+        row-gap: var(--space-3);
+        min-height: calc(
+            2 * var(--space-3)
+            + clamp(96px, max(34cqw, 65cqw - 135px), 18rem) * 5 / 4
+            + 24px + clamp(2rem, calc((100cqw - 2 * var(--space-3)) * 0.145), 6rem) * 2.73
+            + 20px + 60px
+        );
+        overflow: hidden;
+        background-image: linear-gradient(to right, color-mix(in srgb, var(--swiss-ink) 9%, transparent) 1px, transparent 1px);
+        background-size: calc((100% - 2 * var(--space-3) + var(--swiss-gap)) / 4) 100%;
+        background-position: var(--space-3) 0;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-photo-figure {
+        display: none;
+    }
+
+    /* The blocks of information, each under a short rule. */
+    .hero-banner[data-layout][data-variant="swiss"] :is(.hero-meta, .hero-panel .hero-role, .hero-swiss-info) {
+        align-self: start;
+        padding-top: 8px;
+        border-top: 3px solid var(--swiss-ink);
+        font-size: 0.75rem;
+        line-height: 1.35;
+        text-box: normal;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta {
+        grid-area: meta;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding-top: 8px;
+        font-weight: 700;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta-rule {
+        display: none;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-meta > span:last-child {
+        margin-right: 0;
+        font-weight: 400;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel .hero-role {
+        grid-area: role;
+        justify-self: stretch;
+        margin: 0;
+    }
+
+    .hero-swiss-info {
+        position: relative;
+        display: block;
+        grid-area: info;
+        align-self: end;
+        margin: 0;
+        color: var(--swiss-ink);
+        text-transform: lowercase;
+    }
+
+    .hero-swiss-info strong {
+        display: block;
+        font-weight: 700;
+    }
+
+    /* The name over the number, on the first three columns. */
+    .hero-banner[data-layout][data-variant="swiss"] .hero-name-heading {
+        position: relative;
+        z-index: 1;
+        grid-column: 1 / 4;
+        grid-row: 2;
+        align-self: center;
+        margin: 0;
+        font-size: var(--swiss-name-size);
+        line-height: 0.9;
+    }
+
+    /* The number: a solid red mass on the last two columns, run off the panel's right edge. */
+    .hero-swiss-number {
+        position: relative;
+        display: block;
+        grid-area: number;
+        align-self: center;
+        justify-self: start;
+        margin-right: calc(-1 * var(--space-3));
+        color: var(--swiss-red);
+        font-family: var(--font-portfolio-display);
+        font-size: 44cqw;
+        font-weight: 700;
+        font-stretch: 100%;
+        letter-spacing: -0.06em;
+        line-height: 0.78;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    /* The buttons, small and set like type, stacked flush left. */
+    .hero-banner[data-layout][data-variant="swiss"] .hero-actions {
+        grid-area: actions;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: end;
+        gap: 6px;
+        margin: 0;
+    }
+
+    .hero-banner[data-layout][data-variant="swiss"] .hero-panel .hero-action {
+        width: auto;
+        min-height: 34px;
+        padding-inline: 12px;
+        font-size: 0.8125rem;
+    }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Vaporwave (UI/UX Design, fourth): the hero as a late-night mall screensaver, in the site's own
+   faded palette rather than neon: dusty rose, sand and a sage teal, on the hero's own ground, the
+   opposite of the page's as ever. A sky fades down to the horizon, a striped sun sets into it, and
+   a grid floor (the page's own grid, laid flat) runs away to it, all under faint scanlines. The
+   name is set in wide capitals with a doubled, offset shadow in rose and teal, a line of katakana
+   under it; the photo sits in an old desktop's window, and the buttons are bevelled like that
+   desktop's. On phones everything else keeps its place.
+   --------------------------------------------------------------------------------------------- */
+.hero-banner[data-layout][data-variant="vaporwave"] {
+    --vapor-ground: var(--hero-panel);
+    --vapor-ink: var(--card-inverse-strong);
+    --vapor-rose: #c9938a;
+    --vapor-sand: #d9c39a;
+    --vapor-teal: #87a59c;
+    --vapor-dusk: color-mix(in srgb, var(--vapor-rose) 34%, var(--vapor-ground));
+    --vapor-light: color-mix(in srgb, var(--vapor-sand) 70%, white);
+    --vapor-shade: color-mix(in srgb, var(--vapor-sand) 55%, black);
+    /* The type's own colour: sand on the dark ground; on the light one, sand would fade into
+       the sky, so a deep rose-brown ink instead. */
+    --vapor-type: var(--vapor-sand);
+    /* Two more hues at the same faded strength, a lavender and a peach, which the spectrum
+       slider (HomeBannerLayout.jsx, 0 to 1) mixes in: at 0 each is the hue it grows from (the
+       rose, the sand, the teal), so the scene keeps its three; at 1 they're whole. Only the hues
+       widen, never the strength, so it stays the site's faded print however far it goes. */
+    --vapor-lavender: oklch(0.7 0.07 305);
+    --vapor-peach: oklch(0.81 0.07 55);
+    --vapor-reach: calc(var(--vapor-spectrum, 0) * 100%);
+    --vapor-rose-lavender: color-mix(in oklch, var(--vapor-lavender) var(--vapor-reach), var(--vapor-rose));
+    --vapor-teal-lavender: color-mix(in oklch, var(--vapor-lavender) var(--vapor-reach), var(--vapor-teal));
+    --vapor-sand-peach: color-mix(in oklch, var(--vapor-peach) var(--vapor-reach), var(--vapor-sand));
+}
+
+.dark .hero-banner[data-layout][data-variant="vaporwave"] {
+    --vapor-rose: #b5786e;
+    --vapor-sand: #c9a86c;
+    --vapor-teal: #5f8279;
+    --vapor-dusk: color-mix(in srgb, var(--vapor-rose) 30%, var(--vapor-ground));
+    --vapor-type: color-mix(in srgb, var(--vapor-ink) 78%, var(--vapor-rose));
+    --vapor-lavender: oklch(0.58 0.07 305);
+    --vapor-peach: oklch(0.71 0.08 50);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel {
+    --strong-foreground: var(--vapor-ink);
+    --foreground: var(--vapor-ink);
+    --muted-foreground: color-mix(in srgb, var(--vapor-ink) 66%, var(--vapor-ground));
+    --border: color-mix(in srgb, var(--vapor-ink) 40%, var(--vapor-ground));
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] :is(.hero-name-traces, .hero-photo-edge) {
+    display: none;
+}
+
+/* The scene: the sky from the ground's colour at the top to dusk at the horizon (62% down). */
+.hero-vapor-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: linear-gradient(
+        to bottom,
+        var(--vapor-ground) 8%,
+        color-mix(in srgb, var(--vapor-rose-lavender) 30%, var(--vapor-ground)) 38%,
+        var(--vapor-dusk) 62%
+    );
+    pointer-events: none;
+}
+
+/* Faint scanlines over the whole scene. */
+.hero-vapor-scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(to bottom, color-mix(in srgb, var(--vapor-ink) 5%, transparent) 0 1px, transparent 1px 4px);
+}
+
+/* The sun: sand to rose, its lower half cut into ever thinner bands, setting behind the floor. */
+.hero-vapor-scene .is-sun {
+    position: absolute;
+    bottom: 30%;
+    left: 50%;
+    height: 52%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: linear-gradient(to bottom, var(--vapor-sand) 18%, var(--vapor-sand-peach) 45%, var(--vapor-rose) 72%, var(--vapor-rose-lavender));
+    transform: translateX(-50%);
+    mask-image:
+        linear-gradient(to bottom, #000 52%, transparent 52%),
+        repeating-linear-gradient(to bottom, #000 0 9px, transparent 9px 14px);
+}
+
+/* The floor: the grid laid flat and run to the horizon, its far lines fading out. */
+.hero-vapor-scene .is-floor {
+    position: absolute;
+    top: 62%;
+    right: -60%;
+    bottom: -60%;
+    left: -60%;
+    border-top: 2px solid var(--vapor-rose);
+    background:
+        linear-gradient(to right, color-mix(in srgb, var(--vapor-teal-lavender) 70%, transparent) 1px, transparent 1px) 0 0 / 56px 56px,
+        linear-gradient(to bottom, color-mix(in srgb, var(--vapor-teal) 70%, transparent) 1px, transparent 1px) 0 0 / 56px 56px,
+        var(--vapor-ground);
+    transform: perspective(320px) rotateX(58deg);
+    transform-origin: top;
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.35), #000 40%);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-meta {
+    color: var(--vapor-type);
+    letter-spacing: 0.32em;
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-meta-rule {
+    background: linear-gradient(to right, var(--vapor-rose), var(--vapor-rose-lavender), var(--vapor-teal));
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-role {
+    border: 1px solid var(--vapor-teal);
+    color: var(--vapor-teal);
+    letter-spacing: 0.24em;
+}
+
+/* The name: wide capitals in the type's colour, with a doubled shadow stepping down and right in rose, then teal. */
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-name-heading {
+    color: var(--vapor-type);
+    letter-spacing: 0.08em;
+    text-shadow:
+        0.04em 0.04em 0 var(--vapor-rose),
+        0.08em 0.08em 0 var(--vapor-teal-lavender),
+        0.12em 0.12em 0 color-mix(in srgb, var(--vapor-teal) var(--vapor-reach), transparent);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-name-line {
+    margin-left: 0;
+}
+
+/* The buttons, bevelled like an old desktop's: light on the top and left, shade below and right,
+   the other way about when pressed. */
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .theme-button[data-variant] {
+    border: 2px solid var(--vapor-ground);
+    border-radius: 0;
+    background: var(--vapor-sand);
+    color: var(--nier-light-strong);
+    box-shadow: inset 2px 2px 0 var(--vapor-light), inset -2px -2px 0 var(--vapor-shade);
+    font-weight: 700;
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .theme-button[data-variant="outline"] {
+    background: var(--vapor-rose);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .theme-button[data-variant]:hover {
+    background: var(--vapor-teal);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .theme-button[data-variant]:active {
+    box-shadow: inset 2px 2px 0 var(--vapor-shade), inset -2px -2px 0 var(--vapor-light);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-side::before,
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-side::after {
+    display: none;
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-side {
+    border: 0;
+    background: var(--vapor-dusk);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-face {
+    --photo-inset: 0px;
+    filter: sepia(0.35) saturate(0.85) hue-rotate(-12deg);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-caption {
+    color: var(--vapor-type);
+}
+
+/* The photo in an old desktop's window: a raised frame, a title bar in rose fading to teal with
+   the file's name, and a close box. */
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-photo-film {
+    flex-direction: column;
+    padding: 26px 4px 4px;
+    background: var(--vapor-sand);
+    box-shadow: inset 2px 2px 0 var(--vapor-light), inset -2px -2px 0 var(--vapor-shade), 6px 6px 0 color-mix(in srgb, var(--vapor-ink) 18%, transparent);
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-photo-film::before {
+    content: "portrait.jpg";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    left: 4px;
+    height: 20px;
+    padding: 0 28px 0 8px;
+    background: linear-gradient(to right, var(--vapor-rose), var(--vapor-rose-lavender), var(--vapor-teal));
+    color: var(--nier-light-strong);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-photo-film::after {
+    content: "×";
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 16px;
+    height: 14px;
+    background: var(--vapor-sand);
+    box-shadow: inset 1px 1px 0 var(--vapor-light), inset -1px -1px 0 var(--vapor-shade);
+    color: var(--nier-light-strong);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 13px;
+    text-align: center;
+}
+
+/* Phones: the photo a little smaller in its window, so the window, title bar and all, stands as
+   tall as the photo alone does in the hero's own design (hero-banner.css), and the panel keeps
+   its height. */
+@container hero (width < 640px) {
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-frame {
+        width: calc(clamp(96px, max(34cqw, 65cqw - 135px), 18rem) - 24px);
+    }
+
+    /* The file's name a size smaller, so it fits the narrower title bar. */
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-photo-film::before {
+        padding: 0 24px 0 6px;
+        font-size: 0.625rem;
+        letter-spacing: 0.02em;
+    }
+}
+
+/* The spectrum slider: a groove bevelled into the panel, its track showing the hues in use, and
+   a bevelled thumb, like the old desktop's. On phones it takes the figure caption's place beside
+   the photo; wider, it sits under the window (below). */
+.hero-vapor-spectrum {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--vapor-type);
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+.hero-vapor-spectrum input {
+    width: 100%;
+    height: 18px;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.hero-vapor-spectrum input::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(to right, var(--vapor-sand), var(--vapor-sand-peach), var(--vapor-rose), var(--vapor-rose-lavender), var(--vapor-teal));
+    box-shadow: inset 1px 1px 0 var(--vapor-shade), inset -1px -1px 0 var(--vapor-light);
+}
+
+.hero-vapor-spectrum input::-moz-range-track {
+    height: 8px;
+    background: linear-gradient(to right, var(--vapor-sand), var(--vapor-sand-peach), var(--vapor-rose), var(--vapor-rose-lavender), var(--vapor-teal));
+    box-shadow: inset 1px 1px 0 var(--vapor-shade), inset -1px -1px 0 var(--vapor-light);
+}
+
+.hero-vapor-spectrum input::-webkit-slider-thumb {
+    width: 12px;
+    height: 18px;
+    margin-top: -5px;
+    appearance: none;
+    border: 0;
+    border-radius: 0;
+    background: var(--vapor-sand);
+    box-shadow: inset 1px 1px 0 var(--vapor-light), inset -1px -1px 0 var(--vapor-shade), 1px 1px 0 var(--nier-light-strong);
+}
+
+.hero-vapor-spectrum input::-moz-range-thumb {
+    width: 12px;
+    height: 18px;
+    border: 0;
+    border-radius: 0;
+    background: var(--vapor-sand);
+    box-shadow: inset 1px 1px 0 var(--vapor-light), inset -1px -1px 0 var(--vapor-shade), 1px 1px 0 var(--nier-light-strong);
+}
+
+.hero-vapor-spectrum input:focus-visible {
+    outline: 2px solid var(--vapor-type);
+    outline-offset: 2px;
+}
+
+@container hero (width < 640px) {
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-caption {
+        display: none;
+    }
+
+    .hero-vapor-spectrum {
+        grid-area: caption;
+        align-self: start;
+        margin-top: var(--space-2);
+        margin-right: var(--space-2);
+    }
+}
+
+@container hero (min-width: 640px) {
+    .hero-vapor-spectrum {
+        grid-area: spectrum;
+        align-self: start;
+        margin-top: var(--space-2);
+    }
+}
+
+/* The katakana has room only beside the window (below). */
+.hero-vapor-kana {
+    display: none;
+}
+
+/* Vaporwave, wider: the name low on the left, sitting on the horizon, the role above it and the
+   katakana below; on the right the photo's window, its caption beneath; the buttons at the foot
+   on the left, on the floor. */
+@container hero (min-width: 640px) {
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-panel {
+        grid-template-columns: minmax(0, 1fr) clamp(12rem, 26cqw, 24rem);
+        grid-template-areas:
+            "meta    meta"
+            "role    window"
+            "heading window"
+            "kana    spectrum"
+            "actions caption";
+        grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+        row-gap: var(--space-2);
+    }
+
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-name {
+        display: contents;
+    }
+
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-role {
+        grid-area: role;
+        align-self: end;
+        justify-self: start;
+    }
+
+    /* Sized to its column: the widest line, "MARK JULIUS" in wide, tracked capitals, is about
+       eleven of its own sizes across, and the column a little over half the hero. */
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-name-heading {
+        grid-area: heading;
+        margin: var(--space-2) 0 0;
+        font-size: clamp(2rem, 5.4cqw, 6rem);
+    }
+
+    .hero-vapor-kana {
+        position: relative;
+        display: block;
+        grid-area: kana;
+        margin: var(--space-2) 0 0;
+        color: var(--vapor-rose);
+        font-size: clamp(0.875rem, 1.4cqw, 1.25rem);
+        letter-spacing: 0.4em;
+    }
+
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-actions {
+        grid-area: actions;
+        align-self: end;
+        margin-top: var(--space-3);
+    }
+
+    /* The window fills the rows beside the name rather than holding the photo's 4:5, so the
+       name's side, not the photo, sets the panel's height. */
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-panel .hero-photo-film {
+        grid-area: window;
+        align-self: stretch;
+        min-height: 0;
+    }
+
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-frame {
+        flex: 1 1 0;
+        width: 100%;
+        min-height: 0;
+        aspect-ratio: auto;
+    }
+
+    .hero-banner[data-layout][data-variant="vaporwave"] .hero-photo-caption {
+        grid-area: caption;
+        align-self: end;
+    }
+}

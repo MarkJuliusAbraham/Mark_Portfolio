@@ -19,17 +19,15 @@ const advanceTime = 500;
  * every switch and `advanced` says whether the latest moved the film, so the movement can start
  * over with each. `auto` says what the automatic switch is doing: "counting" down the hold,
  * "held", "waiting" (mid-advance, off screen or before the page is ready) or "off" with reduced
- * motion. With `wind`, the first time the frame can be seen after loading,
- * its photo is wound into place, once.
+ * motion.
  */
-export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, wind = true } = {}) => {
+export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false } = {}) => {
   const reduceMotion = useReducedMotion();
   const paused = useAccentPaused(frameRef);
   const [state, setState] = useState({ current: 0, previous: null, change: 0, advanced: false });
   const [moving, setMoving] = useState(false);
   const glitchRef = useRef(null);
   const timer = useRef(0);
-  const introduced = useRef(false);
 
   useEffect(() => {
     const glitch = createElementGlitch(frameRef.current);
@@ -57,7 +55,7 @@ export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, wi
     glitchRef.current.run(() => commit(heading, false));
   };
 
-  /** Moves the film `heading` frames on, on its own (0 winds the one shown into place). */
+  /** Moves the film `heading` frames on, on its own. */
   const advance = (heading) => {
     commit(heading, !reduceMotion);
     if (reduceMotion) return;
@@ -67,14 +65,6 @@ export const usePhotoAdvance = (frameRef, count, { hold = 4200, held = false, wi
   };
 
   const advanceOnItsOwn = useEffectEvent(() => advance(1));
-  const windFirst = useEffectEvent(() => advance(0));
-
-  // `paused` already waits for the page to be ready and the frame to be on screen.
-  useEffect(() => {
-    if (introduced.current || paused || reduceMotion || !wind) return;
-    introduced.current = true;
-    windFirst();
-  }, [paused, reduceMotion, wind]);
 
   const auto = reduceMotion ? "off" : held ? "held" : paused || moving ? "waiting" : "counting";
 

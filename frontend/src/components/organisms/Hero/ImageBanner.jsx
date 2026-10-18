@@ -56,21 +56,15 @@ const AutoSwitchStatus = ({ state }) => {
 // The dark line between one frame of film and the next, in px.
 const frameLine = 8;
 
-// The hero's opening (hero-intro.css): the film winds two frames on, slower, once the panel has
-// opened, so it reads as the reel being threaded rather than an ordinary advance.
-const introWind = { duration: 1100, delay: 750, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
-const introFrames = 2;
-
 /**
  * A framed photo that keeps moving on through its photos (usePhotoAdvance.js). On its own, the
  * film moves on a frame: the photo slides up and away, the next slides up into place, and the
  * sprocket holes along the film's edge travel with them. Clicking either half steps back or
  * forward at once, through the site's chromatic aberration. Every photo stays loaded, so none ever
  * shows half-decoded. Hovering or focusing it holds the automatic switch, and the caption shows
- * it: a line filling toward the next switch, or "Paused". With `intro`, the hero's opening is
- * playing: the film winds its first photo into place as part of it.
+ * it: a line filling toward the next switch, or "Paused".
  */
-export const ImageBanner = ({ photos = [], intro = false }) => {
+export const ImageBanner = ({ photos = [] }) => {
   const frameRef = useRef(null);
   const faceRefs = useRef([]);
   const edgeRef = useRef(null);
@@ -82,7 +76,6 @@ export const ImageBanner = ({ photos = [], intro = false }) => {
   const { current, previous, change, advanced, step, auto } = usePhotoAdvance(frameRef, count, {
     hold: switchHold,
     held: hovered || focused,
-    wind: intro,
   });
 
   // Decode every photo up front so even the first time each comes around, it is ready.
@@ -96,19 +89,16 @@ export const ImageBanner = ({ photos = [], intro = false }) => {
   }, [photos]);
 
   // A switch on its own moves the film on a frame: the photo leaving slides up and out, the one
-  // arriving slides up into place a frame line behind it, and the sprocket holes travel as far. The
-  // opening winds further and slower (introWind).
+  // arriving slides up into place a frame line behind it, and the sprocket holes travel as far.
   useEffect(() => {
     const arriving = faceRefs.current[current];
     if (!advanced || !arriving) return;
-    const opening = intro && change === 1;
-    const timing = opening ? { ...introWind, fill: "backwards" } : filmAdvance;
-    const distance = (arriving.offsetHeight + frameLine) * (opening ? introFrames : 1);
+    const distance = arriving.offsetHeight + frameLine;
     const moves = [
-      arriving.animate([{ transform: `translateY(${distance}px)` }, { transform: "none" }], timing),
+      arriving.animate([{ transform: `translateY(${distance}px)` }, { transform: "none" }], filmAdvance),
     ];
     const leaving = previous === null ? null : faceRefs.current[previous];
-    if (leaving) moves.push(leaving.animate([{ transform: "none" }, { transform: `translateY(${-distance}px)` }], timing));
+    if (leaving) moves.push(leaving.animate([{ transform: "none" }, { transform: `translateY(${-distance}px)` }], filmAdvance));
 
     const edge = edgeRef.current;
     const travel = edgeTravel.current;
@@ -117,13 +107,13 @@ export const ImageBanner = ({ photos = [], intro = false }) => {
       travel.offset -= distance;
       const holes = edge.animate(
         [{ backgroundPositionY: `${from}px` }, { backgroundPositionY: `${travel.offset}px` }],
-        { ...timing, pseudoElement: "::before", fill: "both" },
+        { ...filmAdvance, pseudoElement: "::before", fill: "forwards" },
       );
       travel.animation?.cancel();
       travel.animation = holes;
     }
     return () => moves.forEach((move) => move.cancel());
-  }, [change, current, previous, advanced, intro]);
+  }, [change, current, previous, advanced]);
 
   const figure = String(current + 1).padStart(2, "0");
 

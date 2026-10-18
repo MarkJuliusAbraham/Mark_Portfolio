@@ -39,7 +39,11 @@ const useGameTheme = (itemRef, enabled, active) => {
   return inverted;
 };
 
-const FocusItem = ({ toner, title, readable, accent }) => {
+/**
+ * One area of focus. Clicking it (or its button, from the keyboard) selects it, or deselects it if
+ * it already is; dragging the UI/UX title's resize handles doesn't count.
+ */
+const FocusItem = ({ toner, title, readable, accent, selected, onSelect }) => {
   const itemRef = useRef(null);
   const titleRef = useRef(null);
   const [active, setActive] = useState(false);
@@ -53,9 +57,17 @@ const FocusItem = ({ toner, title, readable, accent }) => {
       data-accent={accent}
       data-active={active}
       data-inverted={inverted}
+      data-selected={selected}
       onPointerEnter={() => setActive(true)}
       onPointerLeave={() => setActive(false)}
+      onClick={(event) => {
+        if (!event.target.closest(".focus-spec-handle")) onSelect();
+      }}
     >
+      {/* The item's click, for the keyboard and assistive technology; its click reaches the item. */}
+      <button type="button" className="hero-focus-select sr-only" aria-pressed={selected}>
+        Show {title} in the hero
+      </button>
       <FocusAccent slot="backdrop" {...accentProps} />
       <FocusAccent slot="edge" {...accentProps} />
       <div className="hero-focus-body flex min-w-0 flex-col gap-2">
@@ -71,10 +83,18 @@ const FocusItem = ({ toner, title, readable, accent }) => {
   );
 };
 
-export const FocusStrip = ({ items }) => {
+/** The areas of focus; `selected` is the toner of the one chosen, and `onSelect` chooses one. */
+export const FocusStrip = ({ items, selected, onSelect }) => {
   return (
     <ul className="hero-focus" aria-label="Areas of focus">
-      {items.map((item) => <FocusItem key={item.toner} {...item} />)}
+      {items.map((item) => (
+        <FocusItem
+          key={item.toner}
+          {...item}
+          selected={item.toner === selected}
+          onSelect={() => onSelect(item.toner)}
+        />
+      ))}
     </ul>
   );
 };
