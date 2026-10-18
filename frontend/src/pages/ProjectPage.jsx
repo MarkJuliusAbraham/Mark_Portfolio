@@ -3,7 +3,8 @@ import {ScrollingContent} from "@/components/templates/ScrollingContent.jsx";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import {WebGpuCanvas} from "@/components/organisms/WebGpuCanvas.jsx";
-import projectPreview from "@/gifs/MitsuhaRun.gif";
+import projectPreview from "@/previews/MitsuhaRun.mp4";
+import projectPoster from "@/previews/MitsuhaRun.jpg";
 
 export const ProjectPage = () => {
 
@@ -17,10 +18,15 @@ export const ProjectPage = () => {
     <ScrollingContent>
       <ProjectHeadliner />
       <div>
-        <img
+        <video
           src={projectPreview}
-          alt="Project preview"
+          poster={projectPoster}
+          aria-label="Project preview"
           className="block h-auto w-full max-w-3xl"
+          muted
+          loop
+          playsInline
+          autoPlay
         />
       </div>
       <WebGpuCanvas/>
