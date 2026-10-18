@@ -3,7 +3,8 @@
    holds still before its turn, then:
 
      0ms     the panel's gate opens: a line drawn across its middle, then opened top and bottom
-     450ms   a band of light sweeps across it, and the grid inside it comes up
+             (side by side, the name square's, then the photo mat's just after)
+     450ms   a band of light sweeps across it (the name square), and the grid inside comes up
      600ms   the header line, its rule drawing out from the centre
      700ms   the role tag
      750ms   the name's letters rise, one after another
@@ -15,8 +16,22 @@
    Pieces move, not the panel, beyond its gate: one-pixel rules translated across fractional pixels
    look doubled and flicker, so anything carrying a divider only fades. */
 
-.hero-banner[data-intro="play"] .hero-panel {
-    animation: hero-intro-gate 700ms both;
+/* Where the hero is one panel, the gate opens on it; side by side (hero-layouts.css), on the name
+   square and then the photo's mat. */
+@container hero (width < 760px) {
+    .hero-banner[data-intro="play"] .hero-panel {
+        animation: hero-intro-gate 700ms both;
+    }
+}
+
+@container hero (min-width: 760px) {
+    .hero-banner[data-intro="play"] :is(.hero-name, .hero-photo-figure) {
+        animation: hero-intro-gate 700ms both;
+    }
+
+    .hero-banner[data-intro="play"] .hero-photo-figure {
+        animation-delay: 120ms;
+    }
 }
 
 @keyframes hero-intro-gate {
@@ -35,21 +50,42 @@
     }
 }
 
-/* A band of light, in the panel's own foreground, crossing it once as it opens. */
-.hero-banner[data-intro="play"] .hero-panel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-        105deg,
-        transparent 38%,
-        color-mix(in srgb, var(--card-inverse-foreground) 14%, transparent) 50%,
-        transparent 62%
-    );
-    background-size: 300% 100%;
-    pointer-events: none;
-    animation: hero-intro-sweep 1000ms cubic-bezier(0.4, 0, 0.2, 1) 450ms both;
+/* A band of light, in the panel's own foreground, crossing it once as it opens: the whole panel,
+   or side by side, the name square. */
+@container hero (width < 760px) {
+    .hero-banner[data-intro="play"] .hero-panel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background: linear-gradient(
+            105deg,
+            transparent 38%,
+            color-mix(in srgb, var(--card-inverse-foreground) 14%, transparent) 50%,
+            transparent 62%
+        );
+        background-size: 300% 100%;
+        pointer-events: none;
+        animation: hero-intro-sweep 1000ms cubic-bezier(0.4, 0, 0.2, 1) 450ms both;
+    }
+}
+
+@container hero (min-width: 760px) {
+    .hero-banner[data-intro="play"] .hero-name::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background: linear-gradient(
+            105deg,
+            transparent 38%,
+            color-mix(in srgb, var(--card-inverse-foreground) 14%, transparent) 50%,
+            transparent 62%
+        );
+        background-size: 300% 100%;
+        pointer-events: none;
+        animation: hero-intro-sweep 1000ms cubic-bezier(0.4, 0, 0.2, 1) 450ms both;
+    }
 }
 
 @keyframes hero-intro-sweep {
