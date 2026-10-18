@@ -4,7 +4,7 @@
 :root {
     /* How dark the screen's corners get in each theme, as a share of black: a beige screen dims
        gently, a dark one needs more to show at all. */
-    --screen-limb-light: 22%;
+    --screen-limb-light: 30%;
     --screen-limb-dark: 42%; /* 28 default */
 
     /* The darkening's shape, from the screen's corners in toward its centre; the same in both
@@ -23,7 +23,7 @@
        even the inner part dims noticeably. Keep it above 0.5: at 0.5 or below, the darkening
        starts abruptly at the start and shows a line there. To reach further in, lower the start
        instead. */
-    --screen-limb-curve: 4;
+    --screen-limb-curve: 5;
 }
 
 .screen-limb {
@@ -33,6 +33,26 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+}
+
+/* A scope panel's own copy of the darkening (LimbScopeLayer.jsx), fixed over the panel at its place
+   on screen (set from script), above the panel's content but beneath what's exempt. */
+.limb-scope-layer {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Beneath all the panel's content: a panel paints its own background and border, then anything
+   below zero, then its content, so this darkens the panel itself and nothing in it. */
+.limb-scope-layer[data-beneath] {
+    z-index: -1;
+}
+
+/* What's exempt sits above its panel's darkening, untouched by it. */
+[data-limb-scope] [data-limb-exempt] {
+    position: relative;
+    z-index: 2;
 }
 
 :root:not(.dark) .screen-limb[data-theme="dark"],

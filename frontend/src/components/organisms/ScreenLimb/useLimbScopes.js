@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 
-// Elements the darkening leaves alone: mark one with `data-limb-exempt` and it shows at full
-// brightness, crisp to its edges, however near the screen's dark corners it sits.
-export const limbExemptSelector = "[data-limb-exempt]";
+// Panels that carry their own copy of the darkening (LimbScopeLayer.jsx), marked
+// `data-limb-scope`: the screen-wide darkening leaves each one out, along its own edges, so the
+// copy inside it isn't laid over a second time.
+export const limbScopeSelector = "[data-limb-scope]";
 
 // How many frames running the cut-outs must hold still before they stop being measured.
 const settleFrames = 20;
@@ -53,7 +54,7 @@ const measureHoles = () => {
   const ratio = window.devicePixelRatio || 1;
   const snap = (value) => Math.round(value * ratio) / ratio;
   const holes = [];
-  for (const element of document.querySelectorAll(limbExemptSelector)) {
+  for (const element of document.querySelectorAll(limbScopeSelector)) {
     const part = visiblePart(element);
     if (!part || part.opacity < 0.01) continue;
     const left = snap(Math.max(part.left, 0));
@@ -82,11 +83,11 @@ const maskFor = (holes) => {
 };
 
 /**
- * Cuts every exempt element out of the darkening's canvases (`canvasRefs`), following them as the
+ * Cuts every scope panel out of the darkening's canvases (`canvasRefs`), following them as the
  * page scrolls, the window resizes and things animate. It measures only while something may be
  * moving, frame by frame until the cut-outs hold still, and rests otherwise.
  */
-export const useLimbExemptions = (canvasRefs) => {
+export const useLimbScopes = (canvasRefs) => {
   useEffect(() => {
     let frame;
     let still = 0;
@@ -111,16 +112,16 @@ export const useLimbExemptions = (canvasRefs) => {
       if (frame === undefined) frame = requestAnimationFrame(tick);
     };
 
-    // An element becoming exempt or stopping, or one arriving already marked (as on a new page);
+    // A panel becoming a scope or stopping, or one arriving already marked (as on a new page);
     // text and other changes are let pass without a look.
     const marks = new MutationObserver((changes) => {
       const relevant = changes.some((change) => change.type === "attributes" || [...change.addedNodes, ...change.removedNodes].some(
-        (node) => node.nodeType === 1 && (node.matches(limbExemptSelector) || node.querySelector(limbExemptSelector)),
+        (node) => node.nodeType === 1 && (node.matches(limbScopeSelector) || node.querySelector(limbScopeSelector)),
       ));
       if (relevant) wake();
     });
-    // The loading screen's end (data-page-ready) reveals the page, exempt elements included.
-    marks.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-limb-exempt", "data-page-ready"] });
+    // The loading screen's end (data-page-ready) reveals the page, scope panels included.
+    marks.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-limb-scope", "data-page-ready"] });
     const moves = ["scroll", "resize", "animationstart", "animationend", "transitionstart", "transitionend"];
     for (const type of moves) document.addEventListener(type, wake, { capture: true, passive: true });
     window.addEventListener("resize", wake);

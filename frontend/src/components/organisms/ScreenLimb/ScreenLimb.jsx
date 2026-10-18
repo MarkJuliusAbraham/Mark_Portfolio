@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { resolveColor } from "@/lib/gridCanvas.js";
 import { brightestChannel, ditherSpread, limbShape, paintLimbDarkening } from "@/lib/limbDarkening.js";
 import { showLimb } from "@/lib/limbPierce.js";
-import { useLimbExemptions } from "./useLimbExemptions.js";
+import { useLimbScopes } from "./useLimbScopes.js";
 import "./screen-limb.css";
 
 const themes = ["light", "dark"];
@@ -27,12 +27,13 @@ const readShape = (style) => ({
  * says and dithered by one visible step of that theme's background, onto a canvas of its own; the
  * stylesheet shows the current theme's, so switching themes costs nothing. The current theme's is
  * painted first and the other's once the browser is idle, and both again when the window resizes.
- * Elements marked `data-limb-exempt` are cut out of it (useLimbExemptions.js), and the background
- * grid's light shines through the one shown (limbPierce.js).
+ * Panels marked `data-limb-scope` carry their own copy instead (useLimbScopes.js,
+ * LimbScopeLayer.jsx), so what's inside them can be layered above it, and the background grid's
+ * light shines through the one shown (limbPierce.js).
  */
 export function ScreenLimb() {
   const canvasRefs = useRef({});
-  useLimbExemptions(canvasRefs);
+  useLimbScopes(canvasRefs);
 
   useEffect(() => {
     const canvases = canvasRefs.current;

@@ -6,6 +6,7 @@ import { SidebarFooter } from "./SidebarFooter.jsx";
 import { SidebarProfileActions } from "./SidebarProfileActions.jsx";
 import { SidebarItemButton } from "./SidebarItemButton.jsx";
 import { SidebarCursor } from "./SidebarCursor.jsx";
+import { LimbScopeLayer } from "@/components/organisms/ScreenLimb/LimbScopeLayer.jsx";
 import { useSidebarEntrance } from "./useSidebarEntrance.js";
 import { ThemeToggle } from "@/components/molecules/ThemeToggle/ThemeToggle.jsx";
 import { useTheme } from "@/hooks/useTheme.js";
@@ -96,7 +97,11 @@ export const Sidebar = ({ items, onNavigate, activeSection, scrolledSection = ac
         </div>
       </header>
 
-      <aside data-entrance={entrance} data-entrance-waiting={waiting || undefined} className="sidebar-desktop fixed inset-y-0 left-0 z-40 hidden w-(--sidebar-width) overflow-y-auto min-[1100px]:block">
+      {/* Carries its own copy of the screen's darkening, beneath everything in it: the panel dims
+          toward the screen's edge while its name, links and controls stay untouched
+          (LimbScopeLayer.jsx). */}
+      <aside data-limb-scope data-entrance={entrance} data-entrance-waiting={waiting || undefined} className="sidebar-desktop fixed inset-y-0 left-0 z-40 hidden w-(--sidebar-width) overflow-y-auto min-[1100px]:block">
+        <LimbScopeLayer beneath />
         <div className="sidebar-shell">
           <div className="sidebar-top">
             <SidebarHeader onClick={goHome} />

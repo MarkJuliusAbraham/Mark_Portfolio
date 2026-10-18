@@ -84,8 +84,8 @@ export const SidebarItemButton = ({label, index, progressIndex, scrolledIndex = 
                 "--enter-index": index,
             }}
             data-active={active}
-            // The selected section stands out at full brightness, untouched by the screen's
-            // darkening toward its edges (ScreenLimb.jsx).
+            // The selected section, with its pointer, progress bar and dot, stands out at full
+            // brightness above the sidebar's darkening (LimbScopeLayer.jsx).
             data-limb-exempt={active || undefined}
             aria-current={active ? "location" : undefined}
         >
@@ -98,10 +98,10 @@ export const SidebarItemButton = ({label, index, progressIndex, scrolledIndex = 
             <span className="sidebar-item-lock" aria-hidden="true" />
 
             {/* Beside the row, fills top to bottom with scroll progress through this section; shown
-                once the selection has arrived here. Exempt from the darkening with the row. */}
-            <span className="sidebar-item-progress" data-limb-exempt={active || undefined} aria-hidden="true" />
+                once the selection has arrived here. */}
+            <span className="sidebar-item-progress" aria-hidden="true" />
             {/* Stands in for the bar on a section too short to scroll through; aberrates in when entered. */}
-            <span ref={dotRef} className="sidebar-item-dot" data-limb-exempt={active || undefined} aria-hidden="true" />
+            <span ref={dotRef} className="sidebar-item-dot" aria-hidden="true" />
         </button>
     );
 }

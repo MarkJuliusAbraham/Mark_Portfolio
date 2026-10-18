@@ -111,6 +111,23 @@ export const showLimb = (canvas, { repainted = false } = {}) => {
   pristine.height = canvas.height;
   draw(pristine).drawImage(canvas, 0, 0);
   watch();
+  for (const listener of listeners) listener();
+};
+
+// Panels that carry their own copy of the darkening (LimbScopeLayer.jsx), told when the picture
+// changes: a repaint, or a switch to the other theme's.
+const listeners = new Set();
+
+/**
+ * The darkening as painted for the theme shown, untouched by the light, covering the screen less
+ * any scrollbar; null before the first paint.
+ */
+export const limbPicture = () => (target ? pristine : null);
+
+/** Calls `listener` whenever the picture changes; returns a function that stops it. */
+export const onLimbPicture = (listener) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
 };
 
 /**

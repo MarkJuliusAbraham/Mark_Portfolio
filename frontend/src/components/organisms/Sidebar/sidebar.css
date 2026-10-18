@@ -5,6 +5,24 @@
     scrollbar-color: var(--nier-hover) var(--sidebar);
 }
 
+/* Every stroke in the desktop navbar (its text, borders, dividers, icons and the theme switch) in
+   the selected section's own tone: the palette's deepest dark in light mode, its brightest light in
+   dark mode, so they hold their own against the screen's darkening at its edge (ScreenLimb.jsx).
+   Set on the content, so the panel's own edge and scrollbar keep theirs. */
+.sidebar-desktop .sidebar-shell {
+    --sidebar-stroke: var(--nier-dark-field);
+    --sidebar-foreground: var(--sidebar-stroke);
+    --sidebar-border: var(--sidebar-stroke);
+    --foreground: var(--sidebar-stroke);
+    --muted-foreground: var(--sidebar-stroke);
+    --nier-foreground: var(--sidebar-stroke);
+    --nier-border: var(--sidebar-stroke);
+}
+
+.dark .sidebar-desktop .sidebar-shell {
+    --sidebar-stroke: var(--nier-light-field);
+}
+
 .sidebar-shell {
     position: relative;
     display: flex;
@@ -115,11 +133,12 @@
     clip-path: var(--sidebar-cursor-shape);
 }
 
+/* The pointer in the selected row's own colour, as one piece with the row it points at. */
 .sidebar-cursor-core {
     position: relative;
     z-index: 1;
     display: block;
-    background: var(--foreground);
+    background: var(--sidebar-primary);
 }
 
 .sidebar-active-indicator::before,
@@ -142,7 +161,7 @@
 }
 
 .sidebar-cursor-ghost {
-    background: var(--foreground);
+    background: var(--sidebar-primary);
     transform: translate(var(--cursor-ghost-x, 0px), var(--cursor-ghost-y, 0px));
 }
 
@@ -409,7 +428,6 @@
     border-color: var(--sidebar-border);
     box-shadow: none;
 }
-
 :is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button):focus-visible {
     outline: 2px solid var(--sidebar-foreground);
     outline-offset: 3px;
