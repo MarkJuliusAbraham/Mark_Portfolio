@@ -106,6 +106,11 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
   let inView = false;
   let placed = false;
 
+  // The grid's geometry: cheap to read, so kept current on every resize, unlike the canvas.
+  const readGeometry = () => {
+    grid = flat ? { ...readGrid(), bulge: 0 } : readGrid();
+  };
+
   const measure = () => {
     ratio = window.devicePixelRatio || 1;
     const { width, height } = canvas.getBoundingClientRect();
@@ -113,7 +118,7 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
       surface.width = Math.round(width * ratio);
       surface.height = Math.round(height * ratio);
     }
-    grid = flat ? { ...readGrid(), bulge: 0 } : readGrid();
+    readGeometry();
     ({ opaque: line, alpha: lineAlpha } = splitAlpha(resolveColor(color, canvas.parentElement ?? document.body)));
   };
 
@@ -137,8 +142,14 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
    * squares show inside it.
    */
   const frameBounds = (box) => {
-    const { angle, centerX, centerY } = grid;
-    const corners = [[box.left, box.top], [box.right, box.top], [box.left, box.bottom], [box.right, box.bottom]].map(([x, y]) => {
+    const { angle, centerX, centerY, width, height } = grid;
+    // Only what's on the screen is drawn, and only there does undoing the bulge hold: far past
+    // the screen's edge it runs away, and the lines and squares between would never end.
+    const left = Math.min(Math.max(box.left, centerX - width / 2), centerX + width / 2);
+    const right = Math.min(Math.max(box.right, left), centerX + width / 2);
+    const top = Math.min(Math.max(box.top, centerY - height / 2), centerY + height / 2);
+    const bottom = Math.min(Math.max(box.bottom, top), centerY + height / 2);
+    const corners = [[left, top], [right, top], [left, bottom], [right, bottom]].map(([x, y]) => {
       const [flatX, flatY] = unbend(grid, x, y);
       const dx = flatX - centerX;
       const dy = flatY - centerY;
@@ -337,10 +348,11 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
     frame = requestAnimationFrame(render);
   };
 
-  // Remeasured once the window settles at its new size, not on every step of a drag; in between,
-  // the canvas stretches with it.
+  // The canvas is remeasured once the window settles at its new size, not on every step of a drag;
+  // in between, it stretches with it, while the grid's geometry follows at once.
   let settle;
   const resized = () => {
+    readGeometry();
     clearTimeout(settle);
     settle = setTimeout(measure, 150);
   };
