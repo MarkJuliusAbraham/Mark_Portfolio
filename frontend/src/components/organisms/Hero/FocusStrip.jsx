@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import {FadeInComponent} from "@/components/atoms/FadeInComponent.jsx";
 import {FocusAccent} from "@/components/organisms/Hero/accents/FocusAccents.jsx";
 import {createElementGlitch} from "@/lib/theme-transition/elementChromatic.js";
 import "@/components/organisms/Hero/accents/focus-accents.css";
@@ -56,7 +55,7 @@ const FocusItem = ({ toner, title, readable, accent }) => {
     >
       <FocusAccent slot="backdrop" {...accentProps} />
       <FocusAccent slot="edge" {...accentProps} />
-      <FadeInComponent className="hero-focus-body flex min-w-0 flex-col gap-2">
+      <div className="hero-focus-body flex min-w-0 flex-col gap-2">
         <span className="typeset-card-toner text-muted-foreground">[{toner}]</span>
         <span ref={titleRef} className="hero-focus-title">
           {title}
@@ -64,7 +63,7 @@ const FocusItem = ({ toner, title, readable, accent }) => {
         </span>
         <span className="hero-focus-text">{readable}</span>
         <FocusAccent slot="after" {...accentProps} />
-      </FadeInComponent>
+      </div>
     </li>
   );
 };
