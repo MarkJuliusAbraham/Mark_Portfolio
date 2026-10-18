@@ -16,9 +16,9 @@
 }
 
 /* Dwelling on Games switches just this item to the opposite theme, borrowing the inverse palette the
-   project cards use. */
+   project cards use, on the hero panel's own ground where the hero has one (hero-layouts.css). */
 .hero-focus-item[data-inverted="true"] {
-    --background: var(--card-inverse);
+    --background: var(--hero-panel, var(--card-inverse));
     --foreground: var(--card-inverse-foreground);
     --muted-foreground: var(--card-inverse-muted-foreground);
     --border: var(--card-inverse-border);
