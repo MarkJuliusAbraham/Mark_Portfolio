@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { limbPicture, onLimbPicture } from "@/lib/limbPierce.js";
+import { limbPicture, limbPictureScale, onLimbPicture } from "@/lib/limbPierce.js";
 
 /**
  * The screen's darkening (ScreenLimb.jsx) carried inside a panel of its own, for a panel marked
@@ -42,12 +42,12 @@ export function LimbScopeLayer({ beneath = false }) {
         width: `${box.width}px`,
         height: `${box.height}px`,
       });
-      if (!picture || !box.width || !box.height) {
+      if (!picture?.width || !picture.height || !box.width || !box.height) {
         canvas.width = 0;
         return;
       }
-      // The picture covers the screen less any scrollbar; this is the part of it under the panel.
-      const scale = picture.width / document.documentElement.clientWidth;
+      // The part of the picture under the panel; the picture starts at the screen's top left.
+      const scale = limbPictureScale();
       const [x, y, width, height] = [box.left, box.top, box.width, box.height].map((value) => value * scale);
       canvas.width = Math.max(Math.round(width), 1);
       canvas.height = Math.max(Math.round(height), 1);

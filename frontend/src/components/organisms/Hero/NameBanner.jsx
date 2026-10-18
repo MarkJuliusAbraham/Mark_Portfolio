@@ -116,10 +116,11 @@ const NameLines = ({ lines, nameLines }) => {
 // inside it, but only lit around the pointer, in the panel's own colours, and far more strongly
 // than on the page, so the panel reads as the place that matters: brighter, reaching further,
 // lines swelling thicker, dimming less and breathing a little quicker. It never goes out there:
-// it rests at the panel's centre and follows the pointer only while it's over the panel.
+// it rests at the panel's centre and follows the pointer only while it's over the panel, its lines
+// easing thinner then (still breathing), so the pointer reads as a finer touch.
 const panelTraces = {
   color: "color-mix(in srgb, var(--card-inverse-foreground) 85%, transparent)",
-  look: { radius: 230, strength: 0.85, thicken: 1.1, dim: 0.2, drift: 0.4, breath: 3.4 },
+  look: { radius: 230, strength: 0.85, thicken: 0.85, thickenOver: 0.3, dim: 0.2, drift: 0.4, breath: 3.4 },
   bounded: true,
   home: true,
 };

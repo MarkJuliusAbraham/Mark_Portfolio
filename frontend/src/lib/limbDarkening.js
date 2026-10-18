@@ -74,6 +74,8 @@ const fastRandom = () => {
  */
 export const paintLimbDarkening = (canvas, strength, { shape = limbShape, spread = 1, random = fastRandom() } = {}) => {
   const { width, height } = canvas;
+  // A screen with no size yet has nothing to darken (and no image of no size can be made).
+  if (!width || !height) return;
   const context = canvas.getContext("2d");
   const image = context.createImageData(width, height);
   // Each pixel written whole, as one word: black, with its opacity in the top byte.

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { burnRemaining, createPulse, headProgress, pickEdgePoint, pulseGlowKeyframes, pulseKeyframes } from "../src/components/organisms/BodyGrid/gridPulses.js";
+import { burnRemaining, createGlowSource, createPulse, headProgress, pickEdgePoint, pulseGlow, pulseGlowKeyframes, pulseHead, pulseKeyframes } from "../src/components/organisms/BodyGrid/gridPulses.js";
+import { gridLightAt } from "../src/lib/gridLighting.js";
 
 // Explicit options keep these checks independent of the visual preset.
 const options = { cells: [4, 8], speed: [100, 200], thickness: 1, burnout: 1200, edgeBand: 0.18 };
@@ -109,4 +110,45 @@ test("the light eases in rather than popping on", () => {
   assert.equal(glow[0].opacity, 0);
   assert.equal(glow[0].easing, "ease-out");
   assert.deepEqual([glow[1].offset, glow[1].opacity], [0.15, 1]);
+});
+
+test("a pulse's light, for the squares: brightness follows its glow, and its head runs its path", () => {
+  const timeline = { burnStart: 0.7, cruise: 1.2 };
+  assert.equal(pulseGlow(0, timeline), 0, "nothing at the start");
+  assert.equal(pulseGlow(0.5, timeline), 1, "full while it cruises");
+  assert.ok(pulseGlow(0.85, timeline) > 0 && pulseGlow(0.85, timeline) < 1, "dimming as it burns out");
+  assert.equal(pulseGlow(1, timeline), 0, "nothing once it halts");
+  assert.ok(pulseGlow(0.05, timeline) > 0 && pulseGlow(0.05, timeline) < 1, "easing in");
+
+  const path = { left: 100, top: 300, width: 560, height: 1, travel: 560, timeline };
+  const right = pulseHead({ ...path, heading: "to right" }, 0);
+  const left = pulseHead({ ...path, heading: "to left" }, 0);
+  assert.deepEqual(right, { x: 100, y: 300.5 }, "heading right, it starts at the path's left end, on the line's middle");
+  assert.deepEqual(left, { x: 660, y: 300.5 }, "heading left, at its right end");
+  assert.ok(pulseHead({ ...path, heading: "to right" }, 0.5).x > right.x, "and moves along it");
+  const down = pulseHead({ left: 300, top: 100, width: 1, height: 560, travel: 560, timeline, heading: "to bottom" }, 0);
+  assert.deepEqual(down, { x: 300.5, y: 100 });
+});
+
+test("the source lists each live pulse's light and tells listeners when one starts", () => {
+  const source = createGlowSource();
+  let heard = 0;
+  const stop = source.subscribe(() => { heard += 1; });
+  const live = () => ({ x: 1, y: 2, radius: 3, strength: 1 });
+  const done = () => null;
+  source.add(live);
+  source.add(done);
+  assert.equal(heard, 2);
+  assert.deepEqual(source.list(), [{ x: 1, y: 2, radius: 3, strength: 1 }], "a finished one drops out");
+  source.remove(live);
+  assert.deepEqual(source.list(), []);
+  stop();
+  source.add(live);
+  assert.equal(heard, 2, "a listener that stopped hears nothing more");
+});
+
+test("the squares fade toward the middle of the screen as the grid's light does", () => {
+  assert.ok(Math.abs(gridLightAt(0, 0, 1200, 800, 0.05) - 0.05) < 1e-9, "only the centre share in the middle");
+  assert.ok(Math.abs(gridLightAt(600, 400, 1200, 800, 0.05) - 1) < 1e-9, "full in the corners");
+  assert.ok(gridLightAt(300, 0, 1200, 800, 0.05) < gridLightAt(550, 0, 1200, 800, 0.05), "rising outward");
 });

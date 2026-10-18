@@ -41,6 +41,12 @@
     margin-right: -0.16em;
 }
 
+/* The header line, name and photo together: only a layout that gathers them into a panel shows it as
+   a box of its own (hero-layouts.css); elsewhere they sit in the hero's grid as if it weren't there. */
+.hero-panel {
+    display: contents;
+}
+
 .hero-name {
     grid-area: name;
     container-type: inline-size;

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { minScrollableSpan, pageProgress, sectionProgress, sectionSpans } from "../src/lib/sectionProgress.js";
+import { minScrollableSpan, pageProgress, sectionProgress, sectionSpans, writeSectionProgress } from "../src/lib/sectionProgress.js";
 
 // Home, About, Projects and Contact become active at these scroll positions.
 const starts = [0, 800, 2000, 3000];
@@ -44,4 +44,26 @@ test("a final section that starts past the bottom has no scroll travel", () => {
 
 test("a final section with room to scroll keeps its travel", () => {
   assert.deepEqual(sectionSpans(starts, 3600), [800, 1200, 1000, 600]);
+});
+
+test("progress is written on the navbar's own containers, and a value that hasn't changed isn't written again", () => {
+  const scope = () => {
+    const writes = [];
+    return { writes, style: { setProperty: (name, value) => writes.push([name, value]) } };
+  };
+  const desktop = scope();
+  const mobile = scope();
+  const spans = [minScrollableSpan * 4, minScrollableSpan / 2];
+  writeSectionProgress([0.25, 1], spans, [desktop, mobile]);
+  assert.deepEqual(desktop.writes, [
+    ["--section-progress-0", "0.2500"],
+    ["--section-fixed-0", "0"],
+    ["--section-progress-1", "1.0000"],
+    ["--section-fixed-1", "1"],
+  ]);
+  assert.deepEqual(mobile.writes, desktop.writes, "each container gets the same values");
+
+  // The next frame of a scroll: only the first section's progress moved.
+  writeSectionProgress([0.3, 1], spans, [desktop, mobile]);
+  assert.deepEqual(desktop.writes.slice(4), [["--section-progress-0", "0.3000"]], "only what changed is written");
 });

@@ -1,13 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "motion/react";
 import { gridLightMask } from "@/lib/gridLighting.js";
 import { gridOpening } from "@/lib/gridCanvas.js";
-import { createPulse, gridPulses, pulseGlowKeyframes, pulseKeyframes, randomBetween } from "./gridPulses.js";
+import { createGlowSource, createPulse, gridPulses, pulseGlow, pulseGlowKeyframes, pulseHead, pulseKeyframes, randomBetween } from "./gridPulses.js";
 import { createOpeningWave, gridOpeningWave } from "./gridOpeningWave.js";
 import { useGridTraces } from "./useGridTraces.js";
 
-// The light over the whole background shines through the screen's darkening (limbPierce.js).
-const backgroundTraces = { pierce: true };
+// The light over the whole background shines through the screen's darkening (limbPierce.js), and
+// tints the squares between the lines as well as the lines themselves (gridTraces.js), around the
+// pointer and around each edge pulse.
+const backgroundTraces = { pierce: true, look: { cells: 0.07 } };
+
+// How far around a pulse's head its squares tint, in grid cells: half its glow's width (body-grid.css).
+const pulseTileReach = 2.5;
 
 export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpeningWave }) {
   const layerRef = useRef(null);
@@ -15,7 +20,9 @@ export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpe
   const openingRef = useRef(null);
   const tracesRef = useRef(null);
   const reducedMotion = useReducedMotion();
-  useGridTraces(tracesRef, backgroundTraces);
+  const glows = useMemo(() => createGlowSource(), []);
+  const traces = useMemo(() => ({ ...backgroundTraces, glows }), [glows]);
+  useGridTraces(tracesRef, traces);
 
   useEffect(() => {
     const element = openingRef.current;
@@ -55,13 +62,15 @@ export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpe
       return {
         width: frame.width,
         height: frame.height,
+        centerX: frame.left + frame.width / 2,
+        centerY: frame.top + frame.height / 2,
         layerSize: layer.offsetWidth,
         cellSize: parseFloat(style.getPropertyValue("--body-grid-size")),
         angle: Math.atan2(b, a),
       };
     };
 
-    const spawn = (pulse) => {
+    const spawn = (pulse, frame) => {
       if (document.hidden || active.size >= options.maxActive) return;
 
       // Light sits behind the grid and shows only through the lines.
@@ -80,17 +89,36 @@ export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpe
       const timing = { duration: pulse.duration, easing: "linear" };
       const glow = element.animate(pulseGlowKeyframes(pulse), timing);
       const movement = element.animate(pulseKeyframes(pulse), timing);
-      active.set(movement, { element, glow });
+      // Its light, for the grid's squares to tint around: the head taken from the rotated layer to
+      // the screen, as bright as its glow is at this point of its life.
+      const { centerX, centerY, layerSize, cellSize, angle } = frame;
+      const [cosine, sine] = [Math.cos(angle), Math.sin(angle)];
+      const lit = () => {
+        const offset = movement.currentTime / pulse.duration;
+        if (!(offset >= 0 && offset < 1)) return null;
+        const head = pulseHead(pulse, offset);
+        const [x, y] = [head.x - layerSize / 2, head.y - layerSize / 2];
+        return {
+          x: centerX + x * cosine - y * sine,
+          y: centerY + x * sine + y * cosine,
+          radius: cellSize * pulseTileReach,
+          strength: pulseGlow(offset, pulse.timeline),
+        };
+      };
+      glows.add(lit);
+      active.set(movement, { element, glow, lit });
       movement.onfinish = () => {
         glow.cancel();
         element.remove();
+        glows.remove(lit);
         active.delete(movement);
       };
     };
 
     const schedule = (delay = 0) => {
       timer = setTimeout(() => {
-        spawn(createPulse(Math.random, readFrame(), options));
+        const frame = readFrame();
+        spawn(createPulse(Math.random, frame, options), frame);
         schedule();
       }, delay + randomBetween(Math.random, options.interval));
     };
@@ -99,13 +127,14 @@ export function BodyGrid({ canvasRef, pulses = gridPulses, openingWave = gridOpe
     schedule(wave.enabled ? gridOpening.blank + wave.duration : 0);
     return () => {
       clearTimeout(timer);
-      active.forEach(({ element, glow }, movement) => {
+      active.forEach(({ element, glow, lit }, movement) => {
         movement.cancel();
         glow.cancel();
         element.remove();
+        glows.remove(lit);
       });
     };
-  }, [pulses, openingWave, reducedMotion]);
+  }, [pulses, openingWave, reducedMotion, glows]);
 
   return (
     <div className="body-grid" aria-hidden="true">

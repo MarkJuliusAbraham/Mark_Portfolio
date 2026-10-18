@@ -72,10 +72,12 @@ export function ScreenLimb() {
       const later = window.requestIdleCallback ?? ((callback) => setTimeout(callback, 200));
       const cancel = window.cancelIdleCallback ?? clearTimeout;
       if (idle !== undefined) cancel(idle);
+      // Within a second however busy the page is, so switching themes soon after loading finds it
+      // painted.
       idle = later(() => {
         idle = undefined;
         paint(other);
-      });
+      }, { timeout: 1000 });
     };
     // Repainted once the window settles at its new size, not on every step of a drag; in between,
     // the canvases stretch with it.

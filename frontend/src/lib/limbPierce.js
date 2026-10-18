@@ -109,7 +109,8 @@ export const showLimb = (canvas, { repainted = false } = {}) => {
   pristine ??= document.createElement("canvas");
   pristine.width = canvas.width;
   pristine.height = canvas.height;
-  draw(pristine).drawImage(canvas, 0, 0);
+  // A canvas with no size yet can't be drawn from; the copy stays empty until it's painted.
+  if (canvas.width && canvas.height) draw(pristine).drawImage(canvas, 0, 0);
   watch();
   for (const listener of listeners) listener();
 };
@@ -124,6 +125,9 @@ const listeners = new Set();
  */
 export const limbPicture = () => (target ? pristine : null);
 
+/** The picture's pixels per CSS px: taken from the canvas shown, which knows its own size best. */
+export const limbPictureScale = () => (target ? target.width / (target.getBoundingClientRect().width || target.width) : 1);
+
 /** Calls `listener` whenever the picture changes; returns a function that stops it. */
 export const onLimbPicture = (listener) => {
   listeners.add(listener);
@@ -135,14 +139,16 @@ export const onLimbPicture = (listener) => {
  * screen as the darkening, and `[sourceX, sourceY, sourceWidth, sourceHeight]` the part of it the
  * light covers, in its pixels; `strength`, from 0 to 1, how fully the lines show through (the
  * light's breath). The two canvases may differ by a few pixels for a moment (one resized before the
- * other); the drawing is scaled to fit.
+ * other); the drawing is scaled to fit their widths.
  */
 export const pierceLimb = (source, [sourceX, sourceY, sourceWidth, sourceHeight], strength) => {
   if (!target || !pristine || !source.width || !source.height) return;
   if (!coversFound) findCovers();
   restore();
+  // Both start at the screen's top left at the same pixel density; the darkening may run taller
+  // (below a phone's address bar), so it's matched by width, the same scale both ways.
   const scaleX = target.width / source.width;
-  const scaleY = target.height / source.height;
+  const scaleY = scaleX;
   const x = Math.max(Math.floor(sourceX * scaleX), 0);
   const y = Math.max(Math.floor(sourceY * scaleY), 0);
   const width = Math.min(Math.ceil((sourceX + sourceWidth) * scaleX), target.width) - x;

@@ -162,8 +162,34 @@ export const traceGridLine = (context, grid, vertical, at, from, to, step = 24) 
   }
 };
 
+/**
+ * Adds one of the grid's squares to `context`'s path as a closed shape, in screen px, as it shows on
+ * the bulging screen: the square from `left` to `right` and `top` to `bottom` across the rotated
+ * grid, its edges sampled every `step` px so they bow with the lines around it.
+ */
+export const traceGridCell = (context, grid, left, top, right, bottom, step = 16) => {
+  const cosine = Math.cos(grid.angle);
+  const sine = Math.sin(grid.angle);
+  const corners = [[left, top], [right, top], [right, bottom], [left, bottom]];
+  corners.forEach(([fromX, fromY], side) => {
+    const [toX, toY] = corners[(side + 1) % corners.length];
+    const steps = Math.max(1, Math.ceil(Math.hypot(toX - fromX, toY - fromY) / step));
+    for (let index = 0; index < steps; index += 1) {
+      const x = fromX + (toX - fromX) * (index / steps);
+      const y = fromY + (toY - fromY) * (index / steps);
+      const [shownX, shownY] = bend(grid, grid.centerX + x * cosine - y * sine, grid.centerY + x * sine + y * cosine);
+      if (side === 0 && index === 0) context.moveTo(shownX, shownY);
+      else context.lineTo(shownX, shownY);
+    }
+  });
+  context.closePath();
+};
+
 /** The shared light falloff, optionally transparent so moving light can show behind the lines. */
 export const createLinePaint = (context, grid, { width, height }, { emphasis = 1, transparent = false } = {}) => {
+  // A screen with no size yet (a tab opened behind others, an embed laid out at nothing) has
+  // nothing to light, and a texture of no size can't be made into a pattern.
+  if (!width || !height) return "transparent";
   // Cache a small lighting texture once per measurement. A pattern can keep its own transform;
   // a gradient would inherit the rotated grid's transform when painted and lose the ellipse.
   const scale = 256 / Math.max(width, height);

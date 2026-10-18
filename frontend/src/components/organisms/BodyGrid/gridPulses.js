@@ -124,3 +124,50 @@ export const pulseGlowKeyframes = ({ timeline }) => [
   { opacity: 1, offset: timeline.burnStart },
   { opacity: 0 },
 ];
+
+/** How bright a pulse's glow is at `offset` of its life, from 0 to 1, as its keyframes run it. */
+export function pulseGlow(offset, { burnStart }) {
+  const fadeIn = Math.min(fadeInShare, burnStart);
+  if (offset <= 0 || offset >= 1) return 0;
+  if (offset < fadeIn) {
+    const t = offset / fadeIn;
+    return 1 - (1 - t) * (1 - t);
+  }
+  if (offset <= burnStart) return 1;
+  return 1 - (offset - burnStart) / (1 - burnStart);
+}
+
+/** Where a pulse's head is at `offset` of its life, in layer pixels, on the middle of its line. */
+export function pulseHead({ left, top, width, height, travel, heading, timeline }, offset) {
+  const head = headProgress(offset, timeline) * travel;
+  switch (heading) {
+    case "to right": return { x: left + head, y: top + height / 2 };
+    case "to left": return { x: left + travel - head, y: top + height / 2 };
+    case "to bottom": return { x: left + width / 2, y: top + head };
+    default: return { x: left + width / 2, y: top + travel - head };
+  }
+}
+
+/**
+ * The pulses alive right now, for something else to light alongside them (the background grid's
+ * squares, gridTraces.js): `list` gives each one's light as it is this moment, and `subscribe`
+ * hears when a new one starts.
+ */
+export function createGlowSource() {
+  const entries = new Set();
+  const listeners = new Set();
+  return {
+    add(entry) {
+      entries.add(entry);
+      listeners.forEach((listener) => listener());
+    },
+    remove(entry) {
+      entries.delete(entry);
+    },
+    list: () => [...entries].map((entry) => entry()).filter(Boolean),
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}

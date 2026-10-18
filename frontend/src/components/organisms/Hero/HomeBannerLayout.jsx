@@ -12,17 +12,22 @@ export const HomeBannerLayout = ({ ref, profile, focusAreas = [], actions = [], 
   return (
     <div ref={ref} className="hero-banner" data-layout={layout}>
       <div className="hero-banner-content">
-        <div className="hero-meta" aria-hidden="true">
-          <span>{profile.label ?? "Portfolio"}</span>
-          <span className="hero-meta-rule" />
-          <span>{new Date().getFullYear()}</span>
+        {/* The header line, name and photo. Where a layout gathers them into one panel (the
+            inverse layout on phones, hero-layouts.css) this is that panel; elsewhere it stands as
+            if it weren't there, and its pieces sit in the hero's grid directly. */}
+        <div className="hero-panel">
+          <div className="hero-meta" aria-hidden="true">
+            <span>{profile.label ?? "Portfolio"}</span>
+            <span className="hero-meta-rule" />
+            <span>{new Date().getFullYear()}</span>
+          </div>
+          <NameBanner
+            nameLines={profile.nameLines}
+            description={profile.description}
+            actions={actions}
+          />
+          <ImageBanner photos={profile.photos} />
         </div>
-        <NameBanner
-          nameLines={profile.nameLines}
-          description={profile.description}
-          actions={actions}
-        />
-        <ImageBanner photos={profile.photos} />
         {focusAreas.length > 0 && <FocusStrip items={focusAreas} />}
       </div>
     </div>

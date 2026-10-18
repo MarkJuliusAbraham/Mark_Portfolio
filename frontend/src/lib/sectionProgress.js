@@ -27,14 +27,34 @@ export function sectionProgress(starts, scrollY, maxScroll) {
 /** Overall progress through a page with no sections, such as a project page. */
 export const pageProgress = (scrollY, maxScroll) => (maxScroll > 0 ? Math.max(0, Math.min(1, scrollY / maxScroll)) : 1);
 
+// What was last written on each element, so a value that hasn't changed isn't written again.
+const written = new WeakMap();
+
+// Where the navbar reads the progress: its containers marked `data-section-progress`, or failing
+// those, the root.
+const progressScopes = () => {
+  const scopes = document.querySelectorAll("[data-section-progress]");
+  return scopes.length ? scopes : [document.documentElement];
+};
+
 /**
- * Publishes progress as `--section-progress-<index>` on the root, for the navbar to draw, and
- * `--section-fixed-<index>` as 1 for sections too short to scroll through, 0 otherwise.
+ * Publishes progress as `--section-progress-<index>`, for the navbar to draw, and
+ * `--section-fixed-<index>` as 1 for sections too short to scroll through, 0 otherwise. Written
+ * on the navbar's own containers, not the root, and only when changed: it runs every frame of a
+ * scroll, and a property changed on the root makes the browser restyle the whole page.
  */
-export function writeSectionProgress(values, spans = []) {
-  values.forEach((value, index) => {
-    const root = document.documentElement.style;
-    root.setProperty(`--section-progress-${index}`, value.toFixed(4));
-    root.setProperty(`--section-fixed-${index}`, (spans[index] ?? Infinity) < minScrollableSpan ? "1" : "0");
-  });
+export function writeSectionProgress(values, spans = [], scopes = progressScopes()) {
+  for (const scope of scopes) {
+    const last = written.get(scope) ?? new Map();
+    written.set(scope, last);
+    const write = (name, value) => {
+      if (last.get(name) === value) return;
+      last.set(name, value);
+      scope.style.setProperty(name, value);
+    };
+    values.forEach((value, index) => {
+      write(`--section-progress-${index}`, value.toFixed(4));
+      write(`--section-fixed-${index}`, (spans[index] ?? Infinity) < minScrollableSpan ? "1" : "0");
+    });
+  }
 }
