@@ -122,17 +122,23 @@ export const readGrid = () => {
 // this share closer to the centre, and less so nearer the middle, so straight lines bow outward.
 export const gridBulge = 0.11;
 
-/** Where a point on the flat grid (screen px) shows on the bulging screen. */
+/**
+ * Where a point on the flat grid (screen px) shows on the bulging screen. A grid with its own
+ * `bulge` (0 for one drawn flat, as on a panel that isn't the screen's glass) uses that instead.
+ */
 export const bend = (grid, x, y) => {
+  const bulge = grid.bulge ?? gridBulge;
+  if (!bulge) return [x, y];
   const dx = x - grid.centerX;
   const dy = y - grid.centerY;
   const reach = Math.hypot(grid.width, grid.height) / 2;
-  const scale = 1 - gridBulge * (dx * dx + dy * dy) / (reach * reach);
+  const scale = 1 - bulge * (dx * dx + dy * dy) / (reach * reach);
   return [grid.centerX + dx * scale, grid.centerY + dy * scale];
 };
 
 /** Where a point seen on the bulging screen (screen px) lies on the flat grid. */
 export const unbend = (grid, x, y) => {
+  if ((grid.bulge ?? gridBulge) === 0) return [x, y];
   let [flatX, flatY] = [x, y];
   // A few rounds of correcting by what the bend does there is plenty for so gentle a bulge.
   for (let round = 0; round < 4; round += 1) {

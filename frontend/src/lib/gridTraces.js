@@ -79,9 +79,11 @@ const drift = (seed, at) => {
  * screen's darkening at its edges (limbPierce.js), as strongly as the light breathes. With
  * `glows`, a source of other lights on the grid (the edge pulses, createGlowSource in
  * gridPulses.js), the squares tint around those too while they last, fading toward the middle of
- * the screen as the pulses themselves do.
+ * the screen as the pulses themselves do. With `flat`, the lines are drawn straight, without the
+ * screen's bulge: for a canvas inside a panel, which moves across the screen as the page scrolls
+ * and would otherwise show the bend shifting over it.
  */
-export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nier-foreground) 40%, transparent)", look, bounded = false, home = false, pierce = false, glows = null } = {}) => {
+export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nier-foreground) 40%, transparent)", look, bounded = false, home = false, pierce = false, glows = null, flat = false } = {}) => {
   const light = { ...cursor, ...look };
   const context = canvas.getContext("2d");
   // Each effect is drawn here first, masked, then laid onto the canvas.
@@ -111,7 +113,7 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
       surface.width = Math.round(width * ratio);
       surface.height = Math.round(height * ratio);
     }
-    grid = readGrid();
+    grid = flat ? { ...readGrid(), bulge: 0 } : readGrid();
     ({ opaque: line, alpha: lineAlpha } = splitAlpha(resolveColor(color, canvas.parentElement ?? document.body)));
   };
 

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bend, traceGridCell } from "../src/lib/gridCanvas.js";
+import { bend, traceGridCell, unbend } from "../src/lib/gridCanvas.js";
 
 const recorder = () => {
   const points = [];
@@ -34,4 +34,16 @@ test("its edges bow with the lines, so a square away from the middle isn't drawn
   const right = path.points.filter(([, x]) => x > grid.centerX + 300);
   const xs = right.map(([, x]) => x);
   assert.ok(Math.max(...xs) - Math.min(...xs) > 1, "its far side curves rather than running straight");
+});
+
+test("a grid drawn flat (a panel's, not the screen's) isn't bent at all", () => {
+  const flat = { ...grid, bulge: 0 };
+  assert.deepEqual(bend(flat, 20, 30), [20, 30]);
+  assert.deepEqual(unbend(flat, 20, 30), [20, 30]);
+  const path = recorder();
+  traceGridCell(path, flat, 380, -350, 436, 350, 16);
+  // Its right side alone: the points down that edge, past its top and bottom corners' runs.
+  const right = path.points.filter(([, x]) => x > grid.centerX + 430);
+  assert.ok(right.length > 10, "the side is sampled all the way down");
+  assert.ok(right.every(([, x]) => Math.abs(x - (grid.centerX + 436)) < 1e-9), "its far side runs straight, right where it was laid");
 });
