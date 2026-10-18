@@ -87,11 +87,18 @@ export const createGridFormation = (canvas, { animate = true } = {}) => {
     if (now - start < gridOpeningDuration) frame = requestAnimationFrame(grow);
     else resolveFormed(); // Hold the completed grid without a running animation while assets load.
   };
-  const onResize = () => {
+  const redraw = () => {
     measure();
     draw(animate ? performance.now() - start : gridOpeningDuration);
   };
-  const themeObserver = new MutationObserver(onResize);
+  // Redrawn once the window settles at its new size, not on every step of a drag; in between, the
+  // canvas stretches with it. A theme change redraws at once.
+  let settle;
+  const onResize = () => {
+    clearTimeout(settle);
+    settle = setTimeout(redraw, 150);
+  };
+  const themeObserver = new MutationObserver(redraw);
 
   measure();
   draw(animate ? 0 : gridOpeningDuration);
@@ -121,6 +128,7 @@ export const createGridFormation = (canvas, { animate = true } = {}) => {
     dispose: () => {
       disposed = true;
       cancelAnimationFrame(frame);
+      clearTimeout(settle);
       window.removeEventListener("resize", onResize);
       themeObserver.disconnect();
       resolveFormed();

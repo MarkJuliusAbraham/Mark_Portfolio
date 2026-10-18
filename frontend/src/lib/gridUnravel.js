@@ -218,9 +218,15 @@ export const createGridUnravel = (canvas, { breathe = true } = {}) => {
   draw(clockStart);
   if (breathe) frame = requestAnimationFrame(breatheLoop);
 
+  // Redrawn once the window settles at its new size, not on every step of a drag; in between, the
+  // canvas stretches with it.
+  let settle;
   const onResize = () => {
-    measure();
-    draw(performance.now());
+    clearTimeout(settle);
+    settle = setTimeout(() => {
+      measure();
+      draw(performance.now());
+    }, 150);
   };
   window.addEventListener("resize", onResize);
 
@@ -232,6 +238,7 @@ export const createGridUnravel = (canvas, { breathe = true } = {}) => {
     play: ({ lead = 0, onNearlyDone } = {}) => new Promise((resolve) => {
       const run = () => {
         cancelAnimationFrame(frame);
+        clearTimeout(settle);
         window.removeEventListener("resize", onResize);
         const begin = performance.now();
         let nearlyDone = false;
@@ -255,6 +262,7 @@ export const createGridUnravel = (canvas, { breathe = true } = {}) => {
     dispose: () => {
       clearTimeout(waiting);
       cancelAnimationFrame(frame);
+      clearTimeout(settle);
       window.removeEventListener("resize", onResize);
     },
   };

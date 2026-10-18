@@ -16,8 +16,13 @@ export const useGridTraces = (canvasRef, options) => {
     const canvas = canvasRef.current;
     if (!canvas || !ready || reducedMotion) return;
     const traces = createGridTraces(canvas, options);
-    // A canvas inside the page changes size with its element, not only the window.
-    const size = new ResizeObserver(() => traces.refresh());
+    // A canvas inside the page changes size with its element, not only the window: remeasured once
+    // it settles at its new size, not on every step of a drag.
+    let settle;
+    const size = new ResizeObserver(() => {
+      clearTimeout(settle);
+      settle = setTimeout(() => traces.refresh(), 150);
+    });
     size.observe(canvas);
     // A light that stays lit only runs while its canvas is on screen.
     const view = new IntersectionObserver(([entry]) => traces.show(entry.isIntersecting));
@@ -39,6 +44,7 @@ export const useGridTraces = (canvasRef, options) => {
       window.removeEventListener("pointermove", move);
       document.documentElement.removeEventListener("pointerleave", traces.leave);
       theme.disconnect();
+      clearTimeout(settle);
       size.disconnect();
       view.disconnect();
       traces.dispose();

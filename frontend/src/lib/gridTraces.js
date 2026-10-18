@@ -337,8 +337,16 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
     frame = requestAnimationFrame(render);
   };
 
+  // Remeasured once the window settles at its new size, not on every step of a drag; in between,
+  // the canvas stretches with it.
+  let settle;
+  const resized = () => {
+    clearTimeout(settle);
+    settle = setTimeout(measure, 150);
+  };
+
   measure();
-  window.addEventListener("resize", measure);
+  window.addEventListener("resize", resized);
   // A pulse starting wakes the light, even with no pointer about.
   const stopGlows = glows?.subscribe(() => wake());
 
@@ -374,7 +382,8 @@ export const createGridTraces = (canvas, { color = "color-mix(in srgb, var(--nie
     },
     dispose: () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener("resize", measure);
+      clearTimeout(settle);
+      window.removeEventListener("resize", resized);
       stopGlows?.();
       if (pierce) clearLimbPierce();
     },
