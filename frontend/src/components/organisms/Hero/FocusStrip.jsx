@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import {FocusAccent} from "@/components/organisms/Hero/accents/FocusAccents.jsx";
 import {createElementGlitch} from "@/lib/theme-transition/elementChromatic.js";
 import "@/components/organisms/Hero/accents/focus-accents.css";
@@ -40,15 +41,22 @@ const useGameTheme = (itemRef, enabled, active) => {
 };
 
 /**
- * One area of focus. Clicking it (or its button, from the keyboard) selects it, or deselects it if
- * it already is; dragging the UI/UX title's resize handles doesn't count.
+ * One area of focus. One with `variants` (designs for the hero) can be clicked, or its button
+ * pressed from the keyboard, to restyle the hero with the next of them; dragging the UI/UX title's
+ * resize handles doesn't count. It says so under its text: a refresh icon that turns while it's
+ * pointed at, "restyle", and a mark for the hero's own design and each of its own, the one shown
+ * (`shownId`) filled.
  */
-const FocusItem = ({ toner, title, readable, accent, selected, onSelect }) => {
+const FocusItem = ({ toner, title, readable, accent, variants = [], selected, shownId, onSelect }) => {
   const itemRef = useRef(null);
   const titleRef = useRef(null);
   const [active, setActive] = useState(false);
   const inverted = useGameTheme(itemRef, accent === "game", active);
   const accentProps = { kind: accent, active, titleRef, itemRef, dwellDuration: themeDwell };
+  const selectable = variants.length > 0;
+  // Which design is shown: 0 for the hero's own, then each of the area's in turn.
+  const shown = variants.findIndex(({ id }) => id === shownId) + 1;
+  const next = variants[shown]?.label ?? "its own design";
 
   return (
     <li
@@ -58,16 +66,19 @@ const FocusItem = ({ toner, title, readable, accent, selected, onSelect }) => {
       data-active={active}
       data-inverted={inverted}
       data-selected={selected}
+      data-selectable={selectable}
       onPointerEnter={() => setActive(true)}
       onPointerLeave={() => setActive(false)}
-      onClick={(event) => {
+      onClick={selectable ? (event) => {
         if (!event.target.closest(".focus-spec-handle")) onSelect();
-      }}
+      } : undefined}
     >
       {/* The item's click, for the keyboard and assistive technology; its click reaches the item. */}
-      <button type="button" className="hero-focus-select sr-only" aria-pressed={selected}>
-        Show {title} in the hero
-      </button>
+      {selectable && (
+        <button type="button" className="hero-focus-select sr-only">
+          Restyle the hero: {next}
+        </button>
+      )}
       <FocusAccent slot="backdrop" {...accentProps} />
       <FocusAccent slot="edge" {...accentProps} />
       <div className="hero-focus-body flex min-w-0 flex-col gap-2">
@@ -77,14 +88,30 @@ const FocusItem = ({ toner, title, readable, accent, selected, onSelect }) => {
           <FocusAccent slot="title" {...accentProps} />
         </span>
         <span className="hero-focus-text">{readable}</span>
+        {selectable && (
+          <span className="hero-focus-cycle" aria-hidden="true">
+            <span className="hero-focus-cycle-label">
+              <RefreshCw className="hero-focus-cycle-icon" size={12} strokeWidth={2} />
+              restyle
+            </span>
+            <span className="hero-focus-cycle-marks">
+              {[null, ...variants].map((design, index) => (
+                <span key={design?.id ?? "own"} data-on={index === shown} />
+              ))}
+            </span>
+          </span>
+        )}
         <FocusAccent slot="after" {...accentProps} />
       </div>
     </li>
   );
 };
 
-/** The areas of focus; `selected` is the toner of the one chosen, and `onSelect` chooses one. */
-export const FocusStrip = ({ items, selected, onSelect }) => {
+/**
+ * The areas of focus; `selected` is the toner of the one chosen, `shown` the id of the design the
+ * hero shows, and `onSelect` chooses one.
+ */
+export const FocusStrip = ({ items, selected, shown, onSelect }) => {
   return (
     <ul className="hero-focus" aria-label="Areas of focus">
       {items.map((item) => (
@@ -92,6 +119,7 @@ export const FocusStrip = ({ items, selected, onSelect }) => {
           key={item.toner}
           {...item}
           selected={item.toner === selected}
+          shownId={shown}
           onSelect={() => onSelect(item.toner)}
         />
       ))}

@@ -200,7 +200,7 @@ export const HomeBannerLayout = ({ ref, profile, focusAreas = [], actions = [], 
             </p>
           )}
         </div>
-        {focusAreas.length > 0 && <FocusStrip items={focusAreas} selected={selected} onSelect={select} />}
+        {focusAreas.length > 0 && <FocusStrip items={focusAreas} selected={selected} shown={variant?.id} onSelect={select} />}
       </div>
     </div>
   );

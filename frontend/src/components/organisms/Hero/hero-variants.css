@@ -2,6 +2,20 @@
    the panel for it. The panel keeps its size whichever is shown, so nothing beneath it moves: the
    photo stays in its place, only unseen, holding the room it always takes. */
 
+/* The hero's own name on a phone takes about this many of its sizes in height: three words on
+   their own lines (NameBanner.jsx splits them below phoneQuery, lib/media.js), or two lines just
+   above it, where the hero is still narrow but the window isn't. The phone layouts that hold the
+   panel at the hero's own height count on it. */
+.hero-banner[data-layout] {
+    --hero-phone-name-lines: 2.73;
+}
+
+@media (min-width: 672px) {
+    .hero-banner[data-layout] {
+        --hero-phone-name-lines: 1.71;
+    }
+}
+
 /* A variant that lays the panel out afresh is never shorter than the hero's own panel, which its
    4:5 photo holds open: the photo's column (hero-layouts.css) less the film's edge it shares it
    with, under the header line, inside the padding. So switching moves nothing beneath. */
@@ -25,9 +39,58 @@
     overflow: visible;
 }
 
-/* The areas of focus choose them: each is clickable, the chosen one marked along its top edge. */
-.hero-focus-item {
+/* The areas of focus with designs choose them: clickable, the chosen one marked along its top
+   edge. */
+.hero-focus-item[data-selectable="true"] {
     cursor: pointer;
+}
+
+/* What says so: a refresh icon, "restyle", and a mark for each design, the one shown filled. The
+   icon turns while the item is pointed at. */
+.hero-focus-cycle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hero-focus-cycle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-focus-item[data-selectable="true"]:hover .hero-focus-cycle-icon {
+    animation: hero-focus-cycle-spin 1.1s linear infinite;
+}
+
+@keyframes hero-focus-cycle-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-focus-item[data-selectable="true"]:hover .hero-focus-cycle-icon {
+        animation: none;
+    }
+}
+
+.hero-focus-cycle-marks {
+    display: flex;
+    gap: 4px;
+}
+
+.hero-focus-cycle-marks span {
+    width: 7px;
+    height: 7px;
+    border: 1px solid currentColor;
+}
+
+.hero-focus-cycle-marks span[data-on="true"] {
+    background: currentColor;
 }
 
 .hero-focus-item[data-selected="true"] {
@@ -674,7 +737,7 @@
         min-height: calc(
             2 * var(--space-3)
             + clamp(96px, max(34cqw, 65cqw - 135px), 18rem) * 5 / 4
-            + 24px + clamp(2rem, calc((100cqw - 2 * var(--space-3)) * 0.145), 6rem) * 2.73
+            + 24px + clamp(2rem, calc((100cqw - 2 * var(--space-3)) * 0.145), 6rem) * var(--hero-phone-name-lines)
             + 20px + 60px
         );
         overflow: hidden;
