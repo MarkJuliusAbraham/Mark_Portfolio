@@ -15,7 +15,7 @@ let introPlayed = false;
 // How long the opening runs, in ms (hero-intro.css), after which its animations are taken off.
 const introLength = 2400;
 // How long each design shows as the opening runs through them all, in ms.
-const previewStep = 340;
+const previewStep = 300;
 
 /**
  * Whether this hero plays the opening (`intro`, settled as it mounts) and, while it does, its
