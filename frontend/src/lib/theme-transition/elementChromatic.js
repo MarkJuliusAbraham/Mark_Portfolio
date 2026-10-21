@@ -46,7 +46,7 @@ export const createElementFrames = (prefix) => pulse.map(([offset, level]) => ({
 export function createElementGlitch(element, { doc = document, view = window, settings = chromatic, random = Math.random, backdrop = () => backgroundBehind(element, view) } = {}) {
   const prefix = `element-chromatic-${++sequence}`;
   const strength = Math.max(0, Math.min(24, Number.isFinite(settings.strength) ? settings.strength : 8));
-  const duration = 360 / (settings.speed ?? 1);
+  const duration = 220 / (settings.speed ?? 1);
   const supported = typeof element.animate === "function" && Boolean(view.CSS?.supports("filter", 'url("#chromatic")'));
   let svg = null;
   let filters = [];

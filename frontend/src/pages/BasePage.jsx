@@ -41,6 +41,13 @@ export const BasePage = () => {
         </a>
         <Sidebar items={navigationItems} onNavigate={handleNavigate} activeSection={activeSection} scrolledSection={scrolledSection} navigating={navigating} />
         <Outlet context={{ sections }} />
+        <div
+          role="status"
+          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 border-2 border-foreground bg-primary px-4 py-2 text-sm font-bold tracking-wider text-primary-foreground uppercase shadow-lg min-[1100px]:left-[calc(50%+var(--sidebar-width)/2)]"
+        >
+          <span className="size-2.5 animate-pulse rounded-full bg-primary-foreground" aria-hidden="true" />
+          Work in progress — site under construction
+        </div>
       </div>
       <ScreenLimb />
     </div>

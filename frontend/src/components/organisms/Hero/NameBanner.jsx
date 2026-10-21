@@ -119,9 +119,6 @@ const panelTraces = {
   look: { radius: 230, strength: 0.85, thicken: 0.85, thickenOver: 0.3, dim: 0.2, drift: 0.4, breath: 3.4 },
   bounded: true,
   home: true,
-  // Its grid is the panel's own, drawn straight: the screen's bulge belongs to the page behind it,
-  // and would shift across the panel as it scrolls.
-  flat: true,
 };
 
 export const NameBanner = ({ nameLines, description, actions = [], splitWords = false }) => {
