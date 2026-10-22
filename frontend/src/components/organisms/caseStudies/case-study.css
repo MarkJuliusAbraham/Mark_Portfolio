@@ -354,3 +354,117 @@
 .cs-component .cs-lifeline { stroke: var(--cs-component-ink); }
 /* Chips are canvas-toned surfaces inside a component, with their own contrasting labels. */
 .cs-chip-surface .cs-chip-label { fill: var(--cs-ink) !important; }
+
+/* Goal and solution callouts that frame a figure. */
+.cs-callout {
+    max-width: 66ch;
+    margin: 2rem 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--strong-foreground);
+    background: color-mix(in srgb, var(--strong-foreground) 5%, transparent);
+}
+.cs-callout-label { margin-bottom: 0.5rem !important; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; }
+.cs-callout-lead { margin: 0 !important; font-size: 1.15rem; line-height: 1.5 !important; color: var(--strong-foreground); }
+.cs-callout-points { display: grid; gap: 0.625rem; margin: 0; padding-left: 1.25em; font-size: 1.05rem; line-height: 1.55; color: var(--strong-foreground); }
+.cs-callout-points li::marker { color: var(--muted-foreground); font-weight: 700; }
+
+/* The solution: plain-language points beside a technical panel; stacks when narrow. */
+.cs-solution { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; align-items: stretch; margin: 2rem 0 1.5rem; }
+.cs-solution > .cs-callout { max-width: none; margin: 0; }
+@media (max-width: 900px) { .cs-solution { grid-template-columns: 1fr; } }
+.cs-callout-technical { border-left-color: var(--muted-foreground); background: color-mix(in srgb, var(--strong-foreground) 3%, transparent); }
+.cs-callout-tech { display: grid; gap: 0.625rem; margin: 0; padding-left: 1.1em; list-style: square; font-size: 0.9rem; line-height: 1.55; }
+.cs-callout-tech li::marker { color: var(--muted-foreground); }
+.cs-callout-tech b { color: var(--strong-foreground); }
+
+/* Body text inside a callout; several paragraphs stack with a little space. */
+.cs-callout-body { margin: 0 !important; font-size: 1.05rem; line-height: 1.6 !important; color: var(--strong-foreground); }
+.cs-callout-body + .cs-callout-body { margin-top: 0.75rem !important; }
+.cs-subsection > h3 + .cs-callout, .case-study section > h2 + .cs-callout { margin-top: 0.5rem; }
+.cs-inside .cs-callout { margin-top: 0; }
+
+/* Extras: optional depth, folded away by default. */
+.cs-extras { border-top: 1px solid var(--border); padding-top: 1rem; }
+.cs-extras > summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 0;
+    cursor: pointer;
+    list-style: none;
+}
+.cs-extras > summary::-webkit-details-marker { display: none; }
+.cs-extras > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+.cs-extras-kicker { grid-column: 1; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; }
+.cs-extras > summary > h3 { grid-column: 1; margin: 0 !important; }
+.cs-extras-toggle { grid-column: 2; grid-row: 1 / span 2; padding: 0.35rem 0.7rem; border: 1px solid var(--border); color: var(--foreground); text-transform: uppercase; }
+.cs-extras-toggle::before { content: "Show"; }
+.cs-extras[open] .cs-extras-toggle::before { content: "Hide"; }
+.cs-extras > summary:hover .cs-extras-toggle { border-color: var(--strong-foreground); color: var(--strong-foreground); }
+.cs-extras[open] > summary { margin-bottom: 1rem; }
+
+/* Extras on the opposite theme to the page, so it reads as set apart from the sections around it.
+   Its figure flips back to the page's own theme, so it still stands out inside the panel. */
+.cs-extras {
+    --foreground: var(--nier-dark-foreground);
+    --strong-foreground: var(--nier-dark-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+    --border: var(--nier-dark-border);
+    --ring: var(--nier-dark-foreground);
+    margin-top: 3.5rem;
+    padding: 1rem 1.5rem 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--nier-dark-panel);
+    color: var(--foreground);
+}
+.dark .cs-extras {
+    --foreground: var(--nier-light-foreground);
+    --strong-foreground: var(--nier-light-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+    --border: var(--nier-light-border);
+    --ring: var(--nier-light-foreground);
+    background: var(--nier-light-panel);
+}
+.cs-extras h3, .cs-extras .cs-prose { color: var(--strong-foreground); }
+.cs-extras .cs-prose { color: var(--foreground); }
+.cs-extras .cs-cue { color: var(--muted-foreground); }
+
+.cs-extras .cs-figure {
+    --foreground: var(--nier-light-foreground);
+    --strong-foreground: var(--nier-light-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+    --card: var(--nier-light-panel);
+    --background: var(--nier-light-surface);
+    --border: var(--nier-light-border);
+    --nier-field: var(--nier-light-field);
+    --nier-hover: var(--nier-light-hover);
+    --cs-ink: var(--nier-light-strong);
+    --cs-accent: #8f3f2c;
+    --bh-green: #495541;
+}
+.dark .cs-extras .cs-figure {
+    --foreground: var(--nier-dark-foreground);
+    --strong-foreground: var(--nier-dark-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+    --card: var(--nier-dark-panel);
+    --background: var(--nier-dark-surface);
+    --border: var(--nier-dark-border);
+    --nier-field: var(--nier-dark-field);
+    --nier-hover: var(--nier-dark-hover);
+    --cs-ink: var(--nier-dark-strong);
+    --cs-accent: #e6a389;
+    --bh-green: #b2b89d;
+}
+.cs-entity-footnote { margin-top: 1.25rem !important; padding-top: 0.75rem; border-top: 1px dashed var(--border); color: var(--muted-foreground); font-size: 0.8125rem !important; line-height: 1.5 !important; }
+.cs-callout-question { max-width: none; margin: 0; border-left-color: var(--cs-accent); }
+.cs-entity-pointer { margin: 0 !important; color: var(--muted-foreground); font-size: 0.9rem !important; }
+.cs-extras-case { margin: 2rem 0 0.75rem; color: var(--strong-foreground); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+.cs-extras .cs-callout-question { background: color-mix(in srgb, var(--strong-foreground) 6%, transparent); }
+.cs-extras-sub { font-weight: 400; color: var(--muted-foreground); }
+
+/* Extras layout: the answer first, at reading width, then a short lead into the reference figure. */
+.cs-extras .cs-callout-question { max-width: 66ch; margin: 2rem 0 0; }
+.cs-extras-lead { margin-bottom: 0.75rem !important; color: var(--muted-foreground) !important; }
+/* Inline code inside the inverted Extras panel uses the panel's colours. */
+.cs-extras code { background: color-mix(in srgb, var(--strong-foreground) 10%, transparent); color: var(--strong-foreground); border-color: var(--border); }

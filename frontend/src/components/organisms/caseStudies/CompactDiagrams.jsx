@@ -32,9 +32,28 @@ const Flow = ({ steps }) => (
   </ol>
 );
 
+export const CompactGoal = () => (
+  <div className="cs-compact">
+    <Label number="01">The goal: composable behaviors</Label>
+    <div className="cs-compact-group">
+      <h4>Entity</h4>
+      <p>Any game object. In the Godot scene tree, its behaviors are child nodes.</p>
+      <div className="cs-compact-stack">
+        {["Pressable", "Activatable", "Draggable"].map(name => <Component key={name} name={name} tone="green" note="Child node" />)}
+      </div>
+      <p className="cs-compact-explanation">… and any number more.</p>
+    </div>
+    <Connection>Mix and match per object</Connection>
+    <div className="cs-compact-stack">
+      <Component name="Folder" term="Entity" note="Draggable + Activatable" />
+      <Component name="Ticket" term="Entity" note="Draggable: the same behavior, reused unchanged" />
+    </div>
+  </div>
+);
+
 export const CompactOverview = () => (
   <div className="cs-compact">
-    <Label number="01">Input routing</Label>
+    <Label number="02">Input routing</Label>
     <Component name="Godot engine" note="Clicks, keys, and every frame" />
     <Connection>Forwards every event</Connection>
     <div className="cs-compact-group">
@@ -64,17 +83,19 @@ const sequence = [
   { name: "Active", tone: "green", note: "The folder is open. Activatable releases its input claim." },
 ];
 
-export const CompactSequence = () => <div className="cs-compact"><Label number="02">A blocking transition</Label><Flow steps={sequence} /></div>;
+export const CompactSequence = () => <div className="cs-compact"><Label number="03">A blocking transition</Label><Flow steps={sequence} /></div>;
 
 export const CompactModes = ({ modes }) => (
   <div className="cs-compact">
     <Label number="03">Three ways to hold the mouse</Label>
     <div className="cs-compact-stack">
-      {modes.map(({ term, say, others, note, usedBy, usedFor }) => (
-        <Component key={term} name={term} note={say} tone={term === "Share" ? undefined : "red"}>
-          <div className="cs-compact-chips"><span>This one</span><span>{others}</span><span>{others}</span></div>
-          <p>{note}</p>
-          <p className="cs-compact-use">Used by <strong>{usedBy}</strong>{usedFor && <span>{usedFor.join(" ")}</span>}</p>
+      {modes.map(({ term, code, say, owner, other, example }) => (
+        <Component key={term} name={code} term={term} note={say} tone={term === "Share" ? undefined : "red"}>
+          <div className="cs-compact-chips">
+            <span data-role="owner"><strong>{owner[0]}</strong><small>{owner[1]}</small></span>
+            <span data-role={other[2]}><strong>{other[0]}</strong><small>{other[1]}</small></span>
+          </div>
+          <p className="cs-compact-use">On the folder <span>{example.join(" ")}</span></p>
         </Component>
       ))}
     </div>
@@ -83,14 +104,14 @@ export const CompactModes = ({ modes }) => (
 
 export const CompactMachine = ({ states }) => (
   <div className="cs-compact">
-    <Label number="04">One state at a time</Label>
+    <Label number="04">Every state, from the start</Label>
     <Component name="Activatable" tone="green" note="Listens for right-clicks" />
-    <Connection>The same right-click</Connection>
+    <Connection>Once, when added: builds all four states</Connection>
     <div className="cs-compact-group">
       <h4>FiniteStateMachine</h4>
-      <p>Holds named states. All four inherit ActivatableState.</p>
+      <p>All four built together, all ActivatableState. A right-click goes to the current one.</p>
       <div className="cs-compact-stack">{states.map(({ name, meaning }) => <Component key={name} name={name} note={meaning} current={name === "Active"} />)}</div>
-      <p className="cs-compact-explanation">Only the current state receives the event. The other states stay idle and never hear it.</p>
+      <p className="cs-compact-explanation">The other states are already there; they just don't hear it.</p>
     </div>
   </div>
 );

@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { FsmClipPlayer } from "./FsmClipPlayer.jsx";
-import { CompactDiagramTerms, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
+import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
 import { createPortal } from "react-dom";
 import folderGif from "@/gifs/threshold-folder.gif";
 import ticketGif from "@/gifs/threshold-ticket.gif";
+import controllableTicketGif from "@/gifs/threshold-controllable-ticket.gif";
 import "./case-study.css";
 
 // The "Papers Please"-style game's case study: how desk objects decide who handles each input
@@ -165,14 +166,57 @@ const Frame = ({ x, y, width, height, name, note, term = name, shaded = false })
   </g>
 );
 
+// Fig. 01: the goal. Any entity gets its abilities from behaviors added as child nodes, mixed and
+// matched per object; the folder and the ticket are two real compositions from the reception scene.
+const goalBehaviors = ["Pressable", "Activatable", "Draggable"];
+const compositions = [
+  { name: "Folder", behaviors: ["Draggable", "Activatable"] },
+  { name: "Ticket", behaviors: ["Draggable"] },
+];
+
+const GoalDiagram = () => (
+  <svg viewBox="0 0 900 330" role="img" aria-label="The goal: simple, composable behaviors for entities. In the Godot scene tree, an entity has behaviors as child nodes: Pressable, Activatable, Draggable, and any number more. Different entities mix and match them: the folder has Draggable and Activatable; the ticket has only Draggable, the same behavior reused.">
+    <FigureLabel number="01" title="THE GOAL: COMPOSABLE BEHAVIORS" />
+
+    <text x="20" y="54" className="cs-note">IN THE GODOT SCENE TREE</text>
+    <Node x={20} y={66} width={220} height={46} name="Entity" note="any game object" />
+    <line x1="44" y1="112" x2="44" y2="296" className="cs-tree-line" />
+    {goalBehaviors.map((name, i) => (
+      <g key={name}>
+        <line x1="44" y1={144 + i * 52} x2="70" y2={144 + i * 52} className="cs-tree-line" />
+        <g className="cs-tone-green"><Node x={70} y={124 + i * 52} width={240} height={40} name={name} tag="CHILD NODE" /></g>
+      </g>
+    ))}
+    <line x1="44" y1="296" x2="70" y2="296" className="cs-tree-line" strokeDasharray="3 3" />
+    <text x="78" y="301" className="cs-note">… any number of behaviors</text>
+
+    <line x1="400" y1="50" x2="400" y2="310" className="cs-lifeline" />
+
+    <text x="440" y="54" className="cs-note">MIX AND MATCH PER OBJECT</text>
+    {compositions.map(({ name, behaviors }, row) => (
+      <g key={name}>
+        <text x="440" y={108 + row * 84} className="cs-name">{name}</text>
+        <text x="530" y={108 + row * 84} className="cs-state-line">=</text>
+        {behaviors.map((behavior, i) => (
+          <g key={behavior} className="cs-tone-green">
+            <Node x={556 + i * 160} y={84 + row * 84} width={148} height={38} name={behavior} />
+          </g>
+        ))}
+      </g>
+    ))}
+    <text x="556" y="228" className="cs-note">the same Draggable, reused unchanged</text>
+    <text x="440" y="270" className="cs-state-line">No code written for the folder or the ticket themselves.</text>
+  </svg>
+);
+
 const OverviewDiagram = () => (
-  <svg viewBox="0 0 900 536" role="img" aria-label="Godot sends engine events to an entity. Inside the entity, its behavior coordinator, the messenger, owns an input coordinator, the referee. The messenger asks the referee whether each behavior may act, then delivers events through BehaviorBase to Pressable, Activatable and Draggable, which claim and release the mouse with the referee directly. The behaviors emit signals that the scene connects to the entity's own actions. The behaviors are the entity's child nodes in the Godot scene tree, and each registers itself with the BehaviorCoordinator the entity has.">
+  <svg viewBox="0 0 900 400" role="img" aria-label="Godot sends engine events to an entity. Inside the entity, its behavior coordinator, the messenger, owns an input coordinator, the referee. The messenger asks the referee whether each behavior may act, then delivers events through BehaviorBase to Pressable, Activatable and Draggable, which claim and release the mouse with the referee directly. The behaviors emit signals that the scene connects to the entity's own actions. The behaviors are the entity's child nodes in the Godot scene tree, and each registers itself with the BehaviorCoordinator the entity has.">
     <defs>
       <Arrowhead id="cs-arrow" />
       <Arrowhead id="cs-arrow-accent" className="cs-fill-accent" />
       <Arrowhead id="cs-arrow-yellow" className="cs-fill-yellow" />
     </defs>
-    <FigureLabel number="01" title="INPUT ROUTING" />
+    <FigureLabel number="02" title="INPUT ROUTING" />
 
     <Node x={360} y={36} width={180} name="Godot engine" />
 
@@ -230,29 +274,6 @@ const OverviewDiagram = () => (
     <g className="cs-tone-green"><Node x={330} y={336} width={240} height={46} name="Activatable" tag="CHILD NODE" /></g>
     <g className="cs-tone-green"><Node x={616} y={336} width={240} height={46} name="Draggable" tag="CHILD NODE" /></g>
 
-    {/* How it looks in Godot: the behaviors are the entity's child nodes, and each registers
-        itself with the BehaviorCoordinator the entity holds. */}
-    <g className="cs-tree" transform="translate(0 -50)">
-      <text x="44" y="458" className="cs-note">IN THE GODOT SCENE TREE</text>
-      <text x="44" y="484" className="cs-name">Entity</text>
-      <line x1="98" y1="480" x2="212" y2="480" className="cs-tree-line" strokeDasharray="3 3" markerEnd="url(#cs-arrow)" />
-      <text x="155" y="473" textAnchor="middle" className="cs-note">has</text>
-      <text x="218" y="484" className="cs-name">BehaviorCoordinator</text>
-      <line x1="52" y1="490" x2="52" y2="568" className="cs-tree-line" />
-      {["Pressable", "Activatable", "Draggable", "…"].map((child, i) => (
-        <g key={child}>
-          <line x1="52" y1={508 + i * 20} x2="66" y2={508 + i * 20} className="cs-tree-line" />
-          <text x="72" y={512 + i * 20} className={child === "…" ? "cs-note" : "cs-state-line"}>{child}</text>
-          {child === "…"
-            ? <line x1="256" y1={508 + i * 20} x2="300" y2={508 + i * 20} className="cs-wire" strokeDasharray="3 3" />
-            : <line x1="164" y1={508 + i * 20} x2="300" y2={508 + i * 20} className="cs-wire" />}
-        </g>
-      ))}
-      {/* Right-angled: each behavior joins one riser that goes up into the coordinator. */}
-      <line x1="300" y1="568" x2="300" y2="490" className="cs-wire" markerEnd="url(#cs-arrow)" />
-      <text x="310" y="530" className="cs-note">register</text>
-      <text x="96" y="572" className="cs-note">any number of behaviors</text>
-    </g>
 
   </svg>
 );
@@ -265,6 +286,7 @@ const lanes = [
   { x: 830, label: "Pressable · Draggable", term: "Pressable" },
 ];
 
+// Not shown on the page right now (kept for later). Renumber its FigureLabel if it returns.
 const SequenceDiagram = () => (
   <svg viewBox="0 0 900 330" role="img" aria-label="Sequence: right-click on a folder. The coordinator delivers it to Activatable, which claims a block and enters Activating. While blocked, clicks for Pressable and Draggable are skipped. When the animation completes, Activatable enters Active and releases the claim.">
     <defs>
@@ -274,7 +296,7 @@ const SequenceDiagram = () => (
         <line x1="0" y1="0" x2="0" y2="6" className="cs-hatch-line-accent" />
       </pattern>
     </defs>
-    <FigureLabel number="02" title="A BLOCKING TRANSITION" />
+    <FigureLabel number="03" title="A BLOCKING TRANSITION" />
 
     {lanes.map(({ x, label, accent, blue, term = label }) => (
       <g key={label}>
@@ -316,39 +338,51 @@ const SequenceDiagram = () => (
 );
 
 // A small behavior chip in Fig. 03: the owner, one that waits, or one that carries on.
-const Chip = ({ x, y, label, role }) => (
+// A behavior in Fig. 03: its name in a chip, and what it's doing right now underneath.
+const Chip = ({ x, y, label, role, status }) => (
   <g className="cs-chip-surface">
-    <rect x={x} y={y} width="78" height="26" className={`cs-chip cs-chip-${role}`} />
-    {role === "waits" && <rect x={x} y={y} width="78" height="26" fill="url(#cs-hatch-modes)" />}
-    <text x={x + 39} y={y + 17} textAnchor="middle" className="cs-state-line cs-chip-label">{label}</text>
+    <rect x={x} y={y} width="124" height="30" className={`cs-chip cs-chip-${role}`} />
+    {role === "waits" && <rect x={x} y={y} width="124" height="30" fill="url(#cs-hatch-modes)" />}
+    <text x={x + 62} y={y + 20} textAnchor="middle" className="cs-state-line cs-chip-label">{label}</text>
+    <text x={x + 62} y={y + 48} textAnchor="middle" className={role === "owner" ? "cs-note cs-accent-text" : "cs-note"}>{status}</text>
   </g>
 );
 
+// The folder's own two behaviors, in each of the three ways a claim can be held.
 const modes = [
-  { x: 0, term: "Take over", say: "\u201cMine until I let go\u201d", others: "waits", note: "follows the cursor off the item", usedBy: "dragging" },
-  { x: 305, term: "Hold", say: "\u201cEveryone wait\u201d", others: "waits", note: "nothing reacts mid-animation", usedBy: "a folder opening" },
-  { x: 610, term: "Share", say: "\u201cBusy, but carry on\u201d", others: "carries on", note: "can be bumped by a take-over", usedBy: "Folder", usedFor: ["Allows dragging while", "mid activation"] },
+  {
+    x: 0, term: "Take over", code: "InputClaim.Capture", say: "“Mine until I let go”",
+    owner: ["Draggable", "holds"], other: ["Activatable", "waits", "waits"],
+    example: ["Mid-drag, a right-click won't open", "the folder, and the drop still lands", "if the cursor slips off it."],
+  },
+  {
+    x: 305, term: "Hold", code: "InputClaim.Block", say: "“Everyone wait”",
+    owner: ["Activatable", "holds"], other: ["Draggable", "waits", "waits"],
+    example: ["In Blocking mode, a drag", "started mid-animation does", "nothing."],
+  },
+  {
+    x: 610, term: "Share", code: "InputClaim.Shared", say: "“Busy, but carry on”",
+    owner: ["Activatable", "shares"], other: ["Draggable", "carries on", "free"],
+    example: ["The folder's Graceful mode: you", "can pick it up while it's still", "opening."],
+  },
 ];
 
 const ModesDiagram = () => (
-  <svg viewBox="0 0 900 290" role="img" aria-label="Three ways a behavior can hold the mouse. Take over: others wait and it follows the cursor off the item, used by dragging. Hold: others wait while a folder animates. Share: others carry on, and a take-over can bump it, used by the folder, which allows dragging while mid activation.">
+  <svg viewBox="0 0 900 290" role="img" aria-label="Three ways a behavior can hold the mouse, shown with the folder's two behaviors. Take over: Draggable holds the mouse and Activatable waits, so mid-drag a right-click won't open the folder and the drop still lands off it. Hold: Activatable holds and Draggable waits, so in Blocking mode a drag mid-animation does nothing. Share: Activatable shares and Draggable carries on, so in the folder's Graceful mode you can pick it up while it's opening.">
     <defs>
       <pattern id="cs-hatch-modes" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
         <line x1="0" y1="0" x2="0" y2="6" className="cs-hatch-line" />
       </pattern>
     </defs>
     <FigureLabel number="03" title="THREE WAYS TO HOLD THE MOUSE" />
-    {modes.map(({ x, term, say, others, note, usedBy, usedFor }) => (
+    {modes.map(({ x, term, code, say, owner, other, example }) => (
       <g key={term} className="cs-component">
-        <Node x={x} y={34} width={290} height={240} name={term} note={say} accent={term !== "Share"} />
-        <Chip x={x + 12} y={96} label="this one" role="owner" />
-        <Chip x={x + 104} y={96} label={others} role={others === "waits" ? "waits" : "free"} />
-        <Chip x={x + 196} y={96} label={others} role={others === "waits" ? "waits" : "free"} />
-        <text x={x + 12} y={154} className="cs-state-line">{note}</text>
-        <line x1={x + 12} y1="174" x2={x + 278} y2="174" className="cs-lifeline" />
-        <text x={x + 12} y={196} className="cs-note">USED BY</text>
-        <text x={x + 12} y={214} className={usedFor ? "cs-state-line cs-used-by" : "cs-state-line"}>{usedBy}</text>
-        {usedFor?.map((line, i) => <text key={line} x={x + 12} y={234 + i * 18} className="cs-note">{line}</text>)}
+        <Node x={x} y={34} width={290} height={240} name={code} note={say} term={term} accent={term !== "Share"} />
+        <Chip x={x + 12} y={92} label={owner[0]} status={owner[1]} role="owner" />
+        <Chip x={x + 154} y={92} label={other[0]} status={other[1]} role={other[2]} />
+        <line x1={x + 12} y1="164" x2={x + 278} y2="164" className="cs-lifeline" />
+        <text x={x + 12} y={186} className="cs-note">ON THE FOLDER</text>
+        {example.map((line, i) => <text key={line} x={x + 12} y={206 + i * 19} className="cs-state-line">{line}</text>)}
       </g>
     ))}
   </svg>
@@ -364,15 +398,20 @@ const fsmStates = [
 ];
 
 const MachineDiagram = () => (
-  <svg viewBox="0 0 900 360" role="img" aria-label="The same right-click goes from Activatable into its finite state machine, which holds four named states, all ActivatableState, and forwards it to the current one only. Active is current, so the right-click closes the folder. Had Inactive been current, the same click would open it; Activating and Deactivating would ignore it.">
+  <svg viewBox="0 0 900 360" role="img" aria-label="When Activatable is added to an entity, it builds all four of its states at once, all ActivatableState, inside its finite state machine. Later, a right-click goes into the machine, which forwards it to the current state only. Active is current, so the right-click closes the folder. Had Inactive been current, the same click would open it; Activating and Deactivating would ignore it.">
     <defs>
       <Arrowhead id="cs-arrow-m" />
       <Arrowhead id="cs-arrow-m-accent" className="cs-fill-blue" />
     </defs>
-    <FigureLabel number="04" title="ONE STATE AT A TIME" />
+    <FigureLabel number="04" title="EVERY STATE, FROM THE START" />
     <g className="cs-tone-green"><Node x={10} y={150} width={176} height={66} name="Activatable" note="listens for right-clicks" /></g>
-    <line x1="188" y1="183" x2="276" y2="183" className="cs-wire" markerEnd="url(#cs-arrow-m)" />
-    <text x="232" y="175" textAnchor="middle" className="cs-note cs-accent-text">a right-click</text>
+    {/* Once, when the behavior is added: every state is built up front. */}
+    <line x1="188" y1="166" x2="294" y2="166" className="cs-wire-blue" markerEnd="url(#cs-arrow-m-accent)" />
+    <text x="236" y="158" textAnchor="middle" className="cs-note cs-blue-text">builds all</text>
+    <text x="236" y="139" textAnchor="middle" className="cs-note cs-blue-text">once, on add:</text>
+    {/* Every time after: input goes to the current state. */}
+    <line x1="188" y1="200" x2="276" y2="200" className="cs-wire" markerEnd="url(#cs-arrow-m)" />
+    <text x="232" y="220" textAnchor="middle" className="cs-note cs-accent-text">a right-click</text>
 
     <Frame x={280} y={40} width={600} height={304} name="FiniteStateMachine" note="holds named states" />
     <text x="300" y="104" className="cs-note">WHAT THAT SAME RIGHT-CLICK MEANS IN EACH STATE</text>
@@ -381,7 +420,7 @@ const MachineDiagram = () => (
     <rect x="296" y="118" width="568" height="104" className="cs-group" />
     <Term term="ActivatableState">
       <rect x="306" y="124" width="200" height="20" className="cs-hit" />
-      <text x="310" y="139" className="cs-note cs-term-label">ActivatableState · all four inherit it</text>
+      <text x="310" y="139" className="cs-note cs-term-label">All four built together · ActivatableState</text>
     </Term>
     {fsmStates.map(({ name, meaning }, i) => {
       const x = 310 + i * 138;
@@ -516,7 +555,7 @@ const ActivatableDiagram = ({ current = null, edge = null }) => (
   </svg>
 );
 
-// Fig. 06 with the recorded clip driving it: the diagram follows the folder's real state.
+// The folder's state machine figure, with the recorded clip driving it: the diagram follows the folder's real state.
 const LiveActivatableFigure = () => {
   const [live, setLive] = useState({ state: "Inactive", edge: null });
   return (
@@ -553,9 +592,22 @@ const entities = [
       { name: "Representation", kind: "Helper node", does: "Not a behavior: added by the printer to link the ticket to its miniature elsewhere in the scene." },
     ],
   },
+  {
+    name: "Controllable Ticket",
+    gif: controllableTicketGif,
+    alt: "In the game's reception scene, a ticket is printed and a SelectAndControllableComponent is attached to it. A click selects it: arrows and a dashed outline appear around it. The arrow keys then move it right, up, left and down, with the arrow for each direction lighting up, and Escape deselects it so the keys stop moving it.",
+    summary: "The same ticket with one more behavior attached: click to select it, then move it with the arrow keys. Nothing about the ticket itself changed.",
+    footnote: "SelectAndControllable is a prototype for demo purposes. Ideally it would be two distinct behaviors: Selectable and Controllable.",
+    actions: ["Print", "Stop print animation"],
+    parts: [
+      { name: "Draggable", kind: "Behavior", reused: true, does: "Same as the Ticket's, sharing left-click with selection." },
+      { name: "SelectAndControllable", kind: "Behavior", fresh: true, does: "Click to select, arrow keys to move, Escape to let go." },
+      { name: "Representation", kind: "Helper node", does: "Same as the Ticket's." },
+    ],
+  },
 ];
 
-const EntityShowcase = ({ name, gif, alt, summary, actions, parts }) => (
+const EntityShowcase = ({ name, gif, alt, summary, actions, parts, footnote }) => (
   <div className="cs-entity">
     <figure className="cs-gif">
       <img src={gif} alt={alt} loading="lazy" />
@@ -580,11 +632,13 @@ const EntityShowcase = ({ name, gif, alt, summary, actions, parts }) => (
             <span className="cs-kinds">
               <span className="cs-kind typeset-card-toner">{part.kind}</span>
               {part.reused && <span className="cs-kind cs-kind-reused typeset-card-toner">Reused</span>}
+              {part.fresh && <span className="cs-kind cs-kind-reused typeset-card-toner">New</span>}
             </span>
             <span className="cs-does">{part.does}</span>
           </li>
         ))}
       </ul>
+      {footnote && <p className="cs-entity-footnote typeset-card-toner">* {footnote}</p>}
     </div>
   </div>
 );
@@ -611,7 +665,7 @@ export const ThresholdCaseStudy = () => {
   <article className="case-study typeset-card-readable">
     <header className="cs-prose">
       <p className="cs-eyebrow typeset-card-toner">Case study · Game systems · Godot / C#</p>
-      <h1 className="typeset-title">How things on the desk respond to you</h1>
+      <h1 className="typeset-title">Composing Behaviors: Input and State</h1>
       <p>A "Papers Please"-style game.</p>
       <p>
         Every item on its desk (folders, papers, buttons, tools) is an <b>entity</b> with small <b>behaviors</b>{" "}
@@ -624,92 +678,123 @@ export const ThresholdCaseStudy = () => {
 
     <section>
       <h2 className="typeset-card-title">The Input System</h2>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">The goal</p>
+        <p className="cs-callout-lead">Entities get their abilities by composing many possible behaviors.</p>
+      </div>
+      <HintCue />
+      <figure className="cs-figure"><GoalDiagram /><CompactGoal /></figure>
+      <div className="cs-solution">
+        <div className="cs-callout">
+          <p className="cs-callout-label typeset-card-toner">The solution</p>
+          <ol className="cs-callout-points">
+            <li>The entity doesn't know its behaviors, only the <b>actions</b> it can do.</li>
+            <li>It passes every input to a <b>BehaviorCoordinator</b>, which makes sure the right behaviors invoke those actions at the right time.</li>
+          </ol>
+        </div>
+        <div className="cs-callout cs-callout-technical">
+          <p className="cs-callout-label typeset-card-toner">Technically</p>
+          <ul className="cs-callout-tech">
+            <li><b>The entity is behavior-agnostic.</b> It forwards <code>_Process</code>, <code>_GuiInput</code> and <code>_Input</code> to its <code>BehaviorCoordinator</code> and never calls a behavior directly.</li>
+            <li><b>Behaviors register themselves.</b> Each behavior (a child node of the entity) calls the entity's <code>RegisterBehavior</code> in its own <code>_Ready</code>, which adds it to the entity's <code>BehaviorCoordinator</code>.</li>
+            <li><b>Dispatch goes through an interface.</b> The coordinator only sees <code>ICoordinatedBehavior</code>, and asks the <code>InputCoordinator</code> who may act (<code>IsBlocked</code>, <code>GetCapture</code>).</li>
+            <li><b>Actions are reached by signals.</b> Behaviors emit signals; the scene connects them to the entity's methods.</li>
+          </ul>
+        </div>
+      </div>
       <HintCue />
       <figure className="cs-figure"><OverviewDiagram /><CompactOverview /></figure>
-      <p className="cs-caption"><b>The Goal:</b> Simple Composable Behaviors for Entities.</p>
 
       <div className="cs-subsection">
-      <h3 className="typeset-card-title">Behaviors in action</h3>
+      <h3 className="typeset-card-title">The Results: Behaviors in action</h3>
       <p className="cs-prose">
         Two examples from the reception desk. Each is built from the same behaviors, so what they can do is decided
         by which child nodes they have, not by code written for that object.
       </p>
       <div className="cs-entities">
         <EntityShowcase {...entities[0]} />
-        {/* What happens inside the folder on that right-click, right after seeing it. */}
-        <div className="cs-inside">
-          <p className="cs-prose">
-            Inside that right-click: Activatable's state change takes a claim on the mouse, and that claim changes
-            what every <i>other</i> behavior receives. The two never call each other.
-          </p>
-          <HintCue />
-          <figure className="cs-figure"><SequenceDiagram /><CompactSequence /></figure>
-          <p className="cs-caption">
-            Shown in Blocking mode, the default: the folder holds the mouse while it animates. The folder in the GIF
-            uses Graceful mode instead, sharing the mouse so nothing is paused, and a second right-click mid-animation
-            reverses it.
-          </p>
-        </div>
         <EntityShowcase {...entities[1]} />
+        <EntityShowcase {...entities[2]} />
+        <p className="cs-entity-pointer">How do Draggable and Selectable share left-click? See <i>Extras</i> below.</p>
       </div>
-      </div>
-
-      <div className="cs-subsection">
-      <h3 className="typeset-card-title">Holding the mouse, three ways</h3>
-      <p className="cs-prose">
-        Claiming input isn't all-or-nothing. Each behavior says how it holds the mouse, and separately whether it
-        agrees to wait for others. That one split is what lets the same folder be clicked, dragged and opened
-        without any of the three knowing about the others.
-      </p>
-      <HintCue />
-      <figure className="cs-figure"><ModesDiagram /><CompactModes modes={modes} /></figure>
       </div>
 
       <div className="cs-subsection cs-prose cs-conclusions">
       <h3 className="typeset-card-title">Conclusions</h3>
-      <p>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">Conclusion</p>
+        <p className="cs-callout-body">
         Game engines already provide many tools for input handling. They're great for rapid development, and can
         even be used as-is throughout a whole game. But I find that there is more room for creativity when we get to
         define how things are built at a foundational level.
-      </p>
+        </p>
+      </div>
       <blockquote>"Good foundations make for good games."</blockquote>
       </div>
+
+      {/* Optional depth, closed by default so the main story reads cleanly. */}
+      <details className="cs-subsection cs-extras">
+      <summary>
+        <span className="cs-extras-kicker typeset-card-toner">Extras</span>
+        <h3 className="typeset-card-title" data-outline-label="Extras: Input Claims (Draggable vs Selectable on a left click)">Input Claims <span className="cs-extras-sub">(Draggable vs Selectable on a left click)</span></h3>
+        <span className="cs-extras-toggle typeset-card-toner" aria-hidden="true" />
+      </summary>
+      <p className="cs-prose">
+        Behaviors claim input from the InputCoordinator. A claim is made per input kind, like the mouse or the
+        keyboard, and each behavior declares whether it waits while another behavior holds that input. A claim can
+        be held in three ways:
+      </p>
+      <HintCue />
+      <figure className="cs-figure"><ModesDiagram /><CompactModes modes={modes} /></figure>
+
+      <div className="cs-callout cs-callout-question">
+        <p className="cs-callout-body">
+          So on a left-click, Draggable takes an <code>InputClaim.Capture</code> on the mouse for the drag. Selectable
+          only claims the keyboard and doesn't wait on mouse claims, so the drag's capture doesn't hide the click from
+          it. The InputCoordinator delivers the one click to both, and a test checks it: one left-click starts a drag
+          <i> and</i> selects.
+        </p>
+      </div>
+      </details>
     </section>
 
     <section>
       <h2 className="typeset-card-title">The Finite State Machine</h2>
-      <div className="cs-prose">
-        <p>
-          The input system decides <i>who</i> gets an input. Each behavior's finite state machine decides what that
-          input <i>means right now</i>.
-        </p>
-        <p>
-          A right-click means "open" to a closed folder and "close" to an open one. The state machine is what
-          remembers which one the folder is.
-        </p>
-      </div>
+      <p className="cs-prose">
+        The input system decides <i>who</i> gets an input. Each behavior's finite state machine decides what that
+        input <i>means right now</i>.
+      </p>
+      <p className="cs-prose">
+        A right-click means "open" to a closed folder and "close" to an open one. The state machine is what
+        remembers which one the folder is.
+      </p>
 
       <div className="cs-subsection">
-      <h3 className="typeset-card-title">One state at a time</h3>
-      <p className="cs-prose">
-        A behavior builds its machine once, when it's added to an entity, out of named states. From then on, only
-        the current state hears anything: every frame and every click goes to it alone.
-      </p>
+      <h3 className="typeset-card-title">A behavior must own its state</h3>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">The rule</p>
+        <p className="cs-callout-body">
+        When a behavior is added to an entity, it builds <i>all</i> of its states at once. None are created later:
+        changing state only changes which one is current, and only the current one hears the input.
+        </p>
+      </div>
       <HintCue />
       <figure className="cs-figure"><MachineDiagram /><CompactMachine states={fsmStates} /></figure>
       <p className="cs-caption">
-        Within one behavior, the input never changes; only the current state does. The same right-click closes an
-        open folder and opens a closed one, and the idle states never even hear it. Other behaviors may listen for
-        different input altogether, each with its own machine.
+        The same right-click closes an open folder and opens a closed one. The other states are already there;
+        they just don't hear it.
       </p>
       </div>
 
       <div className="cs-subsection">
       <h3 className="typeset-card-title">Changing state</h3>
-      <p className="cs-prose">
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">The rule</p>
+        <p className="cs-callout-body">
         A change always runs in the same order: the old state leaves completely before the new one arrives. The new
         state is told which state came before it.
-      </p>
+        </p>
+      </div>
       <HintCue />
       <figure className="cs-figure"><ChangeDiagram /><CompactChange callbacks={callbacks} /></figure>
       <p className="cs-caption">
@@ -738,15 +823,18 @@ export const ThresholdCaseStudy = () => {
 
       <div className="cs-subsection cs-prose cs-conclusions">
       <h3 className="typeset-card-title">Conclusions</h3>
-      <p>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">Conclusion</p>
+        <p className="cs-callout-body">
         A state machine turns "what has happened so far?" into a single answer: the current state. Each state stays
         a few lines long because it never has to think about other behaviors; deciding who gets the input is the
         input system's job.
-      </p>
-      <p>
+        </p>
+        <p className="cs-callout-body">
         And when a behavior doesn't need states at all, it doesn't have to have them. Draggable has no state
         machine, and it plugs into the same input system as everything else.
-      </p>
+        </p>
+      </div>
       </div>
     </section>
 

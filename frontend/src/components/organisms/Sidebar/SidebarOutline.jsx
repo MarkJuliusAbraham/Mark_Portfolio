@@ -12,7 +12,11 @@ export const SidebarOutline = ({ outline, activeId, onChoose }) => {
   const go = (event, id) => {
     event.preventDefault();
     onChoose?.();
-    scrollToElement(document.getElementById(id));
+    const target = document.getElementById(id);
+    // A heading inside a folded-away section opens it first, so there's something to scroll to.
+    const folded = target?.closest("details:not([open])");
+    if (folded) folded.open = true;
+    scrollToElement(target);
   };
 
   return (

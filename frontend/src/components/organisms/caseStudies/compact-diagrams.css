@@ -26,9 +26,13 @@
 .cs-compact-group > h4 { font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
 .cs-compact-group > p { margin-bottom: 0.875rem !important; }
 .cs-compact-group-shaded { background: color-mix(in srgb, var(--cs-ink) 12%, var(--nier-field)); }
-.cs-compact-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.375rem; margin-block: 1rem; }
+.cs-compact-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.375rem; margin-block: 1rem; }
 .cs-compact-chips > span { padding: 0.4rem 0.2rem; background: var(--card); color: var(--cs-ink); text-align: center; font-size: 0.75rem; line-height: 1.4; }
-.cs-compact-chips > span:first-child { background: color-mix(in srgb, var(--cs-accent) 22%, var(--card)); }
+.cs-compact-chips > span[data-role="owner"] { background: color-mix(in srgb, var(--cs-accent) 22%, var(--card)); }
+.cs-compact-chips > span[data-role="waits"] { background: repeating-linear-gradient(45deg, var(--card) 0 5px, color-mix(in srgb, var(--cs-ink) 10%, var(--card)) 5px 7px); }
+.cs-compact-chips strong { display: block; font-size: 0.8125rem; }
+.cs-compact-chips small { display: block; font-size: 0.75rem; opacity: 0.85; }
+.cs-compact-chips > span[data-role="owner"] small { color: var(--cs-accent); font-weight: 700; opacity: 1; }
 .cs-compact-use { padding-top: 0.75rem; border-top: 1px solid currentColor; }
 .cs-compact-use > strong, .cs-compact-use > span { display: block; }
 .cs-compact-explanation { color: var(--foreground); }
@@ -44,3 +48,14 @@
     .cs-cue-pointer { display: none; }
     .cs-cue-compact { display: inline; }
 }
+
+/* Text inside a mobile component always takes the component's own ink, never the page's or the
+   figure's: code chips and bold words in expanded definitions included. */
+.case-study .cs-compact-node code {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    color: inherit;
+    border-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+.case-study .cs-compact-node b,
+.case-study .cs-compact-node strong,
+.case-study .cs-compact-node i { color: inherit; }
