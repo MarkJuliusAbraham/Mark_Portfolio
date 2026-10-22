@@ -11,6 +11,7 @@ import loversVideo from "@/previews/StarCrossedLovers.mp4";
 import loversPoster from "@/previews/StarCrossedLovers.jpg";
 import chaseVideo from "@/previews/MitsuhaChaseMeteor.mp4";
 import chasePoster from "@/previews/MitsuhaChaseMeteor.jpg";
+import receptionPreview from "@/gifs/threshold-preview.gif";
 import { prefersReducedMotion } from "@/lib/scroll.js";
 
 // Placeholder previews until each project has its own: short looping videos (far smaller than the
@@ -23,6 +24,12 @@ const previews = [
   { video: loversVideo, poster: loversPoster },
   { video: chaseVideo, poster: chasePoster },
 ];
+
+// Projects that have their own preview: a GIF recorded from the project itself.
+const ownPreviews = {
+  // Bob collects her papers at the reception window and leaves.
+  "project-2": { gif: receptionPreview, alt: "" },
+};
 
 // The same stand-in for a project every time, so it matches between the carousel and the grid.
 const standIn = (id) => previews[[...id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % previews.length];
@@ -79,8 +86,9 @@ const LazyVideo = ({ preview, className }) => {
  * A project's preview inside a figure frame: its video, or for a placeholder project an empty
  * field marked "TBD".
  */
-export const ProjectPreview = ({ id, placeholder, className }) => (placeholder ? (
-  <span className={`${className} project-preview-empty`} aria-hidden="true">TBD</span>
-) : (
-  <LazyVideo preview={standIn(id)} className={className} />
-));
+export const ProjectPreview = ({ id, placeholder, className }) => {
+  if (placeholder) return <span className={`${className} project-preview-empty`} aria-hidden="true">TBD</span>;
+  const own = ownPreviews[id];
+  if (own) return <img className={className} src={own.gif} alt={own.alt} loading="lazy" decoding="async" aria-hidden="true" />;
+  return <LazyVideo preview={standIn(id)} className={className} />;
+};
