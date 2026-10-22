@@ -585,3 +585,91 @@
         --lock-reach: 0px;
     }
 }
+
+/* "On this page": the open project's sections in the navbar's spare space, subsections indented.
+   Quieter than the main navigation; the section being read is marked with a bar on its left. */
+.sidebar-outline {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.sidebar-outline-title {
+    padding-inline: 12px;
+    color: var(--sidebar-foreground);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.sidebar-outline-list,
+.sidebar-outline-sublist {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-outline-sublist {
+    margin-block: 2px 4px;
+    margin-inline-start: 12px;
+    border-inline-start: 1px solid color-mix(in srgb, var(--sidebar-border) 45%, transparent);
+}
+
+.sidebar-outline-link {
+    position: relative;
+    display: block;
+    padding: 6px 12px;
+    color: var(--sidebar-foreground);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.sidebar-outline-sublink {
+    padding-block: 4px;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.sidebar-outline-link:hover,
+.sidebar-outline-link:focus-visible {
+    opacity: 1;
+    background: color-mix(in srgb, var(--sidebar-foreground) 8%, transparent);
+    outline: none;
+}
+
+.sidebar-outline-link[data-within] {
+    opacity: 1;
+}
+
+.sidebar-outline-link[data-current] {
+    opacity: 1;
+    font-weight: 700;
+}
+
+.sidebar-outline-link[data-current]::before {
+    content: "";
+    position: absolute;
+    inset-block: 4px;
+    inset-inline-start: 0;
+    width: 3px;
+    background: var(--sidebar-foreground);
+}
+
+.sidebar-outline-sublist .sidebar-outline-link[data-current]::before {
+    inset-inline-start: -1px;
+}
+
+.sidebar-mobile-panel .sidebar-outline {
+    margin-top: 20px;
+}
+
+/* Outlined headings stop clear of the mobile header when jumped to. */
+[data-outline-target] {
+    scroll-margin-top: calc(var(--page-chrome-top) + 1.5rem);
+}

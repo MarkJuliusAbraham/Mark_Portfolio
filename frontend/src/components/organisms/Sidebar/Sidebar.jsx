@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { LayoutGroup } from "motion/react";
 import { SidebarHeader } from "./SidebarHeader.jsx";
@@ -6,6 +7,8 @@ import { SidebarFooter } from "./SidebarFooter.jsx";
 import { SidebarProfileActions } from "./SidebarProfileActions.jsx";
 import { SidebarItemButton } from "./SidebarItemButton.jsx";
 import { SidebarCursor } from "./SidebarCursor.jsx";
+import { SidebarOutline } from "./SidebarOutline.jsx";
+import { usePageOutline } from "./usePageOutline.js";
 import { LimbScopeLayer } from "@/components/organisms/ScreenLimb/LimbScopeLayer.jsx";
 import { useSidebarEntrance } from "./useSidebarEntrance.js";
 import { ThemeToggle } from "@/components/molecules/ThemeToggle/ThemeToggle.jsx";
@@ -22,6 +25,9 @@ export const Sidebar = ({ items, onNavigate, activeSection, scrolledSection = ac
   const { theme, toggleTheme } = useTheme();
   const { entrance, waiting } = useSidebarEntrance();
   const closeMenu = () => menuRef.current?.removeAttribute("open");
+  // On a project's page, its sections fill the space under the navigation.
+  const { pathname } = useLocation();
+  const { outline, activeId } = usePageOutline(pathname.startsWith("/projects/"), pathname);
 
   useEffect(() => {
     const dismissOutside = (event) => {
@@ -91,6 +97,7 @@ export const Sidebar = ({ items, onNavigate, activeSection, scrolledSection = ac
             </summary>
             <div className="sidebar-mobile-panel absolute inset-x-0 top-full max-h-[calc(100dvh-var(--mobile-header-height))] overflow-y-auto border-b bg-background px-6 py-6">
               {navigation("Mobile navigation")}
+              <SidebarOutline outline={outline} activeId={activeId} onChoose={closeMenu} />
               <SidebarProfileActions />
               <SidebarFooter />
             </div>
@@ -107,6 +114,7 @@ export const Sidebar = ({ items, onNavigate, activeSection, scrolledSection = ac
           <div className="sidebar-top">
             <SidebarHeader onClick={goHome} />
             {navigation("Desktop navigation")}
+            <SidebarOutline outline={outline} activeId={activeId} />
           </div>
           <div className="sidebar-bottom">
             <div {...enterSoft(0)}>

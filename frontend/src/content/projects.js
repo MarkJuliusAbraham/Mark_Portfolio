@@ -12,7 +12,7 @@ export const projects = [
   },
   {
     id: "project-2",
-    title: "\"Papers Please\" Game Prototype",
+    title: "\"Papers Please\"-Style Game: Systems Case Study",
     description: "A recreation of the game mechanics from the hit game \"Papers Please\" and more!",
     genre: "Game",
     techStack: ["C#", "Godot", "OOD", "Yarn", "PixelArt"],
