@@ -5,10 +5,10 @@ export const projects = [
     id: "project-1",
     featured: true,
     title: "Computer Vision",
-    description: "Using computer vision to make decisions based on hand movements or object classification.",
-    genre: "Computer vision",
-    techStack: ["Python", "OpenCV", "MediaPipe"],
-    year: null,
+    description: "A desktop application for mapping hand gestures to keyboard input, with editable profiles, live feedback, and tracking controls.",
+    genre: "Input simulation",
+    techStack: ["Python", "Tkinter", "OpenCV", "MediaPipe"],
+    year: 2026,
   },
   {
     id: "project-2",
@@ -16,7 +16,7 @@ export const projects = [
     description: "A recreation of the game mechanics from the hit game \"Papers Please\" and more!",
     genre: "Game",
     techStack: ["C#", "Godot", "OOD", "Yarn", "PixelArt"],
-    year: null,
+    year: 2026,
   },
   {
     id: "project-3",

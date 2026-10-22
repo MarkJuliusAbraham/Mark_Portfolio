@@ -692,15 +692,6 @@ export const ThresholdCaseStudy = () => {
             <li>It passes every input to a <b>BehaviorCoordinator</b>, which makes sure the right behaviors invoke those actions at the right time.</li>
           </ol>
         </div>
-        <div className="cs-callout cs-callout-technical">
-          <p className="cs-callout-label typeset-card-toner">Technically</p>
-          <ul className="cs-callout-tech">
-            <li><b>The entity is behavior-agnostic.</b> It forwards <code>_Process</code>, <code>_GuiInput</code> and <code>_Input</code> to its <code>BehaviorCoordinator</code> and never calls a behavior directly.</li>
-            <li><b>Behaviors register themselves.</b> Each behavior (a child node of the entity) calls the entity's <code>RegisterBehavior</code> in its own <code>_Ready</code>, which adds it to the entity's <code>BehaviorCoordinator</code>.</li>
-            <li><b>Dispatch goes through an interface.</b> The coordinator only sees <code>ICoordinatedBehavior</code>, and asks the <code>InputCoordinator</code> who may act (<code>IsBlocked</code>, <code>GetCapture</code>).</li>
-            <li><b>Actions are reached by signals.</b> Behaviors emit signals; the scene connects them to the entity's methods.</li>
-          </ul>
-        </div>
       </div>
       <HintCue />
       <figure className="cs-figure"><OverviewDiagram /><CompactOverview /></figure>

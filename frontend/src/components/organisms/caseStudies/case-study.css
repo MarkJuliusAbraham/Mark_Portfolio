@@ -368,14 +368,9 @@
 .cs-callout-points { display: grid; gap: 0.625rem; margin: 0; padding-left: 1.25em; font-size: 1.05rem; line-height: 1.55; color: var(--strong-foreground); }
 .cs-callout-points li::marker { color: var(--muted-foreground); font-weight: 700; }
 
-/* The solution: plain-language points beside a technical panel; stacks when narrow. */
-.cs-solution { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem; align-items: stretch; margin: 2rem 0 1.5rem; }
+/* The solution spans the figure's width. */
+.cs-solution { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; align-items: start; margin: 2rem 0 1.5rem; }
 .cs-solution > .cs-callout { max-width: none; margin: 0; }
-@media (max-width: 900px) { .cs-solution { grid-template-columns: 1fr; } }
-.cs-callout-technical { border-left-color: var(--muted-foreground); background: color-mix(in srgb, var(--strong-foreground) 3%, transparent); }
-.cs-callout-tech { display: grid; gap: 0.625rem; margin: 0; padding-left: 1.1em; list-style: square; font-size: 0.9rem; line-height: 1.55; }
-.cs-callout-tech li::marker { color: var(--muted-foreground); }
-.cs-callout-tech b { color: var(--strong-foreground); }
 
 /* Body text inside a callout; several paragraphs stack with a little space. */
 .cs-callout-body { margin: 0 !important; font-size: 1.05rem; line-height: 1.6 !important; color: var(--strong-foreground); }
@@ -468,3 +463,15 @@
 .cs-extras-lead { margin-bottom: 0.75rem !important; color: var(--muted-foreground) !important; }
 /* Inline code inside the inverted Extras panel uses the panel's colours. */
 .cs-extras code { background: color-mix(in srgb, var(--strong-foreground) 10%, transparent); color: var(--strong-foreground); border-color: var(--border); }
+
+/* Placeholder for a GIF or figure that hasn't been made yet: a flat green block with a label. */
+.cs-placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    margin: 0.5rem 0 1rem;
+    background: var(--nier-straight-fill);
+    border: 1px solid color-mix(in srgb, var(--nier-straight-text) 50%, transparent);
+}
+.cs-placeholder figcaption { padding: 0.75rem 1rem; color: var(--nier-straight-text); text-transform: uppercase; text-align: center; }
+.dark .cs-placeholder figcaption { color: var(--nier-dark-field); }

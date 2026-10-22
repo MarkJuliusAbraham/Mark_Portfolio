@@ -12,6 +12,8 @@ import loversPoster from "@/previews/StarCrossedLovers.jpg";
 import chaseVideo from "@/previews/MitsuhaChaseMeteor.mp4";
 import chasePoster from "@/previews/MitsuhaChaseMeteor.jpg";
 import receptionPreview from "@/gifs/threshold-preview.gif";
+import gestureVideo from "@/previews/GestureCapture.mp4";
+import gesturePoster from "@/previews/GestureCapture.jpg";
 import { prefersReducedMotion } from "@/lib/scroll.js";
 
 // Placeholder previews until each project has its own: short looping videos (far smaller than the
@@ -25,8 +27,11 @@ const previews = [
   { video: chaseVideo, poster: chasePoster },
 ];
 
-// Projects that have their own preview: a GIF recorded from the project itself.
+// Projects that have their own preview, recorded from the project itself: a GIF, or a video with its
+// first frame as a still (for footage too rich in colour to be a reasonable GIF).
 const ownPreviews = {
+  // Hand gestures on the webcam casting Invoker's spells in Dota 2.
+  "project-1": { video: gestureVideo, poster: gesturePoster },
   // Bob collects her papers at the reception window and leaves.
   "project-2": { gif: receptionPreview, alt: "" },
 };
@@ -89,6 +94,7 @@ const LazyVideo = ({ preview, className }) => {
 export const ProjectPreview = ({ id, placeholder, className }) => {
   if (placeholder) return <span className={`${className} project-preview-empty`} aria-hidden="true">TBD</span>;
   const own = ownPreviews[id];
-  if (own) return <img className={className} src={own.gif} alt={own.alt} loading="lazy" decoding="async" aria-hidden="true" />;
+  if (own?.gif) return <img className={className} src={own.gif} alt={own.alt} loading="lazy" decoding="async" aria-hidden="true" />;
+  if (own?.video) return <LazyVideo preview={own} className={className} />;
   return <LazyVideo preview={standIn(id)} className={className} />;
 };

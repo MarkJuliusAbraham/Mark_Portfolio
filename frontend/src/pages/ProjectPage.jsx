@@ -6,9 +6,10 @@ import {WebGpuCanvas} from "@/components/organisms/WebGpuCanvas.jsx";
 import projectPreview from "@/previews/MitsuhaRun.mp4";
 import projectPoster from "@/previews/MitsuhaRun.jpg";
 import { ThresholdCaseStudy } from "@/components/organisms/caseStudies/ThresholdCaseStudy.jsx";
+import { ComputerVisionProject } from "@/components/organisms/caseStudies/ComputerVisionProject.jsx";
 
-// Projects with a written case study show it in place of the placeholder preview.
-const caseStudies = { "project-2": ThresholdCaseStudy };
+// Projects with a dedicated page show it in place of the placeholder preview.
+const projectPages = { "project-1": ComputerVisionProject, "project-2": ThresholdCaseStudy };
 
 export const ProjectPage = () => {
 
@@ -18,8 +19,8 @@ export const ProjectPage = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [projectId]);
 
-  const CaseStudy = caseStudies[projectId];
-  if (CaseStudy) return <ScrollingContent><CaseStudy /></ScrollingContent>;
+  const ProjectContent = projectPages[projectId];
+  if (ProjectContent) return <ScrollingContent><ProjectContent /></ScrollingContent>;
 
   return (
     <ScrollingContent>
