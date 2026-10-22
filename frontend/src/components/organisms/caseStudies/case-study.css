@@ -1,0 +1,356 @@
+/* Case study pages: a reading column, with figures that break out wider in their own scroll box.
+   Figures are monochrome schematics in the theme's ink; the alert colour is kept for input claims. */
+.case-study {
+    container: case-study / inline-size;
+    --cs-ink: var(--strong-foreground);
+    --cs-accent: var(--nier-alert);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    gap: 3.5rem;
+    max-width: 80rem;
+    width: 100%;
+    margin-inline: auto;
+    color: var(--foreground);
+}
+
+.case-study h1 { margin-block: 0.5rem 1.25rem; }
+.case-study h2 { margin-bottom: 1rem; }
+.cs-subsection { margin-top: 3.5rem; }
+.cs-subsection > h3 { margin-bottom: 1rem; }
+.case-study p { margin-bottom: 0.875rem; line-height: 1.65; }
+.case-study b { color: var(--strong-foreground); font-weight: 600; }
+
+.cs-prose { max-width: 66ch; }
+
+.cs-eyebrow {
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+}
+
+.case-study code {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.85em;
+    background: var(--nier-field);
+    border: 1px solid var(--border);
+    padding: 0 0.3em;
+}
+
+/* Diagrams */
+.cs-figure {
+    container: case-figure / inline-size;
+    position: relative;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    padding: 1.25rem;
+    background: var(--nier-field);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    color: var(--muted-foreground);
+    /* Secondary diagram text: well above the page's muted tone, still a step below the main labels. */
+    --cs-soft: color-mix(in srgb, var(--foreground) 82%, var(--nier-field));
+}
+
+.cs-figure::before,
+.cs-figure::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.cs-figure::before { background: var(--frame-corner-start); }
+.cs-figure::after { background: var(--frame-corner-end); }
+
+.cs-figure svg { display: block; min-width: 0; width: 100%; height: auto; }
+.cs-figure text { font-family: var(--nier-font-family); fill: var(--foreground); }
+
+.cs-fig-label { font-size: 12px; letter-spacing: 0.12em; fill: var(--cs-soft) !important; }
+.cs-fig-number { font-weight: 700; fill: var(--cs-ink); }
+.cs-name { font-size: 15px; font-weight: 700; fill: var(--cs-ink) !important; }
+.cs-note { font-size: 12.5px; letter-spacing: 0.03em; fill: var(--cs-soft) !important; }
+.cs-state-line { font-size: 13.5px; letter-spacing: 0.02em; fill: var(--foreground); }
+.cs-accent-text { fill: var(--cs-accent) !important; }
+
+.cs-node { fill: var(--card); stroke: var(--cs-ink); stroke-width: 1.5; }
+.cs-node-accent { stroke: var(--cs-accent); stroke-width: 1.5; }
+.cs-fill-ink { fill: var(--cs-ink); }
+.cs-fill-accent { fill: var(--cs-accent); }
+
+.cs-wire { stroke: var(--cs-ink); stroke-width: 1; }
+.cs-wire-accent { stroke: var(--cs-accent); stroke-width: 1.5; }
+.cs-band { stroke: var(--border); }
+.cs-frame { fill: none; stroke: var(--cs-ink); stroke-width: 1; }
+.cs-frame-shaded { fill: color-mix(in srgb, var(--cs-ink) 12%, var(--nier-field)); }
+.cs-shaded-frame .cs-note,
+.cs-shaded-frame .cs-plus { fill: var(--cs-ink) !important; }
+.cs-hatch-line-accent { stroke: var(--cs-accent); stroke-width: 1; opacity: 0.6; }
+.cs-blocked { stroke: var(--cs-accent); stroke-width: 1; }
+.cs-seam { stroke: var(--cs-soft); stroke-width: 1.25; }
+.cs-seam-label-bg { fill: var(--card); }
+.cs-lifeline { stroke: var(--cs-soft); stroke-width: 1; stroke-dasharray: 2 4; }
+
+.cs-caption {
+    margin-top: 0.75rem;
+    max-width: 70ch;
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+}
+
+
+/* Figure boxes show a hint: they lift to the accent on hover and focus. */
+.cs-term { cursor: pointer; outline: none; }
+.cs-term .cs-node,
+.cs-term .cs-seam-label-bg { transition: fill 120ms, stroke 120ms; }
+.cs-term:hover .cs-node,
+.cs-term:focus-visible .cs-node { fill: var(--nier-hover); stroke: var(--cs-accent); stroke-width: 1.5; }
+.cs-term:focus-visible .cs-node { stroke-width: 2.5; }
+.cs-term:hover .cs-name,
+.cs-term:focus-visible .cs-name,
+.cs-term:hover .cs-term-label,
+.cs-term:focus-visible .cs-term-label { fill: var(--cs-accent) !important; text-decoration: underline; }
+.cs-hit { fill: transparent; }
+.cs-term-label { text-decoration: underline dotted; }
+
+.cs-plus { font-size: 13px; font-weight: 700; fill: var(--muted-foreground) !important; }
+.cs-term:hover .cs-plus,
+.cs-term:focus-visible .cs-plus { fill: var(--cs-accent) !important; }
+
+/* The cue above each figure. */
+.cs-cue {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem !important;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+}
+.cs-cue-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 1px solid var(--cs-accent);
+    color: var(--cs-accent);
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* The hint card: the site's inverse panel, with the corner triangle and an accent rule. */
+.cs-hint {
+    --cs-accent: var(--nier-alert);
+    position: fixed;
+    z-index: 70;
+    padding: 0.75rem 0.875rem;
+    background: var(--card-inverse);
+    color: var(--card-inverse-foreground);
+    border-left: 3px solid var(--cs-accent);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+    font-size: 14px !important;
+    pointer-events: none;
+    animation: cs-hint-in 120ms ease-out;
+}
+.cs-hint::before { content: ""; position: absolute; inset: 0; background: var(--frame-corner-start); color: var(--card-inverse-foreground); }
+.cs-hint p { margin: 0; }
+.cs-hint-term { margin-bottom: 0.375rem !important; text-transform: uppercase; font-weight: 600; color: var(--card-inverse-strong); }
+.cs-hint-list { display: grid; gap: 0.3rem; margin: 0.4rem 0 0; padding-left: 1.1em; list-style: square; }
+.cs-hint code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85em; }
+@keyframes cs-hint-in { from { opacity: 0; transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .cs-hint { animation: none; } }
+
+/* Fig. 03 behavior chips and Fig. 04 gesture bars */
+.cs-chip { stroke-width: 1; }
+.cs-chip-owner { fill: color-mix(in srgb, var(--cs-accent) 22%, var(--card)); stroke: var(--cs-accent); }
+.cs-chip-waits { fill: var(--card); stroke: var(--border); }
+.cs-hatch-line { stroke: var(--cs-soft); stroke-width: 1; opacity: 0.18; }
+.cs-chip-free { fill: var(--card); stroke: var(--cs-ink); }
+.cs-bar-shared { fill: none; stroke: var(--cs-accent); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.cs-bar-held { fill: color-mix(in srgb, var(--cs-accent) 22%, var(--card)); stroke: var(--cs-accent); stroke-width: 1.5; }
+
+/* Fig. 01: "child node" tags and the scene-tree inset */
+.cs-tag { font-size: 11px; letter-spacing: 0.1em; fill: var(--cs-soft) !important; }
+.cs-tree-line { stroke: var(--muted-foreground); stroke-width: 1; }
+
+/* Entities in the game: a recorded GIF beside each entity's composition. */
+.cs-entities { display: grid; gap: 2.5rem; margin-top: 1.25rem; }
+.cs-entity {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+}
+.cs-entity > *, .cs-entities, .cs-inside, .cs-figure-live > * { min-width: 0; }
+@media (max-width: 900px) { .cs-entity { grid-template-columns: 1fr; } }
+.cs-gif { position: relative; margin: 0; border: 1px solid var(--border); background: var(--card); }
+.cs-gif::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--frame-corner-start); color: var(--strong-foreground); z-index: 1; }
+.cs-gif img { display: block; width: 100%; height: auto; }
+.cs-gif figcaption { padding: 0.5rem 0.75rem; color: var(--muted-foreground); text-transform: uppercase; border-top: 1px solid var(--border); }
+.cs-composition h4 { margin-bottom: 0.5rem; }
+.cs-composition .cs-eyebrow { margin: 1.25rem 0 0.5rem !important; }
+.cs-parts { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--muted-foreground); }
+.cs-part {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.625rem;
+    row-gap: 0.125rem;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+}
+.cs-part::before { content: ""; position: absolute; left: 0; top: 1.05rem; width: 0.875rem; border-top: 1px solid var(--muted-foreground); }
+.cs-part-root { padding-left: 0.75rem; }
+.cs-part-root::before { display: none; }
+.cs-part b { color: var(--strong-foreground); }
+.cs-kind { align-self: center; justify-self: start; padding: 0.15rem 0.4rem; border: 1px solid var(--border); color: var(--muted-foreground); text-transform: uppercase; font-size: 11px !important; }
+.cs-part:not(.cs-part-helper):not(.cs-part-root) .cs-kind { border-color: var(--cs-accent); color: var(--cs-accent); }
+.cs-does { grid-column: 1 / -1; color: var(--muted-foreground); font-size: 0.925rem; }
+.cs-action { color: var(--strong-foreground); font-weight: 600; }
+.cs-inside { padding-top: 0.5rem; }
+.cs-kinds { display: flex; gap: 0.375rem; align-items: center; }
+.cs-kind-reused { background: color-mix(in srgb, var(--cs-accent) 22%, transparent); border-color: var(--cs-accent) !important; color: var(--strong-foreground) !important; }
+
+/* Conclusions */
+.cs-conclusions h4 { margin: 1.5rem 0 0.625rem; text-transform: uppercase; font-weight: 600; color: var(--strong-foreground); }
+.cs-conclusions ul { display: grid; gap: 0.75rem; padding-left: 1.2em; list-style: square; }
+.cs-conclusions li::marker { color: var(--muted-foreground); }
+.cs-conclusions blockquote { margin: 1.75rem 0 0; padding-left: 0.875rem; border-left: 3px solid var(--cs-accent); color: var(--muted-foreground); font-style: italic; }
+.cs-used-by { font-weight: 700; fill: var(--strong-foreground); }
+
+/* Inactive states retain readable labels; their dashed outline provides the distinction. */
+.cs-dim .cs-node { stroke: var(--cs-soft); stroke-dasharray: 4 3; }
+.cs-hookbox .cs-node { stroke-dasharray: 4 3; }
+.cs-group { fill: none; stroke: var(--muted-foreground); stroke-width: 1; stroke-dasharray: 4 3; }
+.cs-pill { fill: var(--card); stroke: var(--muted-foreground); stroke-width: 1; stroke-dasharray: 4 3; }
+.cs-term:hover .cs-pill, .cs-term:focus-visible .cs-pill { stroke: var(--cs-accent); fill: var(--nier-hover); }
+.cs-callback-dot { fill: var(--card); stroke: var(--cs-ink); stroke-width: 1.5; }
+
+/* Fig. 06 live: the recorded clip above the diagram, which follows its state. */
+.cs-figure-live { display: grid; gap: 1rem; justify-items: center; }
+.cs-figure-live svg { justify-self: stretch; }
+.cs-clip { display: grid; gap: 0.5rem; width: min(100%, 560px); }
+.cs-clip-frame { position: relative; border: 1px solid var(--border); background: var(--background); }
+.cs-clip-frame canvas { display: block; width: 100%; height: auto; }
+.cs-clip-toggle {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.cs-clip-toggle:hover, .cs-clip-toggle:focus-visible { border-color: var(--cs-accent); color: var(--cs-accent); }
+.cs-clip-caption { min-height: 2.6em; margin: 0 !important; color: var(--foreground); text-align: center; line-height: 1.3 !important; }
+.cs-edge-live { stroke: var(--cs-accent); stroke-width: 3; }
+
+/* Diagram colours, from the theme. Red (the alert tone): the input system. Green (the sage
+   "straight" tone): behaviors and the state machine. Everything else stays in the ink.
+   Figures sit on the opposite theme (below), so each colour takes the version made for that ground. */
+.case-study {
+    --bh-red: #e6a389;      /* dark theme's alert, on the light theme's dark figures */
+    --bh-green: #b2b89d;    /* dark theme's straight */
+}
+
+.dark .case-study {
+    --bh-red: #8f3f2c;      /* light theme's alert, on the dark theme's light figures */
+    --bh-green: #495541;    /* light theme's straight */
+}
+
+.case-study {
+    --bh-blue: var(--bh-green);
+    --bh-yellow: var(--cs-ink);
+}
+
+/* Figures use the opposite theme's colours: dark on the light theme, light on the dark theme. */
+.cs-figure {
+    --foreground: var(--nier-dark-foreground);
+    --cs-component-surface: var(--nier-light-panel);
+    --cs-component-ink: var(--nier-light-strong);
+    --cs-component-hover: var(--nier-light-hover);
+    --cs-component-red: #8f3f2c;
+    --cs-component-green: #495541;
+    --strong-foreground: var(--nier-dark-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+    --card: var(--nier-dark-panel);
+    --background: var(--nier-dark-surface);
+    --border: var(--nier-dark-border);
+    --nier-field: var(--nier-dark-field);
+    --nier-hover: var(--nier-dark-hover);
+    --cs-ink: var(--nier-dark-strong);
+    --cs-accent: var(--bh-red);
+}
+
+.dark .cs-figure {
+    --foreground: var(--nier-light-foreground);
+    --cs-component-surface: var(--nier-dark-panel);
+    --cs-component-ink: var(--nier-dark-strong);
+    --cs-component-hover: var(--nier-dark-hover);
+    --cs-component-red: #e6a389;
+    --cs-component-green: #b2b89d;
+    --strong-foreground: var(--nier-light-strong);
+    --muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+    --card: var(--nier-light-panel);
+    --background: var(--nier-light-surface);
+    --border: var(--nier-light-border);
+    --nier-field: var(--nier-light-field);
+    --nier-hover: var(--nier-light-hover);
+    --cs-ink: var(--nier-light-strong);
+}
+
+.cs-figure { color: var(--foreground); }
+.cs-figure::before, .cs-figure::after { color: var(--strong-foreground); }
+
+/* Emphasised boxes: a light tint of their colour with a coloured outline and name. */
+.cs-solid-red .cs-node { fill: color-mix(in srgb, var(--bh-red) 18%, var(--card)); stroke: var(--bh-red); stroke-width: 2; }
+.cs-solid-red .cs-name { fill: var(--bh-red) !important; }
+.cs-solid-red path { fill: var(--bh-red); }
+.cs-solid-blue .cs-node { fill: color-mix(in srgb, var(--bh-green) 22%, var(--card)); stroke: var(--bh-green); stroke-width: 2; }
+.cs-solid-blue .cs-name { fill: var(--bh-green) !important; }
+.cs-solid-blue path { fill: var(--bh-green); }
+.cs-solid-yellow .cs-node { stroke: var(--cs-ink); stroke-width: 2; }
+.cs-tone-green .cs-node { stroke: var(--bh-green); stroke-width: 2; }
+.cs-tone-green .cs-name { fill: var(--bh-green) !important; }
+.cs-tone-green path { fill: var(--bh-green); }
+
+.cs-fill-yellow { fill: var(--cs-ink); }
+.cs-fill-blue { fill: var(--bh-green); }
+.cs-wire-yellow { stroke: var(--cs-ink); stroke-width: 1; }
+.cs-wire-blue { stroke: var(--bh-green); stroke-width: 2; }
+.cs-yellow-text { fill: var(--foreground) !important; }
+.cs-blue-text { fill: var(--bh-green) !important; }
+
+/* The state machine in green: the ActivatableState group, the live state and the arrow just taken. */
+.cs-group { stroke: var(--bh-green); stroke-width: 1.5; }
+.cs-live .cs-node { fill: color-mix(in srgb, var(--bh-green) 22%, var(--card)); stroke: var(--bh-green); stroke-width: 2.5; }
+.cs-live .cs-name { fill: var(--bh-green) !important; }
+.cs-live path { fill: var(--bh-green); }
+.cs-edge-live { stroke: var(--bh-green); stroke-width: 3; }
+
+/* Behavior tags in the composition panels are green (page colours, not the figure's). */
+.cs-part:not(.cs-part-helper):not(.cs-part-root) .cs-kind:not(.cs-kind-reused) { border-color: var(--nier-straight-text); color: var(--nier-straight-text); }
+
+/* Components contrast with the canvas. Frames and connectors retain the canvas palette. */
+.cs-component .cs-node { fill: var(--cs-component-fill, var(--cs-component-surface)); }
+.cs-component .cs-name,
+.cs-component .cs-state-line,
+.cs-component .cs-used-by,
+.cs-on-yellow { fill: var(--cs-component-ink) !important; }
+.cs-component .cs-note,
+.cs-component .cs-tag,
+.cs-component .cs-plus {
+    fill: color-mix(in srgb, var(--cs-component-ink) 85%, var(--cs-component-surface)) !important;
+}
+.cs-component path { fill: var(--cs-component-ink); }
+.cs-solid-red { --cs-component-fill: color-mix(in srgb, var(--cs-component-red) 18%, var(--cs-component-surface)); }
+.cs-solid-blue,
+.cs-live { --cs-component-fill: color-mix(in srgb, var(--cs-component-green) 22%, var(--cs-component-surface)); }
+.cs-tone-green .cs-component .cs-name { fill: var(--cs-component-green) !important; }
+.cs-component .cs-term:is(:hover, :focus-visible) .cs-node { fill: var(--cs-component-hover); }
+.cs-component .cs-term:is(:hover, :focus-visible) .cs-name { fill: var(--cs-component-ink) !important; }
+.cs-component .cs-lifeline { stroke: var(--cs-component-ink); }
+/* Chips are canvas-toned surfaces inside a component, with their own contrasting labels. */
+.cs-chip-surface .cs-chip-label { fill: var(--cs-ink) !important; }
