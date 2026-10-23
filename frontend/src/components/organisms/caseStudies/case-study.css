@@ -493,32 +493,35 @@
 /* Separator between the opening and the write-up: a thin rule with end ticks and a centre marker. */
 .cs-separator {
     position: relative;
-    height: 12px;
+    height: 16px;
     margin-block: -1rem;
-    color: var(--border);
+    color: color-mix(in srgb, var(--strong-foreground) 55%, transparent);
 }
 .cs-separator::before {
     content: "";
     position: absolute;
     inset: 50% 0 auto;
-    border-top: 1px solid currentColor;
+    border-top: 2px solid currentColor;
+    transform: translateY(-1px);
 }
 .cs-separator::after {
     content: "";
     position: absolute;
     inset: 0;
-    border-inline: 1px solid currentColor;
+    border-inline: 2px solid currentColor;
 }
 .cs-separator > span {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--strong-foreground);
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--strong-foreground);
     background: var(--background);
     transform: translate(-50%, -50%) rotate(45deg);
 }
+/* Between sections: room on both sides, the next section's heading close below. */
+.cs-separator-section { margin-block: 5rem 2.5rem; }
 
 /* Simplify: a reading mode for non-technical visitors that hides the technical parts. */
 .cs-simplify {
@@ -793,3 +796,32 @@
 }
 .cs-detail-adjust[data-adjustable] { color: var(--strong-foreground); }
 .cs-detail-adjust[data-adjustable] b { color: var(--strong-foreground); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Heading scale: each level visibly smaller than the one above it. Sections open with a rule and
+   more space; subsections and cards step down from there. */
+.case-study section > h2.typeset-card-title {
+  --typeset-size: clamp(1.875rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+}
+.case-study h3.typeset-card-title { --typeset-size: clamp(1.3rem, 1.9vw, 1.55rem); }
+.case-study h4.typeset-card-title { --typeset-size: clamp(1.1rem, 1.4vw, 1.25rem); }
+.cs-extras > summary > h3.typeset-card-title { --typeset-size: clamp(1.3rem, 1.9vw, 1.55rem); }
+
+/* Design details cards on the opposite theme to the page, like the Extras panels. */
+.cs-detail {
+  --foreground: var(--nier-dark-foreground);
+  --strong-foreground: var(--nier-dark-strong);
+  --muted-foreground: color-mix(in srgb, var(--nier-dark-muted) 70%, var(--nier-dark-foreground));
+  --border: var(--nier-dark-border);
+  background: var(--nier-dark-panel);
+  color: var(--foreground);
+  border-color: var(--border);
+  border-top-color: var(--strong-foreground);
+}
+.dark .cs-detail {
+  --foreground: var(--nier-light-foreground);
+  --strong-foreground: var(--nier-light-strong);
+  --muted-foreground: color-mix(in srgb, var(--nier-light-muted) 70%, var(--nier-light-foreground));
+  --border: var(--nier-light-border);
+  background: var(--nier-light-panel);
+}

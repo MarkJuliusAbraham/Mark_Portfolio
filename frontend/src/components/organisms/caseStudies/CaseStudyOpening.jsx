@@ -9,6 +9,11 @@ import "@/components/molecules/project-card.css";
  * preview on an opposite-theme panel, its figure number and title, and its spec table. The page
  * opens on the figure the visitor just clicked. Text and figure stack on narrow screens.
  */
+/** The ruled line with a diamond at its centre that divides a case study's parts. */
+export const Separator = ({ className = "" }) => (
+  <div className={`cs-separator ${className}`.trim()} role="separator" aria-hidden="true"><span /></div>
+);
+
 const SIMPLIFIED_KEY = "case-study-simplified";
 const NOTICE_FULL_MS = 4000;
 
@@ -108,7 +113,7 @@ export const CaseStudyOpening = ({ id, children }) => {
       )}
     </header>
     {/* Separates the opening from the write-up below it. */}
-    <div className="cs-separator" role="separator" aria-hidden="true"><span /></div>
+    <Separator />
     </>
   );
 };

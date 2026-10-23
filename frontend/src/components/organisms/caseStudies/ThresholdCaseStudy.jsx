@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FsmClipPlayer } from "./FsmClipPlayer.jsx";
-import { CaseStudyOpening } from "./CaseStudyOpening.jsx";
+import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
 import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
@@ -634,7 +634,7 @@ export const ThresholdCaseStudy = () => (
       <figure className="cs-figure"><OverviewDiagram /><CompactOverview /></figure>
 
       <div className="cs-subsection">
-      <h3 className="typeset-card-title">The Results: Behaviors in action</h3>
+      <h3 className="typeset-card-title">The Results: Behaviors in Action</h3>
       <p className="cs-prose">
         <Plain simple={"Examples from the game's reception desk. What each object can do comes from the abilities it was given, not from code written just for it."}>Two examples from the reception desk. Each is built from the same behaviors, so what they can do is decided
         by which child nodes they have, not by code written for that object.</Plain>
@@ -664,7 +664,7 @@ export const ThresholdCaseStudy = () => (
       <details className="cs-subsection cs-extras cs-technical">
       <summary>
         <span className="cs-extras-kicker typeset-card-toner">Extras</span>
-        <h3 className="typeset-card-title" data-outline-label="Extras: Input Claims (Draggable vs Selectable on a left click)">Input Claims <span className="cs-extras-sub">(Draggable vs Selectable on a left click)</span></h3>
+        <h3 className="typeset-card-title" data-outline-label="Extras: Input Claims (Draggable vs Selectable on a Left Click)">Input Claims <span className="cs-extras-sub">(Draggable vs Selectable on a Left Click)</span></h3>
         <span className="cs-extras-toggle typeset-card-toner" aria-hidden="true" />
       </summary>
       <p className="cs-prose">
@@ -686,6 +686,7 @@ export const ThresholdCaseStudy = () => (
       </details>
     </section>
 
+    <Separator className="cs-separator-section" />
     <section>
       <h2 className="typeset-card-title">The Finite State Machine</h2>
       <p className="cs-prose">
@@ -700,7 +701,7 @@ export const ThresholdCaseStudy = () => (
       </p>
 
       <div className="cs-subsection">
-      <h3 className="typeset-card-title">A behavior must own its state</h3>
+      <h3 className="typeset-card-title">A Behavior Must Own Its State</h3>
       <div className="cs-callout">
         <p className="cs-callout-label typeset-card-toner">The rule</p>
         <p className="cs-callout-body">
@@ -718,7 +719,7 @@ export const ThresholdCaseStudy = () => (
       </div>
 
       <div className="cs-subsection cs-technical">
-      <h3 className="typeset-card-title">Changing state</h3>
+      <h3 className="typeset-card-title">Changing State</h3>
       <div className="cs-callout">
         <p className="cs-callout-label typeset-card-toner">The rule</p>
         <p className="cs-callout-body">
@@ -738,7 +739,7 @@ export const ThresholdCaseStudy = () => (
       </div>
 
       <div className="cs-subsection">
-      <h3 className="typeset-card-title">The folder's state machine</h3>
+      <h3 className="typeset-card-title">The Folder's State Machine</h3>
       <p className="cs-prose">
         <Plain simple={<>The folder's open/close ability has four situations: closed, opening, open and closing. The "-ing" ones
         give the animation time to play. Watch the diagram follow along with the game.</>}>Activatable, the behavior that opens and closes the folder, has four states. The "-ing" states exist so an

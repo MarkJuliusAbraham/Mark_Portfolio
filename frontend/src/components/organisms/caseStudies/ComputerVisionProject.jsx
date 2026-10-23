@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import "./case-study.css";
-import { CaseStudyOpening } from "./CaseStudyOpening.jsx";
+import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
 import { ApplicationScreenshot } from "@/components/molecules/ApplicationScreenshot";
@@ -337,9 +337,9 @@ const designDetails = [
 ];
 
 const detailGroups = [
-  { id: "steady", name: "Steady readings", intro: "Camera data is noisy. These keep what the system reads about your hand from wobbling." },
-  { id: "deliberate", name: "Only deliberate input", intro: "People don't hold perfectly still. These make sure a key is pressed only when you mean it." },
-  { id: "stuck", name: "Never stuck", intro: "A slow model or a crash shouldn't freeze the app or leave a key held down." },
+  { id: "steady", name: "Steady Readings", intro: "Camera data is noisy. These keep what the system reads about your hand from wobbling." },
+  { id: "deliberate", name: "Only Deliberate Input", intro: "People don't hold perfectly still. These make sure a key is pressed only when you mean it." },
+  { id: "stuck", name: "Never Stuck", intro: "A slow model or a crash shouldn't freeze the app or leave a key held down." },
 ];
 
 const profiles = [
@@ -389,32 +389,7 @@ export const ComputerVisionProject = () => (
 
     </section>
 
-    <section className="cs-technical">
-      <h2 className="typeset-card-title">Design details</h2>
-      <p className="cs-prose">
-        The pipeline above is the happy path. Most of the work that makes it feel good is in the small decisions
-        around it, each handling one way things would otherwise show up as a wrong, repeated or missing key press.
-      </p>
-      {detailGroups.map((group) => (
-        <div key={group.id} className="cs-subsection">
-          <h3 className="typeset-card-title">{group.name}</h3>
-          <p className="cs-prose">{group.intro}</p>
-          <ul className="cs-details-grid">
-            {designDetails.filter((detail) => detail.group === group.id).map(({ problem, fix, how, adjust }) => (
-              <li key={fix} className="cs-detail">
-                <p className="cs-detail-problem typeset-card-toner">{problem}</p>
-                <p className="cs-detail-fix">{fix}</p>
-                <p className="cs-detail-how">{how}</p>
-                <p className="cs-detail-adjust typeset-card-toner" data-adjustable={adjust ? "" : undefined}>
-                  {adjust ? <><b>Adjustable in {adjust.where}</b> · {adjust.what}</> : "Built in"}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </section>
-
+    <Separator className="cs-separator-section" />
     <section>
       <h2 className="typeset-card-title">Features</h2>
       <p className="cs-prose">
@@ -424,7 +399,7 @@ export const ComputerVisionProject = () => (
       <div className="cs-features">
         <Feature
           id="hub"
-          name="Pick a camera and a workspace"
+          name="Pick a Camera and a Workspace"
           pitch="Choose a webcam, see that it's streaming, and open the hand-tracking workspace."
           media={<ApplicationScreenshot image={applicationScreenshots.hub} />}
         >
@@ -437,7 +412,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="debugging"
-          name="Watch it read your hand"
+          name="Watch It Read Your Hand"
           pitch="See, live, what the system thinks each hand is doing and which key it would press."
           media={<ApplicationScreenshot image={applicationScreenshots.debugging} />}
         >
@@ -453,7 +428,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="camera"
-          name="See what the camera sees"
+          name="See What the Camera Sees"
           pitch="A camera window draws your hand's joints, the paths your fingertips trace, and the keys just pressed."
           media={<ApplicationScreenshot image={applicationScreenshots.camera} />}
         >
@@ -469,7 +444,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="mapping"
-          name="Teach it a gesture"
+          name="Teach It a Gesture"
           pitch="Make the pose, and the app records how each finger is bent and which way the palm faces."
           media={<ApplicationScreenshot image={applicationScreenshots.mapping} />}
         >
@@ -490,7 +465,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="manual"
-          name="Define a gesture manually"
+          name="Define a Gesture Manually"
           pitch="Pick the palm direction and each finger's allowed positions yourself, from simple choices or a checklist."
           media={<ApplicationScreenshot image={applicationScreenshots.manual} />}
         >
@@ -511,7 +486,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="repeats"
-          name="Repeat by moving"
+          name="Repeat by Moving"
           pitch="Move your hand after a gesture to press its keys again, instead of re-making the pose."
           media={<ApplicationScreenshot image={applicationScreenshots.repeats} />}
         >
@@ -535,7 +510,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="reset"
-          name="Reset with one pose"
+          name="Reset with One Pose"
           pitch="One gesture, shared by the whole profile, stops everything and gets ready for the next command."
           media={<ApplicationScreenshot image={applicationScreenshots.reset} />}
         >
@@ -556,7 +531,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="profiles"
-          name="Switch between profiles"
+          name="Switch Between Profiles"
           pitch="Keep separate gesture sets for different programs and swap between them."
           media={<ApplicationScreenshot image={applicationScreenshots.profiles} />}
         >
@@ -569,7 +544,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="settings"
-          name="Tune recognition"
+          name="Tune Recognition"
           pitch="Adjust how fingers are judged and how steady tracking is, with a live preview of your own hand."
           media={<ApplicationScreenshot image={applicationScreenshots.settings} />}
         >
@@ -587,7 +562,7 @@ export const ComputerVisionProject = () => (
 
         <Feature
           id="overlay"
-          name="Keep feedback on screen"
+          name="Keep Feedback on Screen"
           pitch="A small desktop overlay shows what's recognized while you use another program."
           media={<ApplicationScreenshot image={applicationScreenshots.overlay} />}
         >
@@ -600,7 +575,7 @@ export const ComputerVisionProject = () => (
       </div>
 
       <div className="cs-subsection">
-        <h3 className="typeset-card-title">Profiles in use</h3>
+        <h3 className="typeset-card-title">Profiles in Use</h3>
         <p className="cs-prose">
           Profiles built with the application, for a game and for watching videos. The same tracking and input systems drive each one; only the
           profile changes.
@@ -614,6 +589,33 @@ export const ComputerVisionProject = () => (
           ))}
         </div>
       </div>
+    </section>
+
+    <Separator className="cs-separator-section cs-technical" />
+    <section className="cs-technical">
+      <h2 className="typeset-card-title">Design Details</h2>
+      <p className="cs-prose">
+        The pipeline in Systems is the happy path. Most of the work that makes it feel good is in the small decisions
+        around it, each handling one way things would otherwise show up as a wrong, repeated or missing key press.
+      </p>
+      {detailGroups.map((group) => (
+        <div key={group.id} className="cs-subsection">
+          <h3 className="typeset-card-title">{group.name}</h3>
+          <p className="cs-prose">{group.intro}</p>
+          <ul className="cs-details-grid">
+            {designDetails.filter((detail) => detail.group === group.id).map(({ problem, fix, how, adjust }) => (
+              <li key={fix} className="cs-detail">
+                <p className="cs-detail-problem typeset-card-toner">{problem}</p>
+                <p className="cs-detail-fix">{fix}</p>
+                <p className="cs-detail-how">{how}</p>
+                <p className="cs-detail-adjust typeset-card-toner" data-adjustable={adjust ? "" : undefined}>
+                  {adjust ? <><b>Adjustable in {adjust.where}</b> · {adjust.what}</> : "Built in"}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
   </article>
   </HintProvider>
