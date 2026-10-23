@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { SwapLabel } from "./SwapLabel.jsx";
 import { ProjectPreview } from "@/components/molecules/ProjectPreview.jsx";
 import { projects } from "@/content/projects.js";
 import { figureNumber } from "@/lib/figures.js";
@@ -88,7 +89,7 @@ export const CaseStudyOpening = ({ id, children }) => {
           </span>
           <button type="button" className="cs-simplify-button" aria-pressed={simplified}
             onClick={() => setSimplified((on) => !on)}>
-            {simplified ? "Show technical details" : "Simplify"}
+            <SwapLabel on={simplified} onLabel="Show technical details" offLabel="Simplify" />
           </button>
         </div>
       </div>

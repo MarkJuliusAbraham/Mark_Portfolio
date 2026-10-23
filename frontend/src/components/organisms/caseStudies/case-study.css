@@ -184,10 +184,6 @@
 }
 .cs-entity > *, .cs-entities, .cs-inside, .cs-figure-live > * { min-width: 0; }
 @media (max-width: 900px) { .cs-entity { grid-template-columns: 1fr; } }
-.cs-gif { position: relative; margin: 0; border: 1px solid var(--border); background: var(--card); }
-.cs-gif::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--frame-corner-start); color: var(--strong-foreground); z-index: 1; }
-.cs-gif img { display: block; width: 100%; height: auto; }
-.cs-gif figcaption { padding: 0.5rem 0.75rem; color: var(--muted-foreground); text-transform: uppercase; border-top: 1px solid var(--border); }
 .cs-composition h4 { margin-bottom: 0.5rem; }
 .cs-composition .cs-eyebrow { margin: 1.25rem 0 0.5rem !important; }
 .cs-parts { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--muted-foreground); }
@@ -691,7 +687,7 @@
   scroll-margin-top: 4rem;
 }
 .cs-feature > * { min-width: 0; }
-.cs-feature-media .application-screenshot { margin: 0; }
+.cs-feature-media .cs-media { margin: 0; }
 .cs-feature-media { grid-area: media; }
 /* Wide: the column beside the media, as tall as the row; the write-up fills what's left of it. */
 .cs-feature-side { grid-area: side; display: flex; flex-direction: column; align-self: stretch; min-height: 0; }
@@ -825,3 +821,304 @@
   --border: var(--nier-light-border);
   background: var(--nier-light-panel);
 }
+
+.cs-feature-why { margin: 0.6rem 0 0 !important; font-size: 0.95rem; line-height: 1.55; color: var(--foreground); }
+.cs-feature-why b { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8em; }
+
+.cs-detail-problem b { color: var(--strong-foreground); font-weight: 700; }
+.cs-detail-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); vertical-align: 0.15em; }
+
+/* ==========================================================================================
+   Project page design system. Every case-study element uses one of these, so the pages read as
+   one design rather than a set of separately styled parts. Later rules in this block override
+   the per-component styles above.
+
+   Surfaces   panel: a 1px outline with the site's triangle frame corners (the motif on figures and
+              project cards). Inverse panel: the same shape on the opposite theme.
+   Tag        every small label (kickers, Why / Problem / Fix, captions, figure numbers): one size,
+              one tracking, uppercase.
+   Button     one outlined button that fills solid on hover or while active.
+   Markers    ◆ marks structure (separators, stage numbers, list bullets); + only ever means
+              "reveals more" (hint dots, How it works, Extras).
+   Spacing    --cs-s1 to --cs-s6.
+   ========================================================================================== */
+.case-study {
+  --cs-s1: 0.5rem;
+  --cs-s2: 1rem;
+  --cs-s3: 1.5rem;
+  --cs-s4: 2.5rem;
+  --cs-s5: 4rem;
+  --cs-s6: 6rem;
+  --cs-panel-tint: color-mix(in srgb, var(--strong-foreground) 4%, transparent);
+  /* What a filled button's text is drawn in: the surface it sits on. */
+  --cs-button-ink: var(--background);
+}
+
+/* Surfaces ------------------------------------------------------------------------------- */
+.case-study :is(.cs-callout, .cs-simplify, .cs-flow-stage, .cs-feature-body) {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--foreground);
+  background: var(--frame-corner-start), var(--frame-corner-end), var(--cs-panel-tint);
+}
+.cs-simplified-notice {
+  border: 1px solid var(--border) !important;
+  background: var(--frame-corner-start), var(--frame-corner-end), var(--card) !important;
+  color: var(--foreground);
+}
+.case-study .cs-feature-body { background: var(--frame-corner-start), var(--frame-corner-end), var(--card); }
+.case-study .cs-callout { padding: var(--cs-s2) var(--cs-s3); margin-block: var(--cs-s4) var(--cs-s3); }
+.case-study .cs-solution > .cs-callout { margin: 0; }
+.case-study .cs-callout-question { border-color: var(--cs-accent); }
+.case-study .cs-flow-stage { padding: var(--cs-s2); }
+
+/* Inverse panels already set their own colours; they take the same outline and corners. */
+.case-study :is(.cs-detail, .cs-extras) {
+  border: 1px solid var(--border);
+  background: var(--frame-corner-start), var(--frame-corner-end), var(--nier-dark-panel);
+  --cs-button-ink: var(--nier-dark-panel);
+}
+.dark .case-study :is(.cs-detail, .cs-extras) {
+  background: var(--frame-corner-start), var(--frame-corner-end), var(--nier-light-panel);
+  --cs-button-ink: var(--nier-light-panel);
+}
+.case-study .cs-detail { padding: var(--cs-s3); color: var(--foreground); }
+.case-study .cs-media {
+  background: var(--frame-corner-start), var(--frame-corner-end), var(--media-matte);
+}
+
+/* Rows (features, profiles) are separated by a rule, not boxed. */
+.case-study :is(.cs-feature, .cs-entity) { border-top: 1px solid var(--border); padding-top: var(--cs-s4); }
+.case-study :is(.cs-features, .cs-entities) { gap: var(--cs-s4); }
+
+/* Tag ------------------------------------------------------------------------------------ */
+.case-study :is(
+  .cs-eyebrow, .cs-callout-label, .cs-extras-kicker, .cs-cue,
+  .cs-feature-why b, .cs-detail-problem b, .cs-detail-label, .cs-detail-adjust, .cs-detail-adjust b,
+  .cs-simplify-prompt, .cs-kind
+),
+.case-study .cs-flow-stage::before,
+.cs-simplified-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.case-study :is(.cs-eyebrow, .cs-callout-label, .cs-extras-kicker, .cs-cue, .cs-detail-label, .cs-detail-adjust,
+  .cs-simplify-prompt),
+.case-study .cs-flow-stage::before { color: var(--muted-foreground); }
+.case-study :is(.cs-feature-why b, .cs-detail-problem b, .cs-detail-adjust[data-adjustable] b) { color: var(--strong-foreground); }
+.case-study .cs-callout-label { margin-bottom: var(--cs-s1) !important; }
+/* The problem reads as a sentence; only its label is a tag. */
+.case-study .cs-detail-problem {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+  opacity: 1;
+}
+.case-study .cs-detail-label { vertical-align: 0.2em; margin-right: 0.25em; }
+.case-study .cs-detail-adjust { padding-top: var(--cs-s1); border-top: 1px solid var(--border); }
+.cs-simplified-badge { padding: 0.15rem 0.45rem; border: 1px solid currentColor; background: none; color: var(--strong-foreground); }
+
+/* Button --------------------------------------------------------------------------------- */
+.case-study :is(.cs-simplify-button, .cs-feature-more, .cs-extras-toggle, .cs-media figcaption button),
+.cs-simplified-undo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  margin: 0;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: var(--strong-foreground);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.case-study :is(.cs-simplify-button, .cs-feature-more):is(:hover, :focus-visible, [aria-pressed="true"], [aria-expanded="true"]),
+.cs-simplified-undo:is(:hover, :focus-visible),
+.case-study .cs-extras > summary:is(:hover, :focus-visible) .cs-extras-toggle,
+.case-study .cs-extras[open] .cs-extras-toggle {
+  background: var(--strong-foreground);
+  color: var(--cs-button-ink, var(--background));
+  border-color: var(--strong-foreground);
+}
+.case-study .cs-media figcaption button { color: var(--media-ink); }
+.case-study .cs-media figcaption button:is(:hover, :focus-visible) { background: var(--media-ink); color: var(--media-matte); }
+.case-study .cs-feature-more { margin-top: var(--cs-s2); padding-top: 0.4rem; justify-self: start; }
+/* "+" reveals more; it turns to "−" while open. */
+.case-study .cs-feature-more::before { content: "+"; width: auto; }
+.case-study .cs-feature-more[aria-expanded="true"]::before { content: "−"; }
+.case-study .cs-extras-toggle::before { content: "+ Show"; }
+.case-study .cs-extras[open] .cs-extras-toggle::before { content: "− Hide"; }
+
+/* Markers -------------------------------------------------------------------------------- */
+.case-study .cs-flow-stage::before { content: "◆ " counter(stage, decimal-leading-zero); }
+.case-study .cs-flow-end::before { content: "◆ Out"; }
+.case-study .cs-flow-end { border-color: var(--bh-green); }
+.case-study :is(.cs-feature-body, .cs-prose) ul > li::marker { content: "◆  "; font-size: 0.7em; color: var(--muted-foreground); }
+
+/* Spacing -------------------------------------------------------------------------------- */
+.case-study .cs-subsection { margin-top: var(--cs-s5); }
+.case-study .cs-separator-section { margin-block: var(--cs-s6) var(--cs-s4); }
+.case-study section > h2 { margin-bottom: var(--cs-s3); }
+.case-study .cs-subsection > h3 { margin-bottom: var(--cs-s2); }
+.case-study .cs-details-grid { gap: var(--cs-s3); margin-top: var(--cs-s3); }
+.case-study .cs-flow { gap: var(--cs-s3); }
+.case-study .cs-simplify { padding: var(--cs-s1) var(--cs-s2); gap: var(--cs-s1) var(--cs-s2); }
+.case-study .cs-feature-body { padding: var(--cs-s2) var(--cs-s3); margin-top: var(--cs-s2); }
+@media (max-width: 900px) { .case-study .cs-feature-body { margin-top: 0; } }
+
+/* The Simplify box sits at the foot of the opening text, across the column's full width. */
+.case-study .cs-opening > .cs-prose > .cs-simplify {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  padding: var(--cs-s2) var(--cs-s3);
+}
+
+/* Toggle labels: both texts in one cell, so a button keeps its size whatever it says. */
+.cs-swap { display: inline-grid; }
+.cs-swap > span { grid-area: 1 / 1; text-align: center; }
+.cs-swap > span:not([data-shown]) { visibility: hidden; }
+/* The Extras toggle draws its text in CSS; give it the width of its longer state. */
+.case-study .cs-extras-toggle { min-width: 7.5em; justify-content: center; }
+/* The +/− marker before How it works keeps one width too. */
+.case-study .cs-feature-more::before { display: inline-block; width: 1ch; text-align: center; }
+
+/* Media figures (CaseStudyMedia): the Threshold GIF look on both pages. A 1px frame on the card
+   surface with the corner mark, the image edge to edge, and a caption bar beneath in the tag style
+   with the View button at its end. Clicking still opens the full-screen viewer. */
+.case-study .cs-media {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+}
+.case-study .cs-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--frame-corner-start), var(--frame-corner-end);
+  color: var(--strong-foreground);
+}
+.case-study .cs-media figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cs-s1) var(--cs-s2);
+  flex-wrap: wrap;
+  padding: var(--cs-s1) 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.case-study .cs-media figcaption > span {
+  flex: 1 1 14rem;
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.case-study .cs-media figcaption button {
+  min-height: 2rem;
+  padding: 0.3rem 0.7rem;
+  color: var(--strong-foreground);
+}
+.case-study .cs-media figcaption button:is(:hover, :focus-visible) {
+  background: var(--strong-foreground);
+  color: var(--card);
+}
+
+/* The buffer: a dark matte around the image itself, so a light screenshot never bleeds into the
+   page around it. The caption bar stays on the card surface beneath. */
+.case-study .cs-media__preview {
+  padding: clamp(10px, 2vw, 24px);
+  background: var(--media-matte);
+}
+
+/* Feature text column rhythm: title, description, why, then the button, each with room to breathe. */
+.case-study .cs-feature-head h3 { margin: 0 0 0.75rem; }
+.case-study .cs-feature-pitch { margin: 0 !important; }
+.case-study .cs-feature-why {
+  margin: var(--cs-s2) 0 0 !important;
+  padding-top: var(--cs-s2);
+  border-top: 1px solid var(--border);
+}
+.case-study .cs-feature-side > .cs-feature-more { margin-top: var(--cs-s3); }
+.case-study .cs-feature-side .cs-feature-body { margin-top: var(--cs-s2); }
+
+/* Feature layout, final. Wide: media left; title, summary and button right, the summary filling the
+   column so the button sits level with the media's foot. The write-up covers the summary.
+   Narrow: title, description, why, media, button; the write-up covers the media. */
+.case-study .cs-feature { grid-template-areas: "media side"; grid-template-rows: auto; }
+.case-study .cs-feature-side { display: flex; flex-direction: column; align-self: stretch; min-height: 0; }
+.case-study .cs-feature-title { margin: 0 0 0.75rem; }
+.case-study .cs-feature-summary { position: relative; flex: 1 1 auto; min-height: 0; }
+.case-study .cs-feature-side > .cs-feature-more { margin-top: var(--cs-s3); align-self: flex-start; }
+.case-study .cs-feature-side .cs-feature-body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  contain: none;
+  min-height: 0;
+  overflow-y: auto;
+}
+@media (max-width: 900px) {
+  .case-study .cs-feature {
+    grid-template-columns: 1fr;
+    grid-template-areas: "title" "pitch" "why" "media" "more";
+    row-gap: 0;
+  }
+  .case-study .cs-feature-side, .case-study .cs-feature-summary { display: contents; }
+  .case-study .cs-feature-title { grid-area: title; }
+  .case-study .cs-feature-pitch { grid-area: pitch; }
+  .case-study .cs-feature-why { grid-area: why; margin-bottom: var(--cs-s2) !important; }
+  .case-study .cs-feature-media { grid-area: media; }
+  .case-study .cs-feature-side > .cs-feature-more { grid-area: more; margin-top: var(--cs-s2); }
+  .case-study .cs-feature-side .cs-feature-body {
+    position: static;
+    grid-area: media;
+    align-self: stretch;
+    contain: size;
+  }
+}
+
+/* Phones: the prompt above a button that fills the bar (the same size whichever label it shows). */
+@media (max-width: 600px) {
+  .case-study .cs-opening > .cs-prose > .cs-simplify {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: var(--cs-s2);
+  }
+  .case-study .cs-simplify .cs-simplify-button { justify-content: center; width: 100%; }
+}
+
+/* How it works: short points, evenly spaced, sized to fit the panel without scrolling. */
+.case-study .cs-feature-points {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.case-study .cs-feature-points > li { padding-left: 0.2em; }
+.case-study .cs-feature-points > li::marker { content: "\25C6  "; font-size: 0.7em; color: var(--muted-foreground); }

@@ -4,7 +4,7 @@ export const projects = [
   {
     id: "project-1",
     featured: true,
-    title: "Computer Vision",
+    title: "Gesture Mapping Application",
     description: "A desktop application for mapping hand gestures to keyboard input, with editable profiles, live feedback, and tracking controls.",
     genre: "Input Simulation/Computer Vision",
     techStack: ["Python", "Tkinter", "OpenCV", "MediaPipe"],

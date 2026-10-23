@@ -2,8 +2,9 @@ import { useId, useState } from "react";
 import "./case-study.css";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
+import { SwapLabel } from "./SwapLabel.jsx";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
-import { ApplicationScreenshot } from "@/components/molecules/ApplicationScreenshot";
+import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia";
 import trackingHubImage from "@/img/computer-vision/tracking-hub.png";
 import debuggingImage from "@/gifs/hand-diagnostics.gif";
 import cameraImage from "@/gifs/camera-preview.webp";
@@ -236,35 +237,38 @@ const SystemDiagram = () => (
 );
 
 /**
- * A feature at a glance (name, one-line pitch, media) with its full write-up opened in place: beside
+ * A feature at a glance (name, one-line pitch, the problem it solves, media) with its full write-up opened in place: beside
  * the media on wide screens, over it on narrow ones. Either way it only takes room the media already
  * gives the card (scrolling if long), so opening it never moves the page. The card's id makes it linkable (#feature-mapping) without sending visitors to another page.
  */
-const Feature = ({ id, name, pitch, media, children }) => {
+const Feature = ({ id, name, pitch, why, media, children }) => {
   const [open, setOpen] = useState(false);
   const bodyId = useId();
   return (
     <article className="cs-feature" id={`feature-${id}`}>
       <div className="cs-feature-media">{media}</div>
       <div className="cs-feature-side">
-      <div className="cs-feature-head">
-        <h3 className="typeset-card-title">{name}</h3>
-        <p className="cs-feature-pitch">{pitch}</p>
-      </div>
-      <button
-        type="button"
-        className="cs-feature-more typeset-card-toner"
-        aria-expanded={open}
-        aria-controls={bodyId}
-        onClick={() => setOpen((now) => !now)}
-      >
-        {open ? "Hide details" : "How it works"}
-      </button>
-      {open && (
-        <div className="cs-feature-body cs-prose" id={bodyId} role="region" aria-label={`How ${name.toLowerCase()} works`}>
-          {children}
+        <h3 className="cs-feature-title typeset-card-title">{name}</h3>
+        {/* The write-up opens over the description (wide) or the media (narrow): space the card
+            already has, so opening it never moves the page. */}
+        <div className="cs-feature-summary">
+          <p className="cs-feature-pitch">{pitch}</p>
+          {why && <p className="cs-feature-why"><b>Why:</b> {why}</p>}
+          {open && (
+            <div className="cs-feature-body cs-prose" id={bodyId} role="region" aria-label={`How ${name.toLowerCase()} works`}>
+              {children}
+            </div>
+          )}
         </div>
-      )}
+        <button
+          type="button"
+          className="cs-feature-more typeset-card-toner"
+          aria-expanded={open}
+          aria-controls={bodyId}
+          onClick={() => setOpen((now) => !now)}
+        >
+          <SwapLabel on={open} onLabel="Hide details" offLabel="How it works" />
+        </button>
       </div>
     </article>
   );
@@ -392,185 +396,144 @@ export const ComputerVisionProject = () => (
     <Separator className="cs-separator-section" />
     <section>
       <h2 className="typeset-card-title">Features</h2>
-      <p className="cs-prose">
-        What you can do in the application. Each feature is summed up in a line; open <i>How it works</i> for the
-        details.
-      </p>
       <div className="cs-features">
         <Feature
           id="hub"
           name="Pick a Camera and a Workspace"
           pitch="Choose a webcam, see that it's streaming, and open the hand-tracking workspace."
-          media={<ApplicationScreenshot image={applicationScreenshots.hub} />}
+          why="If the camera isn't streaming, nothing else works. Checking it first rules that out before blaming a gesture."
+          media={<CaseStudyMedia media={applicationScreenshots.hub} />}
         >
-          <p>
-            The tracking hub is the application's entry point. Camera controls are shared, and each workspace
-            provides its own tracking data and configuration.
-          </p>
-          <p>Hand tracking is the workspace available today; body and eye tracking are planned.</p>
+          <ul className="cs-feature-points">
+            <li>Camera controls are shared by every workspace.</li>
+            <li>Each workspace keeps its own tracking data and settings.</li>
+            <li>Hand tracking is available now; body and eye tracking are planned.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="debugging"
           name="Watch It Read Your Hand"
           pitch="See, live, what the system thinks each hand is doing and which key it would press."
-          media={<ApplicationScreenshot image={applicationScreenshots.debugging} />}
+          why="When a gesture doesn't fire, you need to know whether the hand was misread or the gesture was set up wrong."
+          media={<CaseStudyMedia media={applicationScreenshots.debugging} />}
         >
-          <p>
-            The debugging panel shows each hand side by side: whether it's detected, which way the palm faces,
-            the matched gesture and its command, and every finger's bend and category.
-          </p>
-          <p>
-            It also shows whether the hand-tracking model is ready, and lets you restart or pause tracking or turn
-            on the desktop overlay.
-          </p>
+          <ul className="cs-feature-points">
+            <li>Each hand side by side: detected, palm direction, gesture, command.</li>
+            <li>Every finger's bend, with its category.</li>
+            <li>Model status, plus pause, restart and the overlay switch.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="camera"
           name="See What the Camera Sees"
           pitch="A camera window draws your hand's joints, the paths your fingertips trace, and the keys just pressed."
-          media={<ApplicationScreenshot image={applicationScreenshots.camera} />}
+          why="Seeing the tracked joints over your own hand shows straight away when the model loses a finger or the lighting is too poor."
+          media={<CaseStudyMedia media={applicationScreenshots.camera} />}
         >
-          <p>
-            The preview shows the camera mirrored, with each hand's joints and finger chains drawn over it. The
-            fingertips a gesture tracks leave paths behind them, with a marker wherever a repeat fired.
-          </p>
-          <p>
-            Some feedback is profile-specific: the Invoker profile shows the spell elements it just sent, read from
-            the keys actually pressed rather than from the gesture.
-          </p>
+          <ul className="cs-feature-points">
+            <li>Joints and finger chains drawn over the mirrored camera.</li>
+            <li>Tracked fingertips leave paths, marked wherever a repeat fired.</li>
+            <li>Profiles can add their own feedback, like Invoker's spell icons.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="mapping"
           name="Teach It a Gesture"
           pitch="Make the pose, and the app records how each finger is bent and which way the palm faces."
-          media={<ApplicationScreenshot image={applicationScreenshots.mapping} />}
+          why="Describing a hand shape finger by finger is slow and easy to get wrong. Making the pose is how people already think of it."
+          media={<CaseStudyMedia media={applicationScreenshots.mapping} />}
         >
-          <p>
-            <b>Capture from hand</b> counts down, then watches your hand for 1.5 seconds. Each finger takes the
-            position it held most, and the palm is only required if it agreed in at least 80% of frames.
-          </p>
-          <p>
-            The <b>Allowance</b> setting (none, 1 or 2 bands) adds leeway: a finger captured fully straight or closed
-            also accepts the next positions toward the middle, so a pointed finger still matches when it's only
-            partly up.
-          </p>
-          <p>
-            The captured pose lands in the editor like any other change, so you can adjust it before saving, then
-            assign the keys it presses.
-          </p>
+          <ul className="cs-feature-points">
+            <li><b>Capture from hand</b> watches for 1.5 s; each finger takes the position it held most.</li>
+            <li>The palm counts only if it agreed in 80% of frames.</li>
+            <li><b>Allowance</b> adds leeway, so a pointed finger still matches half-raised.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="manual"
           name="Define a Gesture Manually"
           pitch="Pick the palm direction and each finger's allowed positions yourself, from simple choices or a checklist."
-          media={<ApplicationScreenshot image={applicationScreenshots.manual} />}
+          why="A captured pose is exact, but some gestures should accept a range, like a thumb that's anywhere from straight to partly bent."
+          media={<CaseStudyMedia media={applicationScreenshots.manual} />}
         >
-          <p>
-            A gesture is a palm direction plus the positions each finger may be in, connected to a sequence of keys
-            and delays.
-          </p>
-          <p>
-            <b>Simple choices</b> offer one dropdown per finger, like "Straight" or "Curled through Closed".{" "}
-            <b>Use checklist</b> shows every position from Straight to Closed, so any combination can be ticked; a
-            finger with nothing ticked accepts any position.
-          </p>
-          <p>
-            Edits are drafts until saved, and are checked first: two gestures with identical criteria, or an invalid
-            command, are flagged before they reach the running handler.
-          </p>
+          <ul className="cs-feature-points">
+            <li><b>Simple choices:</b> one dropdown per finger, like “Curled through Closed”.</li>
+            <li><b>Checklist:</b> tick any mix of positions; none ticked means any.</li>
+            <li>Saving checks for duplicate gestures and invalid keys first.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="repeats"
           name="Repeat by Moving"
           pitch="Move your hand after a gesture to press its keys again, instead of re-making the pose."
-          media={<ApplicationScreenshot image={applicationScreenshots.repeats} />}
+          why="Some actions repeat: turning the volume, seeking, casting the same spell. Re-making the pose for every press is slow and tiring."
+          media={<CaseStudyMedia media={applicationScreenshots.repeats} />}
         >
-          <p>Each gesture picks how a repeat is triggered:</p>
-          <ul>
-            <li><b>Tracking:</b> repeats the gesture while it's held, as its tracked fingertips travel.</li>
-            <li><b>Distance:</b> every set distance the tracked fingertips travel earns one repeat. The gesture that fired is remembered until reset, so the pose can change while you move.</li>
-            <li><b>Shake:</b> shaking the hand repeats the remembered gesture, with a set travel and time window per shake.</li>
+          <ul className="cs-feature-points">
+            <li><b>Tracking:</b> repeats while the pose is held.</li>
+            <li><b>Distance:</b> one repeat per set distance moved.</li>
+            <li><b>Shake:</b> one repeat per shake.</li>
+            <li>Each has a limit; axis weights pick which directions count.</li>
           </ul>
-          <p>
-            Distances are a percentage of the camera image's width. With several fingertips tracked, their distances are
-            averaged, and leftover distance carries over to the next repeat. Axis weights pick which directions count:
-            the settings shown only count side-to-side movement.
-          </p>
-          <p>
-            Every mode has a repeat limit, shared until the next reset, and distance repeats set a delay between presses.
-            Optimistic tracking can also measure the wrist, and scale distances with hand size so the same motion counts at
-            any distance from the camera.
-          </p>
         </Feature>
 
         <Feature
           id="reset"
           name="Reset with One Pose"
           pitch="One gesture, shared by the whole profile, stops everything and gets ready for the next command."
-          media={<ApplicationScreenshot image={applicationScreenshots.reset} />}
+          why="Gestures fire once and then wait, so you need a quick, deliberate way to say “done, ready for the next one.”"
+          media={<CaseStudyMedia media={applicationScreenshots.reset} />}
         >
-          <p>
-            A profile's universal reset is a hand pose with a built-in action and no keys: it stops queued commands,
-            clears the drawn paths, and re-arms gesture input. It applies to every gesture in the profile and takes
-            precedence over them.
-          </p>
-          <p>
-            It's edited like any gesture's hand criteria. In this profile it's a loose fist: the index through pinky fingers
-            anywhere from curled to closed, with the thumb and palm left free.
-          </p>
-          <p>
-            Re-arming matters because a gesture fires once and then waits. Without a reset, holding a pose would press
-            its keys over and over.
-          </p>
+          <ul className="cs-feature-points">
+            <li>Stops queued keys, clears drawn paths, and re-arms every gesture.</li>
+            <li>Overrides every other gesture in the profile.</li>
+            <li>Here it's a loose fist: four fingers curled, thumb and palm free.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="profiles"
           name="Switch Between Profiles"
           pitch="Keep separate gesture sets for different programs and swap between them."
-          media={<ApplicationScreenshot image={applicationScreenshots.profiles} />}
+          why="Different programs need different keys. One set of gestures can't serve a game and a video player at once."
+          media={<CaseStudyMedia media={applicationScreenshots.profiles} />}
         >
-          <p>
-            Choose a profile folder, create new profiles, and pick which one is active. The dialog shows the active
-            profile apart from the current selection, and a switch takes effect once confirmed.
-          </p>
-          <p>The list here has a YouTube profile alongside the game profiles.</p>
+          <ul className="cs-feature-points">
+            <li>Create profiles and keep them in any folder.</li>
+            <li>Pick one, then confirm to make it active.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="settings"
           name="Tune Recognition"
           pitch="Adjust how fingers are judged and how steady tracking is, with a live preview of your own hand."
-          media={<ApplicationScreenshot image={applicationScreenshots.settings} />}
+          why="Hands, cameras and lighting differ. Thresholds that work in one setup misfire in another."
+          media={<CaseStudyMedia media={applicationScreenshots.settings} />}
         >
-          <p>
-            Settings cover the whole workspace: the tracking model, finger bend ranges, how much margin a finger
-            needs before changing category, and landmark smoothing. <b>Finger settling</b> can hold a gesture back
-            until the relevant fingers stop moving, so a pose passing through on its way to another doesn't fire.
-          </p>
-          <p>
-            Optimistic tracking options set the movement thresholds, repeat timing and hand-size scaling for
-            repeats. A live preview shows your hand against the draft values, and nothing changes until you apply.
-          </p>
-          <p>The application itself has light, dark and NieR: Automata-inspired themes, and a display scale.</p>
+          <ul className="cs-feature-points">
+            <li>Tracking model, finger bend ranges, smoothing and settling.</li>
+            <li>Repeat thresholds and hand-size scaling.</li>
+            <li>A live preview tests drafts; nothing changes until you apply.</li>
+          </ul>
         </Feature>
 
         <Feature
           id="overlay"
           name="Keep Feedback on Screen"
           pitch="A small desktop overlay shows what's recognized while you use another program."
-          media={<ApplicationScreenshot image={applicationScreenshots.overlay} />}
+          why="While you play, the app's own window is hidden behind the game, leaving no other way to see what's being recognized."
+          media={<CaseStudyMedia media={applicationScreenshots.overlay} />}
         >
-          <p>
-            The overlay draws the same live hand report as the debugging panel in a transparent window on top of
-            other applications. Its style, background opacity and position can be previewed, then saved or
-            discarded.
-          </p>
+          <ul className="cs-feature-points">
+            <li>Shows the same live report as the debugging panel.</li>
+            <li>Set its style, opacity and position, then save or discard.</li>
+          </ul>
         </Feature>
       </div>
 
@@ -583,7 +546,7 @@ export const ComputerVisionProject = () => (
         <div className="cs-entities">
           {profiles.map(({ name, summary, gif, image }) => (
             <div key={name} className="cs-entity">
-              {image ? <ApplicationScreenshot image={image} /> : <Placeholder label={gif} />}
+              {image ? <CaseStudyMedia media={image} /> : <Placeholder label={gif} />}
               <div className="cs-composition"><h4 className="typeset-card-title">{name}</h4><p>{summary}</p></div>
             </div>
           ))}
@@ -605,8 +568,8 @@ export const ComputerVisionProject = () => (
           <ul className="cs-details-grid">
             {designDetails.filter((detail) => detail.group === group.id).map(({ problem, fix, how, adjust }) => (
               <li key={fix} className="cs-detail">
-                <p className="cs-detail-problem typeset-card-toner">{problem}</p>
-                <p className="cs-detail-fix">{fix}</p>
+                <p className="cs-detail-problem typeset-card-toner"><b>Problem:</b> {problem}</p>
+                <p className="cs-detail-fix"><span className="cs-detail-label typeset-card-toner">Fix:</span> {fix}</p>
                 <p className="cs-detail-how">{how}</p>
                 <p className="cs-detail-adjust typeset-card-toner" data-adjustable={adjust ? "" : undefined}>
                   {adjust ? <><b>Adjustable in {adjust.where}</b> · {adjust.what}</> : "Built in"}

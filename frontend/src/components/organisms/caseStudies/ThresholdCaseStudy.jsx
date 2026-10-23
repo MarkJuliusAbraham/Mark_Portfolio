@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FsmClipPlayer } from "./FsmClipPlayer.jsx";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
+import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
 import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
 import folderGif from "@/gifs/threshold-folder.gif";
@@ -520,6 +521,8 @@ const entities = [
   {
     name: "Folder",
     gif: folderGif,
+    width: 940,
+    height: 680,
     alt: "In the game's reception scene, a right-click opens the folder and a second right-click closes it. Then the folder is picked up, dragged a little and dropped.",
     summary: "Right-click to open and close it, drag it around the desk. The Folder owns what opening looks like; Activatable only decides when it happens.",
     simpleSummary: "Right-click to open and close it, and drag it around the desk. The folder decides what opening looks like; its open/close ability only decides when.",
@@ -533,6 +536,8 @@ const entities = [
   {
     name: "Ticket",
     gif: ticketGif,
+    width: 1000,
+    height: 640,
     alt: "In the game's reception scene, the ticket dispenser is opened and its green button pressed. A green health permit prints onto the desk, and is then picked up and dragged across it.",
     summary: "Behavior reuse: the ticket is a completely different object from the folder, and it only exists once the dispenser prints it. It still drags exactly like the folder, because it has the same Draggable node. There's no ticket-specific drag code: the only ticket-specific part is what happens when a drag starts, and that's the ticket's own action.",
     simpleSummary: "Reuse: the ticket is a completely different object from the folder, yet it drags exactly the same way, because it was given the same drag ability. Nobody wrote dragging code just for tickets.",
@@ -545,6 +550,8 @@ const entities = [
   {
     name: "Controllable Ticket",
     gif: controllableTicketGif,
+    width: 1000,
+    height: 640,
     alt: "In the game's reception scene, a ticket is printed and a SelectAndControllableComponent is attached to it. A click selects it: arrows and a dashed outline appear around it. The arrow keys then move it right, up, left and down, with the arrow for each direction lighting up, and Escape deselects it so the keys stop moving it.",
     summary: "The same ticket with one more behavior attached: click to select it, then move it with the arrow keys. Nothing about the ticket itself changed.",
     simpleSummary: "The same ticket with one more ability added: click it, then steer it with the arrow keys. The ticket itself didn't change at all.",
@@ -558,12 +565,9 @@ const entities = [
   },
 ];
 
-const EntityShowcase = ({ name, gif, alt, summary, simpleSummary = summary, actions, parts, footnote }) => (
+const EntityShowcase = ({ name, gif, width, height, alt, summary, simpleSummary = summary, actions, parts, footnote }) => (
   <div className="cs-entity">
-    <figure className="cs-gif">
-      <img src={gif} alt={alt} loading="lazy" />
-      <figcaption className="typeset-card-toner">{name} · recorded in the reception scene</figcaption>
-    </figure>
+    <CaseStudyMedia media={{ src: gif, width, height, name, alt, caption: `${name} · recorded in the reception scene` }} />
     <div className="cs-composition">
       <h4 className="typeset-card-title">{name}</h4>
       <p><Plain simple={simpleSummary}>{summary}</Plain></p>
