@@ -6,7 +6,7 @@ export const projects = [
     featured: true,
     title: "Computer Vision",
     description: "A desktop application for mapping hand gestures to keyboard input, with editable profiles, live feedback, and tracking controls.",
-    genre: "Input simulation",
+    genre: "Input Simulation/Computer Vision",
     techStack: ["Python", "Tkinter", "OpenCV", "MediaPipe"],
     year: 2026,
   },

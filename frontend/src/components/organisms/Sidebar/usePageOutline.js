@@ -26,11 +26,13 @@ const ensureId = (heading, used) => {
 
 const readOutline = () => {
   const used = new Set();
-  return [...document.querySelectorAll(SECTION_HEADINGS)].map((heading) => ({
+  // Headings hidden by the page (the simplified reading mode) stay out of the outline.
+  const shown = (heading) => !heading.closest("[data-simplified] .cs-technical");
+  return [...document.querySelectorAll(SECTION_HEADINGS)].filter(shown).map((heading) => ({
     id: ensureId(heading, used),
     label: labelOf(heading),
     children: [...heading.parentElement.querySelectorAll(SUBSECTION_HEADINGS)]
-      .filter((sub) => !sub.closest("figure, [role='tooltip']"))
+      .filter((sub) => !sub.closest("figure, [role='tooltip']") && shown(sub))
       .map((sub) => ({ id: ensureId(sub, used), label: labelOf(sub) })),
   }));
 };
@@ -63,7 +65,7 @@ export const usePageOutline = (enabled, pageKey) => {
     refresh();
     const main = document.getElementById("main-content");
     const observer = new MutationObserver(refresh);
-    if (main) observer.observe(main, { childList: true, subtree: true });
+    if (main) observer.observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-simplified"] });
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();

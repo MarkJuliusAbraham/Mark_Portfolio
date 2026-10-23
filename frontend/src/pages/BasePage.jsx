@@ -43,10 +43,10 @@ export const BasePage = () => {
         <Outlet context={{ sections }} />
         <div
           role="status"
-          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 border-2 border-foreground bg-primary px-4 py-2 text-sm font-bold tracking-wider text-primary-foreground uppercase shadow-lg min-[1100px]:left-[calc(50%+var(--sidebar-width)/2)]"
+          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap border-2 border-foreground bg-primary px-4 py-2 text-sm font-bold max-[640px]:bottom-3 max-[640px]:px-3 max-[640px]:py-1.5 max-[640px]:text-xs tracking-wider text-primary-foreground uppercase shadow-lg min-[1100px]:left-[calc(50%+var(--sidebar-width)/2)]"
         >
           <span className="size-2.5 animate-pulse rounded-full bg-primary-foreground" aria-hidden="true" />
-          Work in progress — site under construction
+          Work in progress<span className="max-[640px]:hidden"> — site under construction</span>
         </div>
       </div>
       <ScreenLimb />

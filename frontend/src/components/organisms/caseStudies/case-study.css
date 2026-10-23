@@ -475,3 +475,287 @@
 }
 .cs-placeholder figcaption { padding: 0.75rem 1rem; color: var(--nier-straight-text); text-transform: uppercase; text-align: center; }
 .dark .cs-placeholder figcaption { color: var(--nier-dark-field); }
+
+/* Opening statement beside the project's card preview; stacks when narrow. */
+.cs-opening {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: 2.5rem;
+    align-items: start;
+}
+.cs-opening > .cs-prose { max-width: none; }
+/* The opening figure is the project card's figure (project-card.css), without its link padding. */
+.cs-opening-figure { height: auto; margin: 0; }
+@media (max-width: 900px) {
+    .cs-opening { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* Separator between the opening and the write-up: a thin rule with end ticks and a centre marker. */
+.cs-separator {
+    position: relative;
+    height: 12px;
+    margin-block: -1rem;
+    color: var(--border);
+}
+.cs-separator::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    border-top: 1px solid currentColor;
+}
+.cs-separator::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-inline: 1px solid currentColor;
+}
+.cs-separator > span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--strong-foreground);
+    background: var(--background);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Simplify: a reading mode for non-technical visitors that hides the technical parts. */
+.cs-simplify {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1.25rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px dashed var(--border);
+}
+.cs-simplify-prompt { opacity: 0.8; }
+.cs-simplify-button {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+}
+.cs-simplify-button:hover,
+.cs-simplify-button[aria-pressed="true"] {
+  background: var(--strong-foreground);
+  color: var(--card);
+}
+[data-simplified] .cs-technical,
+[data-simplified] .cs-callout-technical { display: none !important; }
+/* The Simplify box sits at the bottom right of the opening text, just above the separator. */
+.cs-opening > .cs-prose { display: flex; flex-direction: column; align-self: stretch; }
+.cs-opening > .cs-prose > .cs-simplify { margin-top: auto; align-self: flex-end; }
+.cs-opening > .cs-prose > :nth-last-child(2) { margin-bottom: 1.25rem; }
+
+/* Plain-language text: both versions render, the reading mode picks one. */
+.cs-simple { display: none; }
+[data-simplified] .cs-full { display: none; }
+[data-simplified] .cs-simple { display: inline; }
+
+.cs-simplified-dock {
+  position: sticky;
+  top: calc(var(--page-chrome-top, 0px) + 0.75rem);
+  z-index: 5;
+  height: 0;
+}
+.cs-simplified-notice {
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.75rem);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--bh-green);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+  font-size: 0.9rem;
+}
+.cs-simplified-badge {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid currentColor;
+  color: var(--strong-foreground);
+  font-weight: 700;
+}
+.cs-simplified-undo {
+  margin-left: auto;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+}
+.cs-simplified-undo:hover { background: var(--strong-foreground); color: var(--card); }
+.cs-simplified-notice[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-simplified-notice { transition: none; }
+}
+
+/* Full notice vs. the compact tag it collapses to after a few seconds. */
+.cs-simplified-notice { width: 100%; max-width: 100%; transition-property: opacity, transform, visibility, max-width; }
+.cs-simplified-notice[data-open] { transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s, max-width 0.4s ease; }
+.cs-simplified-detail {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+.cs-simplified-short { display: none; white-space: nowrap; }
+.cs-simplified-notice[data-compact] { max-width: 16rem; flex-wrap: nowrap; cursor: default; }
+.cs-simplified-notice[data-compact] .cs-simplified-badge { display: none; }
+.cs-simplified-notice[data-compact] .cs-simplified-detail { display: none; }
+.cs-simplified-notice[data-compact] .cs-simplified-short { display: inline; animation: cs-fade-in 0.3s ease; }
+.cs-simplified-notice:not([data-compact]) .cs-simplified-detail { animation: cs-fade-in 0.3s ease; }
+@keyframes cs-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .cs-simplified-short, .cs-simplified-detail { animation: none !important; }
+}
+
+/* Stage flow: one gesture's trip from camera to application. Wraps into a column on narrow screens. */
+.cs-flow-figure { margin: 1.5rem 0 0.5rem; }
+.cs-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+.cs-flow-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.8rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--strong-foreground);
+  counter-increment: stage;
+}
+.cs-flow-stage::before {
+  content: counter(stage, decimal-leading-zero);
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+.cs-flow-stage:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: -1.2rem;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+}
+.cs-flow-end { border-top-color: var(--bh-green); }
+.cs-flow-end::before { content: "Out"; }
+.cs-flow-name { color: var(--strong-foreground); }
+.cs-flow-made { font-size: 0.875rem; line-height: 1.45; }
+.cs-flow-by { margin-top: auto; font-size: 0.72rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.cs-flow-branch { margin-top: 0.9rem; color: var(--muted-foreground); font-size: 0.85rem; }
+@media (max-width: 700px) {
+  .cs-flow { grid-template-columns: 1fr; gap: 1.1rem; }
+  .cs-flow-stage:not(:last-child)::after { content: "↓"; top: auto; bottom: -1.15rem; right: 50%; transform: translateX(50%); }
+}
+
+/* Features: one card per feature, its write-up expanded in place. */
+.cs-features { display: grid; gap: 2.25rem; margin-top: 1.25rem; }
+.cs-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-areas: "media side";
+  column-gap: 1.75rem;
+  align-items: start;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 4rem;
+}
+.cs-feature > * { min-width: 0; }
+.cs-feature-media .application-screenshot { margin: 0; }
+.cs-feature-media { grid-area: media; }
+/* Wide: the column beside the media, as tall as the row; the write-up fills what's left of it. */
+.cs-feature-side { grid-area: side; display: flex; flex-direction: column; align-self: stretch; min-height: 0; }
+.cs-feature-head { grid-area: head; }
+.cs-feature-more { grid-area: more; align-self: start; }
+.cs-feature-head h3 { margin-top: 0; }
+.cs-feature-pitch { font-size: 1.05rem; line-height: 1.5; color: var(--strong-foreground); }
+.cs-feature-more {
+  justify-self: start;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding: 0.6rem 0 0;
+  border: 0;
+  border-top: 1px dashed var(--border);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.cs-feature-more::before { content: "+"; display: inline-block; width: 1ch; }
+.cs-feature-more[aria-expanded="true"]::before { content: "−"; }
+.cs-feature-more:hover { color: var(--strong-foreground); }
+.cs-feature-more:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+/* The write-up takes only the height the media already gives the card: size containment stops its
+   text from stretching the row, and long text scrolls inside. Wide: the column beside the media.
+   Narrow: the media's own cell, over it. */
+.cs-feature-body {
+  flex: 1 1 0;
+  contain: size;
+  min-height: 7rem;
+  margin-top: 0.75rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  animation: cs-fade-in 0.2s ease;
+}
+.cs-feature-body > :first-child { margin-top: 0; }
+.cs-feature-body > :last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  .cs-feature { grid-template-columns: 1fr; grid-template-areas: "head" "media" "more"; grid-template-rows: auto; row-gap: 0.9rem; }
+  .cs-feature-side { display: contents; }
+  .cs-feature-body { grid-area: media; align-self: stretch; z-index: 1; margin-top: 0; min-height: 0; }
+  .cs-feature-pitch { margin-bottom: 0; }
+}
+
+/* Hoverable arrows in a figure: a small "+" marker sits on the arrow it explains. */
+.cs-arrow-dot { fill: var(--card); stroke: var(--cs-ink); stroke-width: 1.25; transition: fill 120ms, stroke 120ms; }
+.cs-arrow-plus { font-size: 12px; font-weight: 700; fill: var(--cs-ink) !important; pointer-events: none; }
+.cs-term:is(:hover, :focus-visible) .cs-arrow-dot { fill: var(--cs-accent); stroke: var(--cs-accent); }
+.cs-term:is(:hover, :focus-visible) .cs-arrow-plus { fill: var(--card) !important; }
+.cs-term:focus-visible .cs-arrow-dot { stroke-width: 2.5; }
+
+/* Mobile stage list: each stage explains how it reaches the next. */
+.cs-flow-how { margin-top: 0.4rem; border-top: 1px dashed var(--border); font-size: 0.85rem; line-height: 1.5; }
+.cs-flow-how > summary { padding-top: 0.45rem; cursor: pointer; color: var(--muted-foreground); }
+.cs-flow-how > div { padding-top: 0.4rem; }
+
+@media (max-width: 600px) {
+  .cs-simplified-notice { flex-wrap: nowrap; padding: 0.45rem 0.6rem; font-size: 0.8rem; }
+  .cs-simplified-detail > span { display: none; }
+  .cs-simplified-detail { flex-wrap: nowrap; justify-content: flex-end; }
+  .cs-simplified-undo { white-space: nowrap; }
+}
