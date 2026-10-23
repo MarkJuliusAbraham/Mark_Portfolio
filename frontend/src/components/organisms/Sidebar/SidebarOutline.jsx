@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { scrollToElement } from "@/lib/scroll.js";
 
 /**
@@ -5,6 +6,22 @@ import { scrollToElement } from "@/lib/scroll.js";
  * navbar's spare space. The one being read is marked; choosing one scrolls to it.
  */
 export const SidebarOutline = ({ outline, activeId, onChoose }) => {
+  const list = useRef(null);
+
+  // The list scrolls on its own when it's longer than the space it has; keep the entry being read
+  // inside it, without scrolling the page.
+  useEffect(() => {
+    const box = list.current;
+    const current = box?.querySelector("[data-current]");
+    if (!box || !current || box.scrollHeight <= box.clientHeight) return;
+    const margin = 24;
+    const top = current.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
+    if (top - margin < box.scrollTop) box.scrollTo({ top: top - margin, behavior: "smooth" });
+    else if (top + current.offsetHeight + margin > box.scrollTop + box.clientHeight) {
+      box.scrollTo({ top: top + current.offsetHeight + margin - box.clientHeight, behavior: "smooth" });
+    }
+  }, [activeId]);
+
   if (!outline.length) return null;
   const activeSection = outline.find((section) =>
     section.id === activeId || section.children.some((child) => child.id === activeId))?.id;
@@ -22,7 +39,7 @@ export const SidebarOutline = ({ outline, activeId, onChoose }) => {
   return (
     <nav aria-label="On this page" className="sidebar-outline">
       <p className="sidebar-outline-title">On this page</p>
-      <ol className="sidebar-outline-list">
+      <ol className="sidebar-outline-list" ref={list}>
         {outline.map((section) => (
           <li key={section.id}>
             <a

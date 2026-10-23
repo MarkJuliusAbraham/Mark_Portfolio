@@ -270,6 +270,78 @@ const Feature = ({ id, name, pitch, media, children }) => {
   );
 };
 
+// The small decisions that keep tracking steady, each as the problem it solves and the fix. `adjust`
+// marks the ones a user can tune, and where; the rest are built in.
+// Grounded in ComputerVisionBasics/hand-tracking/docs (one_euro_filter, finger_hysteresis,
+// finger_settling, runtime_reliability) and the gesture handler.
+const designDetails = [
+  {
+    problem: "Landmarks jitter while the hand is still",
+    group: "steady",
+    fix: "One Euro filter",
+    adjust: { where: "Settings", what: "On/off, minimum cutoff and speed response" },
+    how: "Smooths each joint heavily while it's barely moving and lightly while it moves fast, so a resting hand is steady without a moving one lagging behind.",
+  },
+  {
+    problem: "A finger near a threshold flickers between positions",
+    group: "steady",
+    fix: "Hysteresis",
+    adjust: { where: "Settings", what: "On/off and the margin in degrees" },
+    how: "A finger must bend a few degrees past a boundary to change position, and straighten a few degrees back to return. Between the two, it keeps the position it had.",
+  },
+  {
+    problem: "A pose passing through on its way to another fires by accident",
+    group: "deliberate",
+    fix: "Finger settling",
+    adjust: { where: "Settings", what: "On/off and the maximum bend speed" },
+    how: "A matched gesture waits until the fingers that matter slow below a speed limit, so only a pose you're holding activates.",
+  },
+  {
+    problem: "Holding a pose would press its key over and over",
+    group: "deliberate",
+    fix: "Input latch",
+    adjust: { where: "Profile", what: "The reset pose, as the universal reset" },
+    how: "A gesture fires once, then input stays locked until the profile's reset pose. Repeats only come from deliberate movement.",
+  },
+  {
+    problem: "One pose could match two gestures",
+    group: "deliberate",
+    fix: "Ambiguity is rejected",
+    how: "Identical criteria are flagged while editing, and a live pose that matches more than one gesture sends nothing rather than guessing.",
+  },
+  {
+    problem: "The model is slower than the camera",
+    group: "stuck",
+    fix: "Never wait on inference",
+    how: "Each frame is submitted and the newest finished result is used, so the app and its windows stay responsive while the model catches up.",
+  },
+  {
+    problem: "The same motion counts differently near and far from the camera",
+    group: "steady",
+    fix: "Hand-size scaling",
+    adjust: { where: "Settings", what: "On/off, under optimistic tracking" },
+    how: "When turned on, wrist movement is scaled by how large the palm appears, so a repeat takes the same motion whether you sit close or lean back.",
+  },
+  {
+    problem: "The hand drops out for a moment",
+    group: "steady",
+    fix: "Stale history is discarded",
+    how: "If a hand disappears or results are more than 250 ms apart, smoothing and motion history reset instead of bridging the gap with a guess.",
+  },
+  {
+    problem: "A crash could leave a key held down",
+    group: "stuck",
+    fix: "Input is always released",
+    how: "An unexpected error stops tracking and commands, and shutdown releases gesture input before closing the camera, model and windows.",
+  },
+];
+
+const detailGroups = [
+  { id: "steady", name: "Steady readings", intro: "Camera data is noisy. These keep what the system reads about your hand from wobbling." },
+  { id: "deliberate", name: "Only deliberate input", intro: "People don't hold perfectly still. These make sure a key is pressed only when you mean it." },
+  { id: "stuck", name: "Never stuck", intro: "A slow model or a crash shouldn't freeze the app or leave a key held down." },
+];
+
 const profiles = [
   {
     name: "Invoker",
@@ -315,6 +387,32 @@ export const ComputerVisionProject = () => (
       <HintCue target="arrow" compact="Open a stage to see how it reaches the next" />
       <figure className="cs-figure"><SystemDiagram /><StageFlow /></figure>
 
+    </section>
+
+    <section className="cs-technical">
+      <h2 className="typeset-card-title">Design details</h2>
+      <p className="cs-prose">
+        The pipeline above is the happy path. Most of the work that makes it feel good is in the small decisions
+        around it, each handling one way things would otherwise show up as a wrong, repeated or missing key press.
+      </p>
+      {detailGroups.map((group) => (
+        <div key={group.id} className="cs-subsection">
+          <h3 className="typeset-card-title">{group.name}</h3>
+          <p className="cs-prose">{group.intro}</p>
+          <ul className="cs-details-grid">
+            {designDetails.filter((detail) => detail.group === group.id).map(({ problem, fix, how, adjust }) => (
+              <li key={fix} className="cs-detail">
+                <p className="cs-detail-problem typeset-card-toner">{problem}</p>
+                <p className="cs-detail-fix">{fix}</p>
+                <p className="cs-detail-how">{how}</p>
+                <p className="cs-detail-adjust typeset-card-toner" data-adjustable={adjust ? "" : undefined}>
+                  {adjust ? <><b>Adjustable in {adjust.where}</b> · {adjust.what}</> : "Built in"}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
 
     <section>

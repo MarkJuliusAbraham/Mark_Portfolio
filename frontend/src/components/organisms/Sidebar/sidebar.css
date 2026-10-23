@@ -673,3 +673,32 @@
 [data-outline-target] {
     scroll-margin-top: calc(var(--page-chrome-top) + 1.5rem);
 }
+
+/* Desktop: the panel fits the window. Navigation stays at the top and the controls at the bottom;
+   only a long "On this page" list scrolls, in the space between. A window too short for even that
+   still scrolls the whole panel. */
+.sidebar-desktop .sidebar-shell {
+    height: 100dvh;
+    min-height: 0;
+}
+.sidebar-desktop .sidebar-top {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.sidebar-desktop .sidebar-outline {
+    flex: 1 1 auto;
+    min-height: 7rem;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+.sidebar-desktop .sidebar-outline-list {
+    position: relative;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    /* Fades at the edges hint that there's more above or below. */
+    mask-image: linear-gradient(to bottom, transparent, #000 12px, #000 calc(100% - 16px), transparent);
+    padding-block: 6px 10px;
+}

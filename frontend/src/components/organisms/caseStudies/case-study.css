@@ -759,3 +759,37 @@
   .cs-simplified-detail { flex-wrap: nowrap; justify-content: flex-end; }
   .cs-simplified-undo { white-space: nowrap; }
 }
+
+/* Design details: problem → fix cards, two wide columns, grouped by what they protect. */
+.cs-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 1.35rem 1.35rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--strong-foreground);
+}
+.cs-detail p { margin: 0; }
+.cs-detail-problem { font-size: 0.8rem; line-height: 1.45; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); }
+.cs-detail-fix { font-weight: 700; font-size: 1.25rem; line-height: 1.3; color: var(--strong-foreground); }
+.cs-detail-how { font-size: 1rem; line-height: 1.6; }
+@media (max-width: 700px) { .cs-details-grid { grid-template-columns: 1fr; } }
+.cs-detail-adjust {
+  margin-top: auto !important;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+}
+.cs-detail-adjust[data-adjustable] { color: var(--strong-foreground); }
+.cs-detail-adjust[data-adjustable] b { color: var(--strong-foreground); text-transform: uppercase; letter-spacing: 0.08em; }
