@@ -1122,3 +1122,17 @@
 }
 .case-study .cs-feature-points > li { padding-left: 0.2em; }
 .case-study .cs-feature-points > li::marker { content: "\25C6  "; font-size: 0.7em; color: var(--muted-foreground); }
+
+/* Simple-only blocks: whole elements shown only in the simplified reading mode (the technical
+   ones use .cs-technical). */
+.cs-simple-block { display: none !important; }
+[data-simplified] .cs-simple-block { display: revert !important; }
+[data-simplified] .cs-simple-block.cs-figure { display: block !important; }
+
+/* "How to use it" steps are numbered; the technical points keep their diamonds. */
+.case-study ol.cs-feature-steps { list-style: decimal; }
+.case-study ol.cs-feature-steps > li::marker { content: counter(list-item) ".  "; font-size: 0.85em; font-weight: 700; color: var(--muted-foreground); }
+
+/* Stacked phone figures: room between consecutive components. */
+.case-study .cs-compact > .cs-compact-node + .cs-compact-node { margin-top: 0.75rem; }
+.case-study .cs-compact > .cs-compact-explanation { margin: 0.6rem 0; }

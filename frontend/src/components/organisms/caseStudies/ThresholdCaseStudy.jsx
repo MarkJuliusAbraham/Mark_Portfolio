@@ -6,6 +6,7 @@ import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
 import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
 import folderGif from "@/gifs/threshold-folder.gif";
+import receptionPreview from "@/gifs/threshold-preview.gif";
 import ticketGif from "@/gifs/threshold-ticket.gif";
 import controllableTicketGif from "@/gifs/threshold-controllable-ticket.gif";
 import "./case-study.css";
@@ -74,6 +75,11 @@ const glossary = [
   { term: "Active", definition: "Open. Arriving from Activating emits Activated and lets go of the mouse. A right-click asks to close." },
   { term: "Deactivating", definition: "Closing. Entering it emits Deactivating, and it waits for the closing animation to finish." },
   { term: "Player", definition: "The person at the desk, clicking and dragging." },
+  { term: "Booth", definition: "The small view at the top of the screen, where characters stand. Papers here are miniatures with physics: they fall, and can be pinned to the bulletin board." },
+  { term: "Desk", definition: "The table at the bottom, where papers are full size and readable. It's the item's permanent home, and where its behaviors live." },
+  { term: "MiniDraggable", definition: "An item's booth view: a small physics body that follows the pointer while dragged, then falls or pins when let go. Created the first time it's needed." },
+  { term: "Table entity", definition: "An item's desk view: the Entity and its behaviors, like Draggable." },
+  { term: "ItemRepresentation", definition: "One per item. Owns the item's identity and both of its views, and decides which one is visible. Hiding a view never destroys it, so contents and state survive the switch." },
 ];
 
 const entryFor = (term) => glossary.find((entry) => entry.term === term);
@@ -565,6 +571,51 @@ const entities = [
   },
 ];
 
+// Fig. 07: one item, two views. The booth (header viewport) and the desk (table) each hold a view of
+// the same item; its ItemRepresentation shows one and hides the other, switching mid-drag.
+const TwoViewsDiagram = () => (
+  <svg viewBox="-24 -8 948 330" role="img" aria-label="One item, two views. The booth at the top holds the item's MiniDraggable, a small physics view that falls and pins to the board. The desk at the bottom holds its table entity, the full-size view with its behaviors. A line separates them; crossing it during a drag swaps which view is shown. One ItemRepresentation per item owns both views, showing one and hiding the other.">
+    <defs><Arrowhead id="cs-arrow-07" /></defs>
+    <FigureLabel number="07" title="ONE ITEM, TWO VIEWS" />
+
+    <Frame x={20} y={36} width={560} height={110} name="Booth" note="header viewport · small, with physics" />
+    <Node x={44} y={80} width={250} height={50} name="MiniDraggable" note="falls · pins to the board" />
+
+    <line x1="20" y1="168" x2="580" y2="168" className="cs-seam" strokeDasharray="2 5" />
+    <text x="300" y="162" textAnchor="middle" className="cs-note">the line: crossing it mid-drag swaps the view</text>
+
+    <Frame x={20} y={190} width={560} height={110} name="Desk" note="table · full size, readable" />
+    <Node x={44} y={234} width={250} height={50} name="Table entity" note="its behaviors handle input" />
+
+    <g className="cs-solid-red"><Node x={660} y={136} width={240} height={64} name="ItemRepresentation" note="one per item · owns both" accent /></g>
+    <g className="cs-wire" fill="none" markerEnd="url(#cs-arrow-07)">
+      <path d="M660 156 H480 V105 H298" />
+      <path d="M660 180 H480 V259 H298" />
+    </g>
+    <text x="780" y="226" textAnchor="middle" className="cs-note">shows one view,</text>
+    <text x="780" y="243" textAnchor="middle" className="cs-note">hides the other</text>
+  </svg>
+);
+
+const CompactTwoViews = () => (
+  <div className="cs-compact">
+    <div className="cs-compact-label"><b>Fig. 07</b> One item, two views</div>
+    <div className="cs-compact-node">
+      <div className="cs-compact-name">Booth · MiniDraggable</div>
+      <p className="cs-compact-note">The small view at the top: falls, and pins to the board.</p>
+    </div>
+    <p className="cs-compact-explanation">Crossing the line mid-drag swaps the view.</p>
+    <div className="cs-compact-node">
+      <div className="cs-compact-name">Desk · Table entity</div>
+      <p className="cs-compact-note">The full-size view, where the item's behaviors live.</p>
+    </div>
+    <div className="cs-compact-node" data-tone="accent">
+      <div className="cs-compact-name">ItemRepresentation</div>
+      <p className="cs-compact-note">One per item. Owns both views; shows one and hides the other.</p>
+    </div>
+  </div>
+);
+
 const EntityShowcase = ({ name, gif, width, height, alt, summary, simpleSummary = summary, actions, parts, footnote }) => (
   <div className="cs-entity">
     <CaseStudyMedia media={{ src: gif, width, height, name, alt, caption: `${name} · recorded in the reception scene` }} />
@@ -687,6 +738,16 @@ export const ThresholdCaseStudy = () => (
           <i> and</i> selects.
         </p>
       </div>
+
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">Ties</p>
+        <p className="cs-callout-body">
+          The coordinator itself never breaks a tie: claims are first come, first served. An exclusive claim refuses
+          anyone who arrives after it, and only one behavior can capture an input at a time. Who arrives first is the
+          delivery order: a behavior's <code>InputPriority</code>, then the order behaviors registered, which for
+          behaviors placed in the scene is their order under the entity. The scene tree shows who wins a tie.
+        </p>
+      </div>
       </details>
     </section>
 
@@ -770,6 +831,88 @@ export const ThresholdCaseStudy = () => (
         <p className="cs-callout-body cs-technical">
         And when a behavior doesn't need states at all, it doesn't have to have them. Draggable has no state
         machine, and it plugs into the same input system as everything else.
+        </p>
+      </div>
+      </div>
+    </section>
+
+    <Separator className="cs-separator-section" />
+
+    <section>
+      <h2 className="typeset-card-title">The Desk and the Booth</h2>
+      <p className="cs-prose">
+        <Plain simple={'Papers, Please splits the screen in two: a small booth window where people stand, and a big desk where you read their papers. Drag a paper across the line between them and it changes size.'}>
+        Papers, Please is built on a split screen: a small booth view where the entrant stands, and a large desk where
+        documents are read. Dragging a document across the line between them shrinks or enlarges it. Recreating that
+        meant deciding what a document <i>is</i> when it exists in two places.</Plain>
+      </p>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">The goal</p>
+        <p className="cs-callout-lead">
+          <Plain simple="A paper stays the same paper wherever it is: on the desk, in the booth, or in someone's hands.">
+          One item, two views: a document moves between the booth and the desk as the same object, never a copy.</Plain>
+        </p>
+      </div>
+      <HintCue />
+      <figure className="cs-figure"><TwoViewsDiagram /><CompactTwoViews /></figure>
+
+      <div className="cs-subsection">
+      <h3 className="typeset-card-title">One Item, Two Views</h3>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">The rule</p>
+        <p className="cs-callout-body">
+        <Plain simple="Every paper has one owner that keeps both its desk version and its booth version. Only one shows at a time, so a paper can never be in two places at once.">
+        Each item has one ItemRepresentation that owns both of its views. Only one is visible at a time; the other is
+        hidden, never destroyed, so the item's identity and contents can't split.</Plain>
+        </p>
+      </div>
+      <p className="cs-caption">
+        <Plain simple="While you drag, the paper changes size the moment it crosses the line. Let go and it stays on that side.">
+        During a drag, every frame asks one question: is the pointer over the desk? The answer picks the visible view.
+        Letting go commits the item's location; cancelling puts it back where it started.</Plain>
+      </p>
+      </div>
+
+      <div className="cs-subsection">
+      <h3 className="typeset-card-title">Handing Things Over</h3>
+      <div className="cs-entity">
+        <CaseStudyMedia media={{ src: receptionPreview, width: 960, height: 600, name: "Bob's hand-over", alt: "In the reception scene, a ticket is dragged from the desk up into the booth and dropped in the basket, and Bob collects her papers and leaves.", caption: "Hand-over · recorded in the reception scene" }} />
+        <div className="cs-composition cs-prose">
+          <p>
+            <Plain simple="When someone hands you their papers, they arrive already inside the folder. Anything you hand back goes into the basket, which records what you returned.">
+            When a character hands over documents, the ItemProvisioner loads the requested papers into the folder first,
+            then presents it at the character, so the folder never arrives empty. Papers handed back land in the
+            basket, which scores them by type.</Plain>
+          </p>
+          <p className="cs-technical">
+            Collected tickets are destroyed with their miniature, rather than hidden somewhere off-screen.
+          </p>
+        </div>
+      </div>
+      </div>
+
+      <div className="cs-subsection cs-prose">
+      <h3 className="typeset-card-title">Paper Only When Needed</h3>
+      <p>
+        <Plain simple="Nothing is made before it's needed. A paper's booth version appears the first time it's dragged up, and a ticket only exists once it's printed.">
+        Booth views are created on first use, not at load: reception starts with no physics bodies at all. Tickets
+        don't exist until they're printed: the printer reserves one from the day's stock, creates it, and returns the
+        stock if creation fails.</Plain>
+      </p>
+      </div>
+
+      <div className="cs-subsection cs-prose cs-conclusions">
+      <h3 className="typeset-card-title">Conclusions</h3>
+      <div className="cs-callout">
+        <p className="cs-callout-label typeset-card-toner">Conclusion</p>
+        <p className="cs-callout-body">
+        <Plain simple="Because every paper has exactly one owner, everything else (the folder, the basket, the printer) can treat it as one thing, whichever size it's shown at.">
+        Separating an item's identity from how it's shown is what made the hand-off simple. Dragging, folders, the
+        basket and the printer all talk to one owner per item, and none of them care which view is on screen.</Plain>
+        </p>
+        <p className="cs-callout-body cs-technical">
+        It's covered by 101 automated checks across the miniature (41), reception flow (22) and drag session (38)
+        test suites.
         </p>
       </div>
       </div>

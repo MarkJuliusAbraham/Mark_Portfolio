@@ -27,7 +27,11 @@ const ensureId = (heading, used) => {
 const readOutline = () => {
   const used = new Set();
   // Headings hidden by the page (the simplified reading mode) stay out of the outline.
-  const shown = (heading) => !heading.closest("[data-simplified] .cs-technical");
+  // Content for the other reading mode is hidden: technical parts while simplified, simple-only
+  // parts otherwise.
+  const shown = (heading) =>
+    !heading.closest("[data-simplified] .cs-technical") &&
+    !(heading.closest(".cs-simple-block") && !heading.closest("[data-simplified]"));
   return [...document.querySelectorAll(SECTION_HEADINGS)].filter(shown).map((heading) => ({
     id: ensureId(heading, used),
     label: labelOf(heading),

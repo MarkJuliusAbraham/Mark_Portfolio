@@ -188,6 +188,56 @@ const ArrowHint = ({ term, x, y }) => (
   </Term>
 );
 
+// The same figure for the simplified reading mode: three steps and the feedback, no internals
+// (the "General audience" view in ComputerVisionBasics/hand-tracking/docs/functionality_diagrams.md).
+const simpleSteps = [
+  { name: "Camera", note: "films your hand" },
+  { name: "Recognize the hand", note: "matches your gestures" },
+  { name: "Simulate key presses", note: "the ones you assigned" },
+];
+
+const SimpleSystemDiagram = () => (
+  <svg viewBox="-24 -8 948 372" role="img" aria-label="The system in three steps: the camera films your hand, the app recognizes your hand and matches it to your gestures, then simulates the key presses you assigned, which go to your application. In the app's window you set your gestures, keys and tuning, which configure the recognizing and the key presses, and you see live feedback of what it recognized.">
+    <defs><Arrowhead id="cv-simple-arrow" /></defs>
+    <text x="0" y="12" className="cs-fig-label"><tspan className="cs-fig-number">FIG. 01</tspan><tspan dx="12">FROM HAND TO KEY PRESS</tspan></text>
+
+    {/* The app's window: where you set things up, and where you see what it recognized. */}
+    <Box x={233} y={40} width={433} height={56} name="Your settings" note="gestures, keys and tuning · set in the app" />
+    <g className="cs-wire" strokeDasharray="5 4" markerEnd="url(#cv-simple-arrow)">
+      <line x1="333" y1="96" x2="333" y2="148" />
+      <line x1="566" y1="96" x2="566" y2="148" />
+    </g>
+
+    {simpleSteps.map((step, i) => <Box key={step.name} x={i * 233} y={150} width={200} height={56} {...step} />)}
+    <g className="cs-solid-blue"><Box x={699} y={150} width={200} height={56} name="Your application" note="a game, a video player…" /></g>
+    <g className="cs-wire" markerEnd="url(#cv-simple-arrow)">
+      {[0, 1, 2].map((i) => <line key={i} x1={i * 233 + 200} y1="178" x2={(i + 1) * 233 - 2} y2="178" />)}
+      <line x1="333" y1="206" x2="333" y2="284" />
+    </g>
+    <Box x={233} y={286} width={433} height={56} name="Live feedback" note="what it recognized · shown in the app" />
+  </svg>
+);
+
+const SimpleStageFlow = () => (
+  <div className="cs-compact cs-flow-figure">
+    <ol className="cs-flow">
+      {simpleSteps.map(({ name, note }) => (
+        <li key={name} className="cs-flow-stage">
+          <b className="cs-flow-name">{name}</b>
+          <span className="cs-flow-made">{note}</span>
+        </li>
+      ))}
+      <li className="cs-flow-stage cs-flow-end">
+        <b className="cs-flow-name">Your application</b>
+        <span className="cs-flow-made">A game, a video player, anything that takes keys</span>
+      </li>
+    </ol>
+    <p className="cs-flow-branch typeset-card-toner">
+      You set your gestures, keys and tuning in the app's window, and it shows what it recognizes as it happens.
+    </p>
+  </div>
+);
+
 const pipelineBoxes = [
   { name: "Camera", note: "live video", code: "Camera" },
   { name: "Find the hand", note: "21 joints per hand", code: "MediaPipe landmarker" },
@@ -241,7 +291,7 @@ const SystemDiagram = () => (
  * the media on wide screens, over it on narrow ones. Either way it only takes room the media already
  * gives the card (scrolling if long), so opening it never moves the page. The card's id makes it linkable (#feature-mapping) without sending visitors to another page.
  */
-const Feature = ({ id, name, pitch, why, media, children }) => {
+const Feature = ({ id, name, pitch, why, use, media, children }) => {
   const [open, setOpen] = useState(false);
   const bodyId = useId();
   return (
@@ -255,8 +305,13 @@ const Feature = ({ id, name, pitch, why, media, children }) => {
           <p className="cs-feature-pitch">{pitch}</p>
           {why && <p className="cs-feature-why"><b>Why:</b> {why}</p>}
           {open && (
-            <div className="cs-feature-body cs-prose" id={bodyId} role="region" aria-label={`How ${name.toLowerCase()} works`}>
-              {children}
+            <div className="cs-feature-body cs-prose" id={bodyId} role="region" aria-label={name}>
+              <div className="cs-technical">{children}</div>
+              {use && (
+                <ol className="cs-feature-points cs-feature-steps cs-simple-block">
+                  {use.map((step) => <li key={step}>{step}</li>)}
+                </ol>
+              )}
             </div>
           )}
         </div>
@@ -267,7 +322,7 @@ const Feature = ({ id, name, pitch, why, media, children }) => {
           aria-controls={bodyId}
           onClick={() => setOpen((now) => !now)}
         >
-          <SwapLabel on={open} onLabel="Hide details" offLabel="How it works" />
+          <SwapLabel on={open} onLabel="Hide details" offLabel={<Plain simple="How to use it">How it works</Plain>} />
         </button>
       </div>
     </article>
@@ -340,6 +395,14 @@ const designDetails = [
   },
 ];
 
+// What the design details add up to, for the simplified reading mode: outcomes, not mechanisms.
+const reliabilityOutcomes = [
+  { title: "Steady, even with shaky hands", text: "Small tremors and camera noise are smoothed out before anything is read." },
+  { title: "Only presses keys you mean", text: "A gesture fires once and then waits, and a pose you pass through on the way to another doesn't count." },
+  { title: "Never guesses", text: "If a pose could mean two different gestures, nothing is pressed." },
+  { title: "Never stuck", text: "The app keeps up with the camera, and a problem never leaves a key held down." },
+];
+
 const detailGroups = [
   { id: "steady", name: "Steady Readings", intro: "Camera data is noisy. These keep what the system reads about your hand from wobbling." },
   { id: "deliberate", name: "Only Deliberate Input", intro: "People don't hold perfectly still. These make sure a key is pressed only when you mean it." },
@@ -372,6 +435,10 @@ export const ComputerVisionProject = () => (
         Hold up a hand shape in front of a webcam, and the application presses the keys you assigned to it. Which
         shapes mean which keys is up to you, saved as profiles for any program that takes keyboard input.
       </p>
+      <p className="cs-technical">
+        Under the hood: OpenCV captures the camera, MediaPipe finds the hand's landmarks, and a Python pipeline
+        classifies each finger, matches gestures against the profile and sends keys through pynput.
+      </p>
     </CaseStudyOpening>
 
     <section>
@@ -388,8 +455,11 @@ export const ComputerVisionProject = () => (
         Every gesture takes the same trip, one stage at a time. Each stage turns what the last one knew into
         something closer to a key press.
       </p>
-      <HintCue target="arrow" compact="Open a stage to see how it reaches the next" />
-      <figure className="cs-figure"><SystemDiagram /><StageFlow /></figure>
+      <div className="cs-technical">
+        <HintCue target="arrow" compact="Open a stage to see how it reaches the next" />
+      </div>
+      <figure className="cs-figure cs-technical"><SystemDiagram /><StageFlow /></figure>
+      <figure className="cs-figure cs-simple-block"><SimpleSystemDiagram /><SimpleStageFlow /></figure>
 
     </section>
 
@@ -402,6 +472,7 @@ export const ComputerVisionProject = () => (
           name="Pick a Camera and a Workspace"
           pitch="Choose a webcam, see that it's streaming, and open the hand-tracking workspace."
           why="If the camera isn't streaming, nothing else works. Checking it first rules that out before blaming a gesture."
+          use={["Pick your webcam from the list.", "Check that it says it's streaming.", "Open the Hand tracking workspace."]}
           media={<CaseStudyMedia media={applicationScreenshots.hub} />}
         >
           <ul className="cs-feature-points">
@@ -416,6 +487,7 @@ export const ComputerVisionProject = () => (
           name="Watch It Read Your Hand"
           pitch="See, live, what the system thinks each hand is doing and which key it would press."
           why="When a gesture doesn't fire, you need to know whether the hand was misread or the gesture was set up wrong."
+          use={["Hold your hand up to the camera.", "Watch the gesture and each finger's bar update.", "If a gesture won't fire, look for the finger that's read wrong."]}
           media={<CaseStudyMedia media={applicationScreenshots.debugging} />}
         >
           <ul className="cs-feature-points">
@@ -430,6 +502,7 @@ export const ComputerVisionProject = () => (
           name="See What the Camera Sees"
           pitch="A camera window draws your hand's joints, the paths your fingertips trace, and the keys just pressed."
           why="Seeing the tracked joints over your own hand shows straight away when the model loses a finger or the lighting is too poor."
+          use={["Open the camera preview.", "Move your hand; the drawn joints should follow it.", "If they jump around, add more light."]}
           media={<CaseStudyMedia media={applicationScreenshots.camera} />}
         >
           <ul className="cs-feature-points">
@@ -444,6 +517,7 @@ export const ComputerVisionProject = () => (
           name="Teach It a Gesture"
           pitch="Make the pose, and the app records how each finger is bent and which way the palm faces."
           why="Describing a hand shape finger by finger is slow and easy to get wrong. Making the pose is how people already think of it."
+          use={["Pick a gesture and press Capture from hand.", "Hold the pose until the countdown ends.", "Choose the keys it presses, then save."]}
           media={<CaseStudyMedia media={applicationScreenshots.mapping} />}
         >
           <ul className="cs-feature-points">
@@ -458,6 +532,7 @@ export const ComputerVisionProject = () => (
           name="Define a Gesture Manually"
           pitch="Pick the palm direction and each finger's allowed positions yourself, from simple choices or a checklist."
           why="A captured pose is exact, but some gestures should accept a range, like a thumb that's anywhere from straight to partly bent."
+          use={["Pick a gesture and set each finger's position.", "Press Use checklist to allow several positions.", "Choose the keys it presses, then save."]}
           media={<CaseStudyMedia media={applicationScreenshots.manual} />}
         >
           <ul className="cs-feature-points">
@@ -472,6 +547,7 @@ export const ComputerVisionProject = () => (
           name="Repeat by Moving"
           pitch="Move your hand after a gesture to press its keys again, instead of re-making the pose."
           why="Some actions repeat: turning the volume, seeking, casting the same spell. Re-making the pose for every press is slow and tiring."
+          use={["Open Repeat Commands for a gesture.", "Choose the trigger: holding, moving or shaking.", "Set how many times it may repeat."]}
           media={<CaseStudyMedia media={applicationScreenshots.repeats} />}
         >
           <ul className="cs-feature-points">
@@ -487,6 +563,7 @@ export const ComputerVisionProject = () => (
           name="Reset with One Pose"
           pitch="One gesture, shared by the whole profile, stops everything and gets ready for the next command."
           why="Gestures fire once and then wait, so you need a quick, deliberate way to say “done, ready for the next one.”"
+          use={["Press Edit universal reset.", "Set the pose, like a loose fist.", "Make it whenever you want gestures ready again."]}
           media={<CaseStudyMedia media={applicationScreenshots.reset} />}
         >
           <ul className="cs-feature-points">
@@ -501,6 +578,7 @@ export const ComputerVisionProject = () => (
           name="Switch Between Profiles"
           pitch="Keep separate gesture sets for different programs and swap between them."
           why="Different programs need different keys. One set of gestures can't serve a game and a video player at once."
+          use={["Press More Profiles.", "Create a profile or pick one.", "Confirm to switch."]}
           media={<CaseStudyMedia media={applicationScreenshots.profiles} />}
         >
           <ul className="cs-feature-points">
@@ -514,6 +592,7 @@ export const ComputerVisionProject = () => (
           name="Tune Recognition"
           pitch="Adjust how fingers are judged and how steady tracking is, with a live preview of your own hand."
           why="Hands, cameras and lighting differ. Thresholds that work in one setup misfire in another."
+          use={["Open Settings and press Test deviation.", "Adjust while watching your hand in the preview.", "Apply once it reads your hand reliably."]}
           media={<CaseStudyMedia media={applicationScreenshots.settings} />}
         >
           <ul className="cs-feature-points">
@@ -528,6 +607,7 @@ export const ComputerVisionProject = () => (
           name="Keep Feedback on Screen"
           pitch="A small desktop overlay shows what's recognized while you use another program."
           why="While you play, the app's own window is hidden behind the game, leaving no other way to see what's being recognized."
+          use={["Press Enable Overlay in the debugging panel.", "Use Reposition overlay to drag it into place.", "Lower its opacity so the game shows through."]}
           media={<CaseStudyMedia media={applicationScreenshots.overlay} />}
         >
           <ul className="cs-feature-points">
@@ -552,6 +632,19 @@ export const ComputerVisionProject = () => (
           ))}
         </div>
       </div>
+    </section>
+
+    <Separator className="cs-separator-section cs-simple-block" />
+    <section className="cs-simple-block">
+      <h2 className="typeset-card-title">Why It Feels Reliable</h2>
+      <ul className="cs-details-grid">
+        {reliabilityOutcomes.map(({ title, text }) => (
+          <li key={title} className="cs-detail">
+            <p className="cs-detail-fix">{title}</p>
+            <p className="cs-detail-how">{text}</p>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <Separator className="cs-separator-section cs-technical" />
