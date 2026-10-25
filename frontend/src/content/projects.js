@@ -19,6 +19,14 @@ export const projects = [
     year: 2026,
   },
   {
+    id: "tree-systems",
+    title: "Tree Systems",
+    description: "Designing unfamiliar systems with AI tools: a procedural tree generator, live authoring controls, and debug views that make the rules visible.",
+    genre: "Game systems",
+    techStack: ["C#", "Godot", "Shaders"],
+    year: 2026,
+  },
+  {
     id: "project-3",
     title: "AI-Parsed Groceries App",
     description: "A native application that uses a Local LLM to perform query classification to enrich groceries data.",

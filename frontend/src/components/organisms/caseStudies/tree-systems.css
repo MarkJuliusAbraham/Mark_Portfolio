@@ -1,0 +1,40 @@
+/* Extends the shared case-study reading layout without changing its theme. */
+.tree-case-title { overflow-wrap: anywhere; text-wrap: balance; }
+.tree-case-study .cs-callout { border-left-width: 1px; }
+.tree-media-following { margin-top: 1.5rem; }
+.tree-reference-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: 1.75rem; }
+.tree-reference-gallery > div { min-width: 0; }
+.tree-reference-gallery .cs-media__preview img { aspect-ratio: 1; object-fit: contain; }
+.tree-showcase-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 1.75rem; }
+.tree-showcase-gallery > div { min-width: 0; }
+.tree-showcase-gallery .cs-media__preview img { aspect-ratio: 1; object-fit: contain; }
+.tree-future-features { list-style: disc; padding-left: 1.5rem; }
+.tree-future-features li { margin-block: 0.75rem; line-height: 1.65; }
+@media (max-width: 700px) {
+  .tree-reference-gallery, .tree-showcase-gallery { grid-template-columns: 1fr; }
+}
+.tree-variant-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
+.tree-variant-controls button { min-width: 44px; min-height: 44px; }
+.tree-variant-choices { display: flex; gap: 0.375rem; }
+.tree-sample-options { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.75rem; }
+.tree-sample-options button { min-height: 44px; }
+.tree-debug-toggle { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; cursor: pointer; }
+.tree-debug-toggle input { width: 1.125rem; height: 1.125rem; accent-color: var(--strong-foreground); }
+.tree-debug-key { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.75rem; margin-top: 1.75rem; }
+.tree-debug-key > div { min-width: 0; }
+.tree-debug-key dt { display: flex; align-items: center; gap: 0.5rem; color: var(--strong-foreground); font-weight: 600; margin-bottom: 0.625rem; }
+.tree-debug-key dd { margin: 0; line-height: 1.65; }
+.tree-volume { display: inline-block; flex: 0 0 0.9rem; width: 0.9rem; height: 0.9rem; border: 1px solid currentColor; border-radius: 50%; }
+.tree-volume-puff { background: #78b8df; }
+.tree-volume-crown { background: #c77ab0; }
+.tree-volume-leaf { background: #b6d87a; border-radius: 0; }
+.tree-controls-reference { margin-top: 2rem; overflow-x: auto; }
+.tree-controls-reference table { width: 100%; border-collapse: collapse; text-align: left; }
+.tree-controls-reference caption { text-align: left; color: var(--strong-foreground); font-weight: 600; margin-bottom: 1rem; }
+.tree-controls-reference :is(th, td) { padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; }
+.tree-controls-reference th { color: var(--strong-foreground); font-weight: 600; }
+.tree-controls-reference tbody th { width: 22%; }
+@media (max-width: 900px) {
+  .tree-debug-key { grid-template-columns: 1fr; gap: 1.25rem; }
+  .tree-controls-reference :is(th, td) { padding: 0.75rem 0.5rem; }
+}

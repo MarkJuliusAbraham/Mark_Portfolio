@@ -606,6 +606,8 @@
 .sidebar-outline-list,
 .sidebar-outline-sublist {
     display: grid;
+    /* The desktop list fills spare height; entries keep their natural height. */
+    align-content: start;
     gap: 2px;
     margin: 0;
     padding: 0;

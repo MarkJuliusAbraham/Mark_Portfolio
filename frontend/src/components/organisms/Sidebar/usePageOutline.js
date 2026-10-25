@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 const SECTION_HEADINGS = "#main-content section > h2";
 const SUBSECTION_HEADINGS = "h3";
 
-// How far down the window a heading must pass before it counts as the one being read.
-const READING_LINE = 0.3;
+// Match the heading's jump offset, including the mobile header. A small tolerance absorbs
+// fractional scroll positions so a clicked heading counts as current when the jump settles.
+const HEADING_TOLERANCE = 2;
 
 const labelOf = (heading) => (heading.dataset.outlineLabel ?? heading.textContent).trim();
 
@@ -83,7 +84,9 @@ export const usePageOutline = (enabled, pageKey) => {
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const line = window.innerHeight * READING_LINE;
+        const firstHeading = document.getElementById(ids[0]);
+        const jumpOffset = firstHeading ? parseFloat(getComputedStyle(firstHeading).scrollMarginTop) || 0 : 0;
+        const line = jumpOffset + HEADING_TOLERANCE;
         let current = ids[0];
         for (const id of ids) {
           const heading = document.getElementById(id);

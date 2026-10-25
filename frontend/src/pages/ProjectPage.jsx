@@ -7,9 +7,10 @@ import projectPreview from "@/previews/MitsuhaRun.mp4";
 import projectPoster from "@/previews/MitsuhaRun.jpg";
 import { ThresholdCaseStudy } from "@/components/organisms/caseStudies/ThresholdCaseStudy.jsx";
 import { ComputerVisionProject } from "@/components/organisms/caseStudies/ComputerVisionProject.jsx";
+import { TreeSystemsCaseStudy } from "@/components/organisms/caseStudies/TreeSystemsCaseStudy.jsx";
 
 // Projects with a dedicated page show it in place of the placeholder preview.
-const projectPages = { "project-1": ComputerVisionProject, "project-2": ThresholdCaseStudy };
+const projectPages = { "project-1": ComputerVisionProject, "project-2": ThresholdCaseStudy, "tree-systems": TreeSystemsCaseStudy };
 
 export const ProjectPage = () => {
 
