@@ -5,10 +5,9 @@ import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia.jsx";
 import gustField from "@/img/wind/wind-field-gust.png";
 import debugPanel from "@/img/wind/wind-debug-panel.png";
 import legacyGrass from "@/gifs/legacy-grass-wind.webp";
-import gustViewer from "@/gifs/gust-viewer.mp4";
+import gustViewer from "@/gifs/gust-over-time.gif";
 import singleTree from "@/gifs/single-tree-gust.mp4";
 import singleTreePoster from "@/gifs/single-tree-gust.jpg";
-import gustViewerPoster from "@/gifs/gust-viewer.jpg";
 import "./case-study.css";
 
 // Grounded in Woods: shaders/wind_gust_field.gdshaderinc, wind_noise_field.gdshader,
@@ -72,7 +71,7 @@ export function WindSystemCaseStudy() {
           forest has thousands of leaves, and every one of them has to move believably, together, and cheaply.
         </p>
       </CaseStudyOpening>
-<ReadingVersions overview={<> <section><h2 className="typeset-card-title">A forest that feels alive</h2><p>Watch a gust pass through the trees, then settle.</p><CaseStudyMedia media={{src:gustViewer,poster:gustViewerPoster,width:1520,height:1020,name:"Forest gust",alt:"Wind moves through a moonlit forest.",caption:"A gust moving through the forest"}} /></section>
+<ReadingVersions overview={<> <section><h2 className="typeset-card-title">A forest that feels alive</h2><p>Watch a gust pass through the trees, then settle.</p><CaseStudyMedia media={{src:gustViewer,width:960,height:682,name:"Forest gust",alt:"Wind moves through a moonlit forest.",caption:"A gust moving through the forest"}} /></section>
 <section><h2 className="typeset-card-title">One tree, one gust</h2><p>The base stays planted. Branches, leaves and shadows move together.</p><CaseStudyMedia media={{src:singleTree,poster:singleTreePoster,width:900,height:900,name:"Tree in wind",alt:"A tree sways while its base stays still.",caption:"The crown sways; the base stays put"}} /></section>
 <section><h2 className="typeset-card-title">One shared wind map</h2><p>The diagram shows how one map moves the whole forest. Bright areas mean stronger wind; dark areas are calm.</p><WindPipeline /><CaseStudyMedia media={{src:gustField,width:512,height:512,name:"Wind map",alt:"White gust patches separated by dark calm areas.",caption:"White: stronger wind. Black: calm."}} /></section> </>}>
 
@@ -212,7 +211,7 @@ export function WindSystemCaseStudy() {
           </Plain>
         </p>
         <CaseStudyMedia media={{
-          src: gustViewer, poster: gustViewerPoster, width: 1520, height: 1020, name: "gust passing through the trees",
+          src: gustViewer, width: 960, height: 682, name: "gust passing through the trees",
           alt: "A moonlit stand of trees seen from above in the gust viewer, with the F4 wind panel open beside it. During the gust the canopies sway along the flow shown by the panel's arrow, then settle as the panel switches back to Gentle breeze.",
           caption: "One gust, start to finish · the F4 panel counts down while the trees respond",
         }} />
