@@ -27,6 +27,5 @@ export const AboutSection = ({ ref, educationRef, content = aboutContent }) => (
       <AboutEducation ref={educationRef} education={content.education} />
     </div>
 
-    <p className="about-draft-note">{content.draftNote}</p>
   </section>
 );

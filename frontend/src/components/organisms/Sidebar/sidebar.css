@@ -410,7 +410,7 @@
 
 /* Utilities use the same flat, ruled surface as the navigation and name spine.
    Scoped here so controls elsewhere in the portfolio retain their own treatment. */
-:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button, .sidebar-menu-toggle) {
+:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-menu-toggle) {
     min-height: 44px;
     border: 1px solid var(--sidebar-border);
     border-radius: 0;
@@ -428,7 +428,7 @@
     border-color: var(--sidebar-border);
     box-shadow: none;
 }
-:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button):focus-visible {
+:is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle):focus-visible {
     outline: 2px solid var(--sidebar-foreground);
     outline-offset: 3px;
     box-shadow: none;
@@ -530,7 +530,7 @@
 }
 
 @media (hover: hover) {
-    :is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-cv-button, .sidebar-menu-toggle):hover {
+    :is(.sidebar-desktop, .sidebar-mobile-header) :is(.theme-toggle, .sidebar-menu-toggle):hover {
         background: var(--nier-hover);
         color: var(--sidebar-foreground);
     }

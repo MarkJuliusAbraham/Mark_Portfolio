@@ -484,6 +484,7 @@
 .cs-opening-figure { height: auto; margin: 0; }
 @media (max-width: 900px) {
     .cs-opening { grid-template-columns: 1fr; gap: 1.5rem; }
+    .cs-opening > .cs-opening-figure { order: -1; }
 }
 
 /* Separator between the opening and the write-up: a thin rule with end ticks and a centre marker. */
@@ -556,75 +557,39 @@
 [data-simplified] .cs-simple { display: inline; }
 
 .cs-simplified-dock {
-  position: sticky;
-  top: calc(var(--page-chrome-top, 0px) + 0.75rem);
-  z-index: 5;
-  height: 0;
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 45;
+  width: min(18rem, calc(100vw - 24px));
 }
+.cs-simplified-dock[hidden] { display: none; }
 .cs-simplified-notice {
-  display: flex;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-0.75rem);
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.4rem 0.75rem;
-  padding: 0.55rem 0.8rem;
+  gap: 8px;
+  padding: 4px 8px 4px 12px;
   background: var(--card);
   color: var(--foreground);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--bh-green);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
-  font-size: 0.9rem;
-}
-.cs-simplified-badge {
-  padding: 0.1rem 0.45rem;
-  border: 1px solid currentColor;
-  color: var(--strong-foreground);
-  font-weight: 700;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.12);
+  font-size: 0.8rem;
 }
 .cs-simplified-undo {
-  margin-left: auto;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid currentColor;
   font: inherit;
   cursor: pointer;
-  padding: 0.2rem 0.7rem;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
 }
+.cs-simplified-undo:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .cs-simplified-undo:hover { background: var(--strong-foreground); color: var(--card); }
-.cs-simplified-notice[data-open] {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
-}
-@media (prefers-reduced-motion: reduce) {
-  .cs-simplified-notice { transition: none; }
-}
-
-/* Full notice vs. the compact tag it collapses to after a few seconds. */
-.cs-simplified-notice { width: 100%; max-width: 100%; transition-property: opacity, transform, visibility, max-width; }
-.cs-simplified-notice[data-open] { transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s, max-width 0.4s ease; }
-.cs-simplified-detail {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem 0.75rem;
-  overflow: hidden;
-  transition: opacity 0.2s ease;
-}
-.cs-simplified-short { display: none; white-space: nowrap; }
-.cs-simplified-notice[data-compact] { max-width: 16rem; flex-wrap: nowrap; cursor: default; }
-.cs-simplified-notice[data-compact] .cs-simplified-badge { display: none; }
-.cs-simplified-notice[data-compact] .cs-simplified-detail { display: none; }
-.cs-simplified-notice[data-compact] .cs-simplified-short { display: inline; animation: cs-fade-in 0.3s ease; }
-.cs-simplified-notice:not([data-compact]) .cs-simplified-detail { animation: cs-fade-in 0.3s ease; }
-@keyframes cs-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) {
-  .cs-simplified-short, .cs-simplified-detail { animation: none !important; }
+@media (max-width: 1099px) {
+  .cs-simplified-dock { top: calc(var(--mobile-header-height) + 8px); }
+  /* Count the page's existing top gutter toward the notice clearance. Keep
+     the same clearance in both modes so switching does not move the opening. */
+  .case-study .cs-opening { padding-top: max(0px, calc(64px - var(--page-top))); }
 }
 
 /* Stage flow: one gesture's trip from camera to application. Wraps into a column on narrow screens. */
@@ -1144,3 +1109,28 @@
 .case-study .cs-media-pair { align-items: start; }
 .case-study .cs-media-notes h3 { margin-top: 0; }
 .case-study .cs-media-pair > ul { margin: 0; padding-left: 1.1em; display: grid; gap: var(--cs-s2); }
+
+/* The overview is a separate, curated reading path, not a collapsed grid. */
+[data-simplified] .cs-opening .cs-prose > p:not(.cs-opening-summary) { display: none; }
+.cs-visual-overview { display: grid; gap: clamp(32px, 6vw, 72px); }
+.cs-visual-overview > section { min-width: 0; }
+.cs-visual-overview > section > p { max-width: 60ch; margin-block: 12px 24px; }
+.cs-visual-overview .cs-media { margin-block: 24px; }
+.case-study { min-width: 0; overflow-wrap: break-word; overflow-anchor: none; }
+.case-study :is(.cs-prose, .cs-opening-figure, .cs-media, .cs-feature-side) { min-width: 0; }
+.case-study .cs-simplify { align-items: center; min-height: 64px; }
+.case-study .cs-simplify-button { min-height: 44px; max-width: 100%; }
+@media (max-width: 600px) {
+  .case-study .cs-opening { grid-template-columns: minmax(0, 1fr); }
+  .case-study .cs-simplify { width: 100%; align-self: stretch; }
+  .case-study .cs-simplify-button { width: 100%; }
+  .case-study .cs-swap { white-space: normal; }
+  .case-study .cs-flow { grid-template-columns: minmax(0, 1fr); }
+  .tree-variant-choices { flex-wrap: wrap; }
+  .cs-media figcaption { flex-wrap: wrap; }
+  .cs-media figcaption button { min-height: 44px; }
+  .cs-media-viewer__header { flex-wrap: wrap; }
+  .cs-media-viewer__header h2 { min-width: 0; overflow-wrap: anywhere; }
+  .cs-media-viewer__tools { flex-wrap: wrap; }
+  .cs-media-viewer :is(button, a) { min-height: 44px; }
+}

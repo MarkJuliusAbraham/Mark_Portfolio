@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { ProjectLink } from "./ProjectLink.jsx";
 import { figureNumber } from "@/lib/figures.js";
 import { ProjectPreview } from "./ProjectPreview.jsx";
 import "./project-card.css";
@@ -8,7 +8,7 @@ import "./project-card.css";
  * and title, then its genre, stack and year in columns.
  */
 export const ProjectRow = ({ id, number, title, genre, techStack = [], year, placeholder }) => (
-  <Link to={`/projects/${id}`} className="project-row">
+  <ProjectLink id={id} placeholder={placeholder} className="project-row">
     <span className="project-figure-frame project-row-thumb">
       <ProjectPreview id={id} placeholder={placeholder} className="project-figure-image" />
     </span>
@@ -19,6 +19,6 @@ export const ProjectRow = ({ id, number, title, genre, techStack = [], year, pla
     <span className="project-row-detail">{genre || "—"}</span>
     <span className="project-row-detail project-row-stack">{techStack.join(" · ") || "—"}</span>
     <span className="project-row-detail project-row-year">{year || "—"}</span>
-  </Link>
+  </ProjectLink>
 );
 

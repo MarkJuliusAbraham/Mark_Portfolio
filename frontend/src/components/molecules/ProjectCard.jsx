@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { ProjectLink } from "./ProjectLink.jsx";
 import { figureNumber } from "@/lib/figures.js";
 import { ProjectPreview } from "./ProjectPreview.jsx";
 import "./project-card.css";
@@ -17,7 +17,7 @@ export const ProjectCard = ({ id, number, title, description, genre, techStack =
   ];
 
   return (
-    <Link to={`/projects/${id}`} className="project-figure-link">
+    <ProjectLink id={id} placeholder={placeholder} className="project-figure-link">
       <figure className="project-figure" data-theme="inverse-card">
         <div className="project-figure-frame">
           <ProjectPreview id={id} placeholder={placeholder} className="project-figure-image" />
@@ -36,6 +36,6 @@ export const ProjectCard = ({ id, number, title, description, genre, techStack =
           ))}
         </dl>
       </figure>
-    </Link>
+    </ProjectLink>
   );
 };

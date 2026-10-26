@@ -95,10 +95,10 @@ const LazyVideo = ({ preview, className }) => {
 
 /**
  * A project's preview inside a figure frame: its video, or for a placeholder project an empty
- * field marked "TBD".
+ * field marked "In progress".
  */
 export const ProjectPreview = ({ id, placeholder, className }) => {
-  if (placeholder) return <span className={`${className} project-preview-empty`} aria-hidden="true">TBD</span>;
+  if (placeholder) return <span className={`${className} project-preview-empty`} aria-hidden="true">In progress</span>;
   const own = ownPreviews[id];
   if (own?.gif) return <img className={className} src={own.gif} alt={own.alt} loading="lazy" decoding="async" aria-hidden="true" />;
   if (own?.video) return <LazyVideo preview={own} className={className} />;

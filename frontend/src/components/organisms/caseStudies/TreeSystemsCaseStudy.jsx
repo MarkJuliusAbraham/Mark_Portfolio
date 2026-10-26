@@ -1,3 +1,4 @@
+import { CaseStudy, ReadingVersions } from "./CaseStudy.jsx";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia.jsx";
@@ -25,8 +26,8 @@ const controls = [
 
 export function TreeSystemsCaseStudy() {
   return (
-    <article className="case-study tree-case-study typeset-card-readable">
-      <CaseStudyOpening id="tree-systems">
+    <CaseStudy className="case-study tree-case-study typeset-card-readable">
+      <CaseStudyOpening id="tree-systems" summary="Make different trees, adjust their shapes, and see them in the game.">
         <h1 className="typeset-title tree-case-title">Tree Systems - Designing Unfamiliar Systems with the AI Tools</h1>
         <p>A procedural tree system and an authoring tool for <i>Woods</i>, built in Godot with C# and shaders.</p>
         <p>
@@ -40,6 +41,11 @@ export function TreeSystemsCaseStudy() {
           In short, AI helps build the machinery; the tool gives me a way to inspect it and make the visual decisions myself.
         </p>
       </CaseStudyOpening>
+<ReadingVersions overview={<> <section><h2 className="typeset-card-title">From references to trees</h2><p>A few of the shapes and styles that inspired the project.</p><TreeReferenceGallery /></section>
+<section><h2 className="typeset-card-title">Choose a tree. Explore its shape.</h2><p>Compare ages and variations. Turn overlays on to see the leaf clusters underneath.</p><TreeVariantViewer /></section>
+<section><h2 className="typeset-card-title">Shape it live</h2><p>Branch controls change the silhouette; leaf controls change how full it feels.</p><CaseStudyMedia media={{src: branchProfileRecording, width:1600,height:637,name:"Branch shapes",alt:"Branch settings change the tree live.",caption:"Changing the branches"}} /><CaseStudyMedia media={{src: leafProfileRecording,width:1600,height:685,name:"Leaf clusters",alt:"Leaf spacing and size change the canopy live.",caption:"Filling out the canopy"}} /></section>
+<section><h2 className="typeset-card-title">In the game</h2><p>The same trees, seen in Woods.</p><TreeShowcase /></section> </>}>
+
 
       <section>
         <h2 className="typeset-card-title">Preparation</h2>
@@ -281,6 +287,7 @@ export function TreeSystemsCaseStudy() {
           <blockquote>“Build the system that makes the output.”</blockquote>
         </div>
       </section>
-    </article>
+    </ReadingVersions>
+    </CaseStudy>
   );
 }

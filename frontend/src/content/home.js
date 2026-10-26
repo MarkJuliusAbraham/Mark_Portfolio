@@ -1,21 +1,11 @@
-import bannerImage from "@/img/adam-hamel-MgmfPmixwE4-unsplash.jpg";
 import { nameLines } from "./profile.js";
 
 export const heroProfile = {
   nameLines,
   description: "Designer / Developer",
-  // The hero card turns over through these in order; entries without a `src` show as black.
-  photos: [
-    {
-      src: bannerImage,
-      alt: "A camera held up against a blue sky",
-      caption: "Looking up, always.",
-      position: "50% 60%",
-    },
-    { caption: "Coming soon." },
-    { caption: "Coming soon." },
-    { caption: "Coming soon." },
-  ],
+  photos: Array.from({ length: 4 }, (_, index) => ({
+    placeholder: `Photo ${String(index + 1).padStart(2, "0")} Coming Soon`,
+  })),
 };
 
 // The focus strip under the hero. `accent` picks each area's flourish (see FocusAccents.jsx);

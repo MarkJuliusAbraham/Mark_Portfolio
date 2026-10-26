@@ -34,23 +34,14 @@ export const projects = [
     techStack: ["C#", "Godot", "Shaders"],
     year: 2026,
   },
+  // One buffer for future work.
   {
-    id: "project-3",
-    title: "AI-Parsed Groceries App",
-    description: "A native application that uses a Local LLM to perform query classification to enrich groceries data.",
-    genre: "Desktop app",
-    techStack: [".NET", "JavaScript", "C#", "Electron"],
-    year: null,
-  },
-  // Placeholders that fill out the grid until real projects take their place; `placeholder`
-  // marks them so cards show them as still to come.
-  ...Array.from({ length: 6 }, (_, index) => ({
-    id: `prototype-${index + 1}`,
-    title: `Prototype ${String(index + 1).padStart(2, "0")}`,
-    description: "To be documented.",
-    genre: "TBD",
+    id: "more-in-progress",
+    title: "More in progress",
+    description: "More projects are taking shape. Details to follow.",
+    genre: "In progress",
     techStack: [],
     year: null,
     placeholder: true,
-  })),
+  },
 ];

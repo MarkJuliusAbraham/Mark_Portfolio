@@ -1,3 +1,4 @@
+import { CaseStudy, ReadingVersions } from "./CaseStudy.jsx";
 import { useId, useState } from "react";
 import "./case-study.css";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
@@ -426,8 +427,8 @@ const profiles = [
 
 export const ComputerVisionProject = () => (
   <HintProvider lookup={hintFor}>
-  <article className="case-study typeset-card-readable">
-    <CaseStudyOpening id="project-1">
+  <CaseStudy className="case-study typeset-card-readable">
+    <CaseStudyOpening id="project-1" summary="Use hand gestures to control games and other apps.">
       <p className="cs-eyebrow typeset-card-toner">Project · Desktop application · Python / Tkinter / OpenCV / MediaPipe</p>
       <h1 className="typeset-title">Computer Vision for Input Simulation</h1>
       <p>A desktop application that turns hand gestures into keyboard input.</p>
@@ -440,6 +441,10 @@ export const ComputerVisionProject = () => (
         classifies each finger, matches gestures against the profile and sends keys through pynput.
       </p>
     </CaseStudyOpening>
+<ReadingVersions overview={<> <section><h2 className="typeset-card-title">Your hand becomes the controller</h2><p>The camera reads a hand shape and presses the keys you chose.</p><figure className="cs-figure"><SimpleSystemDiagram /></figure><CaseStudyMedia media={applicationScreenshots.camera} /></section>
+<section><h2 className="typeset-card-title">Choose a gesture</h2><p>Set the hand shape, assign a key, and save it in a profile.</p><CaseStudyMedia media={applicationScreenshots.manual} /></section>
+<section><h2 className="typeset-card-title">Use it over a game</h2><p>A small overlay shows what your hands are doing without covering the action.</p><CaseStudyMedia media={applicationScreenshots.overlay} /></section> </>}>
+
 
     <section>
       <h2 className="typeset-card-title">Systems</h2>
@@ -673,6 +678,7 @@ export const ComputerVisionProject = () => (
         </div>
       ))}
     </section>
-  </article>
+  </ReadingVersions>
+    </CaseStudy>
   </HintProvider>
 );

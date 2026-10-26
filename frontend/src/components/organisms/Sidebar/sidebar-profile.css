@@ -22,26 +22,6 @@
     transform: rotate(45deg);
 }
 
-.sidebar-preview-label {
-    margin-inline-start: auto;
-    color: var(--muted-foreground);
-    font-size: 0.625rem;
-    letter-spacing: 0.04em;
-}
-
-.sidebar-cv-button {
-    width: 100%;
-    min-height: 44px;
-    justify-content: space-between;
-    padding-inline: 12px;
-    font-size: 0.875rem;
-}
-
-.sidebar-cv-button:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: -5px;
-}
-
 .sidebar-mobile-panel .sidebar-profile-actions {
     margin-top: 24px;
 }

@@ -13,6 +13,13 @@ const PhotoFace = ({ ref, photo, state }) => {
   const className = cn("hero-photo-face", state && `is-${state}`);
   const hidden = state !== "current" || undefined;
 
+  if (photo.placeholder) return (
+    <div ref={ref} className={cn(className, "hero-photo-placeholder")} aria-hidden={hidden}>
+      <ImageIcon size={32} strokeWidth={1} aria-hidden="true" />
+      <span>{photo.placeholder}</span>
+    </div>
+  );
+
   if (!photo.src) return <div ref={ref} className={cn(className, "hero-photo-blank")} aria-hidden={hidden} />;
 
   return failed ? (
@@ -75,7 +82,7 @@ export const ImageBanner = ({ photos = [] }) => {
   const count = Math.max(photos.length, 1);
   const { current, previous, change, advanced, step, auto } = usePhotoAdvance(frameRef, count, {
     hold: switchHold,
-    held: hovered || focused,
+    held: photos.length < 2 || hovered || focused,
   });
 
   // Decode every photo up front so even the first time each comes around, it is ready.
@@ -139,8 +146,10 @@ export const ImageBanner = ({ photos = [] }) => {
               />
             ))}
           </div>
-          <button type="button" className="hero-photo-turn is-left" aria-label="Show the previous photo" onClick={() => step(-1)} />
-          <button type="button" className="hero-photo-turn is-right" aria-label="Show the next photo" onClick={() => step(1)} />
+          {photos.length > 1 && <>
+            <button type="button" className="hero-photo-turn is-left" aria-label="Show the previous photo" onClick={() => step(-1)} />
+            <button type="button" className="hero-photo-turn is-right" aria-label="Show the next photo" onClick={() => step(1)} />
+          </>}
         </div>
         {/* Sprocket holes and the frame's number, as printed along the edge of a strip of film. */}
         <div ref={edgeRef} className="hero-photo-edge" aria-hidden="true">
@@ -150,7 +159,7 @@ export const ImageBanner = ({ photos = [] }) => {
       <figcaption className="hero-photo-caption" aria-hidden="true">
         <span>Fig. {figure}</span>
         <span>{photos[current]?.caption}</span>
-        <AutoSwitchStatus state={auto} />
+        {photos.length > 1 && <AutoSwitchStatus state={auto} />}
       </figcaption>
     </figure>
   );

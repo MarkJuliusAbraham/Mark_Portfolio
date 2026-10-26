@@ -9,9 +9,10 @@ export const AboutExperience = ({ entries }) => (
             <header className="about-role-header">
               <h4 id={`about-role-${entry.id}`}>{entry.role}</h4>
               <p className="about-organization">{entry.organization}</p>
+              <p className="about-period">{entry.period}</p>
             </header>
             <p className="about-role-summary">{entry.summary}</p>
-            <p className="about-role-detail">{entry.sample}</p>
+            <p className="about-role-detail">{entry.detail}</p>
           </article>
         </li>
       ))}

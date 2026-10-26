@@ -1,3 +1,4 @@
+import { CaseStudy, ReadingVersions } from "./CaseStudy.jsx";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia.jsx";
@@ -62,8 +63,8 @@ const treeParts = [
 
 export function WindSystemCaseStudy() {
   return (
-    <article className="case-study typeset-card-readable">
-      <CaseStudyOpening id="wind-system">
+    <CaseStudy className="case-study typeset-card-readable">
+      <CaseStudyOpening id="wind-system" summary="Wind that moves through a forest, from a gentle breeze to a passing gust.">
         <h1 className="typeset-title">Wind System - One Field for the Whole Forest</h1>
         <p>The wind for <i>Woods</i>, built in Godot with C# and shaders.</p>
         <p>
@@ -71,6 +72,10 @@ export function WindSystemCaseStudy() {
           forest has thousands of leaves, and every one of them has to move believably, together, and cheaply.
         </p>
       </CaseStudyOpening>
+<ReadingVersions overview={<> <section><h2 className="typeset-card-title">A forest that feels alive</h2><p>Watch a gust pass through the trees, then settle.</p><CaseStudyMedia media={{src:gustViewer,poster:gustViewerPoster,width:1520,height:1020,name:"Forest gust",alt:"Wind moves through a moonlit forest.",caption:"A gust moving through the forest"}} /></section>
+<section><h2 className="typeset-card-title">One tree, one gust</h2><p>The base stays planted. Branches, leaves and shadows move together.</p><CaseStudyMedia media={{src:singleTree,poster:singleTreePoster,width:900,height:900,name:"Tree in wind",alt:"A tree sways while its base stays still.",caption:"The crown sways; the base stays put"}} /></section>
+<section><h2 className="typeset-card-title">One shared wind map</h2><p>The diagram shows how one map moves the whole forest. Bright areas mean stronger wind; dark areas are calm.</p><WindPipeline /><CaseStudyMedia media={{src:gustField,width:512,height:512,name:"Wind map",alt:"White gust patches separated by dark calm areas.",caption:"White: stronger wind. Black: calm."}} /></section> </>}>
+
 
       <section>
         <h2 className="typeset-card-title">Where the Wind Came From</h2>
@@ -232,6 +237,7 @@ export function WindSystemCaseStudy() {
           </div>
         </div>
       </section>
-    </article>
+    </ReadingVersions>
+    </CaseStudy>
   );
 }

@@ -7,15 +7,9 @@
 ## Copy
 
 Edit `src/content/about.js`; `AboutSection` also accepts a `content` object with the same
-shape. Replace `introduction.title`, `introduction.paragraphs`, and each experience
-entry's `sample` with final copy. These fields contain the approved A TempTitle
-and Lorem Ipsum layout placeholders. Update or remove `draftNote` after replacing
-all sample copy.
-
-Employers, roles, years, short experience summaries, and education fields preserve
-the supplied portfolio facts. Keep those separate from sample prose. Interests
-reflect the portfolio's existing areas of interest. Keep experience `id` values
-unique because they provide list keys and accessible heading IDs.
+shape. Experience entries provide `summary`, `detail`, and `period`. Keep entry
+`id` values unique for list keys and accessible heading IDs. Career facts and
+education reflect the supplied biography.
 
 ## Layout and navigation
 

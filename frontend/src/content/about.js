@@ -1,10 +1,10 @@
-// Keep the supplied career facts separate from the temporary design copy.
+// Portfolio biography and career history.
 export const aboutContent = {
   introduction: {
-    title: "A TempTitle about how I think.",
+    title: "Exploring how software fits together.",
     paragraphs: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed viverra, nibh at consequat posuere, justo erat sollicitudin sem, vitae facilisis neque erat sed sapien.",
-      "Praesent vel augue eu neque tincidunt luctus. Curabitur a lorem vitae justo interdum facilisis, ut interdum lectus. Integer ut sem non erat commodo dignissim.",
+      "I love exploring and building software systems—from enterprise applications and developer workflows to the mechanics behind games.",
+      "I’m drawn to how their parts fit together, and how different design choices can solve the same problem.",
     ],
     interests: ["UI/UX design", "Software engineering", "AI architecture", "Games & interaction"],
   },
@@ -12,18 +12,20 @@ export const aboutContent = {
     {
       id: "fdm-2026",
       year: "2026",
-      role: "Software Developer",
+      role: "Full-Stack Software Developer",
       organization: "FDM Group",
+      period: "Feb–Sept 2026",
       summary: "SDLC, web applications, AI integration, and modernization projects.",
-      sample: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat velit a mauris tincidunt, sed pharetra eros malesuada. Donec non neque eget enim gravida volutpat.",
+      detail: "Worked on banking applications, legacy modernization, and AI-powered search, while helping teammates explore RAG, MCP, and agent workflows.",
     },
     {
       id: "alberta-envirothon-2025",
       year: "2025",
-      role: "Software Developer",
+      role: "Full-Stack Software Developer (Client Project)",
       organization: "AlbertaEnvirothon",
+      period: "Jan–Dec 2025",
       summary: "Coursework, client work, and leading full stack development.",
-      sample: "Praesent commodo cursus magna, vel scelerisque nisl consectetur. Nulla vitae elit libero, a pharetra augue. Integer posuere erat a ante venenatis dapibus.",
+      detail: "Helped lead a five-person team turning paper-based competitions into a web platform—from registration and live scoring to same-day results.",
     },
   ],
   education: {
@@ -33,5 +35,4 @@ export const aboutContent = {
     major: "Computer Science",
     minor: "Mathematics",
   },
-  draftNote: "A TempTitle and Lorem Ipsum are temporary copy for this layout preview.",
 };

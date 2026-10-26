@@ -1,3 +1,4 @@
+import { CaseStudy, ReadingVersions } from "./CaseStudy.jsx";
 import { useState } from "react";
 import { FsmClipPlayer } from "./FsmClipPlayer.jsx";
 import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
@@ -652,8 +653,8 @@ const EntityShowcase = ({ name, gif, width, height, alt, summary, simpleSummary 
 export const ThresholdCaseStudy = () => (
   <HintProvider lookup={entryFor}>
   <CompactDiagramTerms lookup={entryFor}>
-  <article className="case-study typeset-card-readable">
-    <CaseStudyOpening id="project-2">
+  <CaseStudy className="case-study typeset-card-readable">
+    <CaseStudyOpening id="project-2" summary="A game desk full of objects you can pick up, open, and use.">
       <p className="cs-eyebrow typeset-card-toner">Case study · Game systems · Godot / C#</p>
       <h1 className="typeset-title">Composing Behaviors: Input and State</h1>
       <p>A "Papers Please"-style game.</p>
@@ -667,6 +668,10 @@ export const ThresholdCaseStudy = () => (
         mean different things.</>}>Each behavior runs its own <b>finite state machine</b> to decide what an input means right now.</Plain>
       </p>
     </CaseStudyOpening>
+<ReadingVersions overview={<> <section><h2 className="typeset-card-title">A working reception desk</h2><p>Move papers, use the desk tools, and hand documents back through the booth.</p><CaseStudyMedia media={{src:receptionPreview,width:960,height:600,name:"Reception desk",alt:"Papers are handed back through the reception booth.",caption:"The reception desk in play"}} /></section>
+<section><h2 className="typeset-card-title">Small abilities, different objects</h2><p>A folder can open and move. A button can be pressed. Shared abilities make each object work.</p><figure className="cs-figure"><CompactGoal /></figure><CaseStudyMedia media={{src:folderGif,width:940,height:680,name:"Folder interaction",alt:"A folder opening and moving on the desk.",caption:"Open it. Move it. Close it."}} /></section>
+<section><h2 className="typeset-card-title">One action at a time</h2><p>This diagram shows the folder moving between closed, opening, open and closing.</p><figure className="cs-figure"><CompactActivatable /></figure><CaseStudyMedia media={{src:ticketGif,width:1000,height:640,name:"Ticket interaction",alt:"A ticket being used on the desk.",caption:"The same interaction system, used for a ticket"}} /></section> </>}>
+
 
     <section>
       <h2 className="typeset-card-title">The Input System</h2>
@@ -918,7 +923,8 @@ export const ThresholdCaseStudy = () => (
       </div>
     </section>
 
-  </article>
+  </ReadingVersions>
+    </CaseStudy>
   </CompactDiagramTerms>
   </HintProvider>
 );

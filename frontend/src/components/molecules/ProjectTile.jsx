@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { ProjectLink } from "./ProjectLink.jsx";
 import { figureNumber } from "@/lib/figures.js";
 import { ProjectPreview } from "./ProjectPreview.jsx";
 import "./project-card.css";
@@ -8,7 +8,7 @@ import "./project-card.css";
  * card, with just the genre beneath; a `featured` one is a large tile that keeps its description.
  */
 export const ProjectTile = ({ id, number, title, description, genre, placeholder, featured }) => (
-  <Link to={`/projects/${id}`} className="project-figure-link">
+  <ProjectLink id={id} placeholder={placeholder} className="project-figure-link">
     <figure className={`project-figure project-tile${featured ? " is-featured" : ""}`} data-theme="inverse-card">
       <div className="project-figure-frame">
         <ProjectPreview id={id} placeholder={placeholder} className="project-figure-image" />
@@ -20,6 +20,6 @@ export const ProjectTile = ({ id, number, title, description, genre, placeholder
       {featured && <p className="project-figure-summary">{description}</p>}
       {genre && <p className="project-tile-genre">{genre}</p>}
     </figure>
-  </Link>
+  </ProjectLink>
 );
 
