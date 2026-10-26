@@ -40,3 +40,8 @@
   .cs-media-viewer__viewport { margin: 0 8px; }
   .cs-media-viewer__hint { padding: 10px 8px; }
 }
+
+/* Videos sit exactly where images do. */
+.cs-media__preview video { display: block; width: 100%; height: auto; }
+.cs-media-viewer__viewport video { display: block; max-width: none; height: auto; }
+.cs-media-viewer__viewport[data-fit="true"] video { height: 100%; object-fit: contain; }

@@ -13,6 +13,8 @@ import chaseVideo from "@/previews/MitsuhaChaseMeteor.mp4";
 import chasePoster from "@/previews/MitsuhaChaseMeteor.jpg";
 import receptionPreview from "@/gifs/threshold-preview.gif";
 import treeSystemsPreview from "@/gifs/tree-systems.gif";
+import windVideo from "@/previews/WindSystem.mp4";
+import windPoster from "@/previews/WindSystem.jpg";
 import gestureVideo from "@/previews/GestureCapture.mp4";
 import gesturePoster from "@/previews/GestureCapture.jpg";
 import { prefersReducedMotion } from "@/lib/scroll.js";
@@ -36,6 +38,8 @@ const ownPreviews = {
   // Bob collects her papers at the reception window and leaves.
   "project-2": { gif: receptionPreview, alt: "" },
   "tree-systems": { gif: treeSystemsPreview, alt: "" },
+  // A gust passing through the gust viewer's moonlit stand, cropped tight for the card.
+  "wind-system": { video: windVideo, poster: windPoster },
 };
 
 // The same stand-in for a project every time, so it matches between the carousel and the grid.

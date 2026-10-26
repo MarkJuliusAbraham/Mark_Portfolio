@@ -27,6 +27,14 @@ export const projects = [
     year: 2026,
   },
   {
+    id: "wind-system",
+    title: "Wind System",
+    description: "One wind shader for the whole forest: gust noise is drawn once into a world-space texture, and every trunk, leaf and foliage shadow samples it instead of computing noise per vertex. Wood bends more the higher it reaches; leaves get an extra push.",
+    genre: "Game systems",
+    techStack: ["C#", "Godot", "Shaders"],
+    year: 2026,
+  },
+  {
     id: "project-3",
     title: "AI-Parsed Groceries App",
     description: "A native application that uses a Local LLM to perform query classification to enrich groceries data.",

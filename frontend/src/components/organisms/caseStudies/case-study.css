@@ -1136,3 +1136,11 @@
 /* Stacked phone figures: room between consecutive components. */
 .case-study .cs-compact > .cs-compact-node + .cs-compact-node { margin-top: 0.75rem; }
 .case-study .cs-compact > .cs-compact-explanation { margin: 0.6rem 0; }
+
+/* Two media figures side by side, stacking on narrow screens. */
+.case-study .cs-media-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--cs-s3); margin-block: var(--cs-s3); }
+@media (max-width: 700px) { .case-study .cs-media-pair { grid-template-columns: 1fr; } }
+
+.case-study .cs-media-pair { align-items: start; }
+.case-study .cs-media-notes h3 { margin-top: 0; }
+.case-study .cs-media-pair > ul { margin: 0; padding-left: 1.1em; display: grid; gap: var(--cs-s2); }

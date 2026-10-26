@@ -165,7 +165,7 @@ export function TreeSystemsCaseStudy() {
             src: leafProfileRecording, width: 1600, height: 685,
             name: "Live leaf puff adjustment",
             alt: "Recording of the aged tree in Godot as puff spacing and radius are adjusted. The foliage clusters change size and distribution while the tree updates live.",
-            caption: "Shaping the canopy live · adjusting leaf puff spacing and radius · first six seconds",
+            caption: "Shaping the canopy live · adjusting leaf puff spacing and radius",
           }} />
         </div>
         <div className="cs-subsection cs-prose">

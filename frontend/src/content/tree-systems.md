@@ -103,7 +103,7 @@ At the canopy scale, I could experiment with how foliage gathers around the bran
 
 ![Recording of the aged tree in Godot as puff spacing and radius are adjusted. The foliage clusters change size and distribution while the tree updates live.](../gifs/tree-leaf-profile.gif)
 
-*Shaping the canopy live · adjusting leaf puff spacing and radius · first six seconds*
+*Shaping the canopy live · adjusting leaf puff spacing and radius*
 
 ### Looking Closer at a Single Leaf
 
@@ -164,6 +164,16 @@ Seeing these results beside each other brings the project back to the references
 ![Pale-trunked tree with muted foliage beside an enlarged four-leaf card preview.](../assets/tree-showcase/four-leaf-canopy.png)
 
 *Another look · a pale trunk and a four-leaf silhouette*
+
+![A group of pale-trunked trees with overlapping blue-gray canopies and warm light crossing the foliage.](../assets/tree-showcase/forest-group.png)
+
+*Together as a forest · judging overlapping canopies, variation and light*
+
+![Gameplay recording of flares being thrown around Woods, lighting the trees and foliage.](../assets/tree-showcase/flares-in-woods.gif)
+
+<!-- Small 400px-wide, 15 fps, lazy-loaded, enlargeable GIF preview. -->
+
+*Flares in Woods · trees and foliage under moving light*
 
 ## What I Want to Explore Next
 

@@ -8,6 +8,9 @@
 .tree-showcase-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 1.75rem; }
 .tree-showcase-gallery > div { min-width: 0; }
 .tree-showcase-gallery .cs-media__preview img { aspect-ratio: 1; object-fit: contain; }
+.tree-showcase-gallery .tree-showcase-wide { grid-column: 1 / -1; }
+.tree-showcase-gallery .tree-showcase-wide .cs-media__preview img { aspect-ratio: auto; }
+.tree-showcase-recording { max-width: 400px; }
 .tree-future-features { list-style: disc; padding-left: 1.5rem; }
 .tree-future-features li { margin-block: 0.75rem; line-height: 1.65; }
 @media (max-width: 700px) {
