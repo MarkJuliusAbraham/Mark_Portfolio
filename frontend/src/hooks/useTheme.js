@@ -6,6 +6,10 @@ const storageKey = "theme";
 
 const applyTheme = (theme) => {
   document.documentElement.classList.toggle("dark", theme === "dark");
+  // Match the browser's early rendering hint to the selected site theme.
+  document.querySelector('meta[name="color-scheme"]')?.setAttribute(
+    "content", theme === "dark" ? "dark" : "only light",
+  );
 };
 
 export function initializeTheme() {

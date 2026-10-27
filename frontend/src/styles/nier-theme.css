@@ -1,6 +1,7 @@
 /* Saved NieR presets, captured 2026-10-13. Web text retains a 16px base. */
 :root {
-    color-scheme: light;
+    /* Keep automatic darkening from recoloring the site's authored light theme. */
+    color-scheme: only light;
     --nier-font-family: "Bahnschrift", "Segoe UI", Arial, sans-serif;
     /* Shared palette values let surfaces use either preset without duplicating colors. */
     --nier-light-panel: #e2dfce;
