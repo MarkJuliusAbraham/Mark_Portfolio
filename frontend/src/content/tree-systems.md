@@ -1,6 +1,6 @@
 <!-- Editorial reference for the Tree Systems case study. Edit this file first; apply approved edits to TreeSystemsCaseStudy.jsx. The website does not load this Markdown automatically. Notes inside comments describe existing UI behavior and are not page copy. -->
 
-# Tree Systems - Designing Unfamiliar Systems with the AI Tools
+# Tree Systems - Designing Unfamiliar Systems
 
 A procedural tree system and an authoring tool for *Woods*, built in Godot with C# and shaders.
 

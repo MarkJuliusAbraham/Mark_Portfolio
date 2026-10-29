@@ -28,7 +28,7 @@ export function TreeSystemsCaseStudy() {
   return (
     <CaseStudy className="case-study tree-case-study typeset-card-readable">
       <CaseStudyOpening id="tree-systems" summary="Make different trees, adjust their shapes, and see them in the game.">
-        <h1 className="typeset-title tree-case-title">Tree Systems - Designing Unfamiliar Systems with the AI Tools</h1>
+        <h1 className="typeset-title tree-case-title">Tree Systems - Designing Unfamiliar Systems</h1>
         <p>A procedural tree system and an authoring tool for <i>Woods</i>, built in Godot with C# and shaders.</p>
         <p>
           When this project was started, the goal was to create a basic Tree using AI. However, my experience
