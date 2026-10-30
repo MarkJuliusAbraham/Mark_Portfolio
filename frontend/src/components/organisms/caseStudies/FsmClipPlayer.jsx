@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import sheetUrl from "@/gifs/threshold-fsm-sheet.webp";
 import clip from "./threshold-fsm-timeline.json";
 import { prefersReducedMotion } from "@/lib/scroll.js";
@@ -17,9 +17,10 @@ export const FsmClipPlayer = ({ onStep }) => {
   const [playing, setPlaying] = useState(() => !prefersReducedMotion());
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
-  const [caption, setCaption] = useState(clip.timeline[0].c);
+  const caption = clip.timeline[step].c;
+  // The latest callback, kept current before the step effects below run.
   const onStepRef = useRef(onStep);
-  onStepRef.current = onStep;
+  useLayoutEffect(() => { onStepRef.current = onStep; }, [onStep]);
 
   useEffect(() => {
     const image = new Image();
@@ -44,7 +45,6 @@ export const FsmClipPlayer = ({ onStep }) => {
       const sy = Math.floor(entry.f / columns) * height;
       canvas.getContext("2d").drawImage(sheet, sx, sy, width, height, 0, 0, width, height);
     }
-    setCaption(entry.c);
     onStepRef.current?.({ state: entry.s, edge: entry.e ?? null });
     if (!entry.e) return undefined;
     const clear = setTimeout(() => onStepRef.current?.({ state: entry.s, edge: null }), EDGE_GLOW_MS);

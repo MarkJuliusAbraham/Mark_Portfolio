@@ -1,20 +1,22 @@
 import {useEffect, useRef} from "react";
 import {initWebGpu} from "@/lib/webgpu/initWebGpu.js";
 
+// The cell's two triangles; constant, so built once rather than on every render.
+const vertices = new Float32Array([
+//   X,    Y,
+  -0.8, -0.8, // Triangle 1 (Blue)
+  0.8, -0.8,
+  0.8,  0.8,
+
+  -0.8, -0.8, // Triangle 2 (Red)
+  0.8,  0.8,
+  -0.8,  0.8,
+]);
+
 export const WebGpuCanvas = () => {
 
   const canvasRef = useRef(null);
 
-  const vertices = new Float32Array([
-//   X,    Y,
-    -0.8, -0.8, // Triangle 1 (Blue)
-    0.8, -0.8,
-    0.8,  0.8,
-
-    -0.8, -0.8, // Triangle 2 (Red)
-    0.8,  0.8,
-    -0.8,  0.8,
-  ]);
 
   const GRID_SIZE = 16;
 

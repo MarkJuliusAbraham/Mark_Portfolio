@@ -52,13 +52,18 @@ const sameOutline = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 export const usePageOutline = (enabled, pageKey) => {
   const [outline, setOutline] = useState([]);
   const [activeId, setActiveId] = useState(null);
-
-  useEffect(() => {
+  // Turning the outline off empties it, adjusted while rendering rather than in an effect.
+  const [wasEnabled, setWasEnabled] = useState(enabled);
+  if (wasEnabled !== enabled) {
+    setWasEnabled(enabled);
     if (!enabled) {
       setOutline([]);
       setActiveId(null);
-      return undefined;
     }
+  }
+
+  useEffect(() => {
+    if (!enabled) return undefined;
     let frame = 0;
     const refresh = () => {
       cancelAnimationFrame(frame);

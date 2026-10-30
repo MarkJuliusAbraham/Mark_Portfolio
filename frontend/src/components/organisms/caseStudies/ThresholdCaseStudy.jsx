@@ -5,7 +5,8 @@ import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
-import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactSequence, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
+import { Arrowhead, FigureLabel, Frame, Node } from "./diagram.jsx";
+import { CompactDiagramTerms, CompactGoal, CompactOverview, CompactModes, CompactMachine, CompactChange, CompactActivatable } from "./CompactDiagrams.jsx";
 import folderGif from "@/gifs/threshold-folder.gif";
 import receptionPreview from "@/gifs/threshold-preview.gif";
 import ticketGif from "@/gifs/threshold-ticket.gif";
@@ -15,12 +16,6 @@ import "./case-study.css";
 // The "Papers Please"-style game's case study: how desk objects decide who handles each input
 // (the coordinator) and what that input means right now (each behavior's state machine).
 // Figures are monochrome schematics; the accent marks only input claims, the idea the page is about.
-
-const Arrowhead = ({ id, className = "cs-fill-ink" }) => (
-  <marker id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-    <path d="M0,0 L10,5 L0,10 z" className={className} />
-  </marker>
-);
 
 // What each box in the figures means, shown in a hint beside it; `term` is the name drawn in the box.
 const glossary = [
@@ -84,43 +79,6 @@ const glossary = [
 ];
 
 const entryFor = (term) => glossary.find((entry) => entry.term === term);
-
-// A component uses its own contrasting surface; grouping keeps all of its labels on that palette.
-const Node = ({ x, y, width, height = 46, name, note, tag, lines = [], accent = false, term = name }) => (
-  <g className="cs-component">
-  <Term term={term}>
-    <rect x={x} y={y} width={width} height={height} className={accent ? "cs-node cs-node-accent" : "cs-node"} />
-    <path d={`M${x},${y} h7 L${x},${y + 7} z`} className={accent ? "cs-fill-accent" : "cs-fill-ink"} />
-    <text x={x + 12} y={y + 20} className="cs-name">{name}</text>
-    <text x={x + width - 9} y={y + 14} textAnchor="middle" className="cs-plus" aria-hidden="true">+</text>
-    {tag && <text x={x + width - 20} y={y + 20} textAnchor="end" className="cs-tag">{tag}</text>}
-    {note && <text x={x + 12} y={y + 36} className="cs-note">{note}</text>}
-    {lines.map((line, i) => <text key={line} x={x + 12} y={y + 46 + i * 20} className="cs-state-line">{line}</text>)}
-  </Term>
-  </g>
-);
-
-const FigureLabel = ({ number, title }) => (
-  <text x="0" y="12" className="cs-fig-label">
-    <tspan className="cs-fig-number">FIG. {number}</tspan>
-    <tspan dx="12">{title}</tspan>
-  </text>
-);
-
-// A container drawn as a frame with a hoverable header strip, so hovering what's inside it
-// shows the inner box's hint, not the container's.
-const Frame = ({ x, y, width, height, name, note, term = name, shaded = false }) => (
-  <g className={shaded ? "cs-shaded-frame" : undefined}>
-    <rect x={x} y={y} width={width} height={height} className={shaded ? "cs-frame cs-frame-shaded" : "cs-frame"} />
-    <path d={`M${x},${y} h7 L${x},${y + 7} z`} className="cs-fill-ink" />
-    <Term term={term}>
-      <rect x={x} y={y} width={Math.min(width, 420)} height="34" className="cs-hit" />
-      <text x={x + 12} y={y + 21} className="cs-name">{name}</text>
-      <text x={x + 12 + name.length * 8.4 + 10} y={y + 21} className="cs-note">{note}</text>
-      <text x={x + width - 9} y={y + 14} textAnchor="middle" className="cs-plus" aria-hidden="true">+</text>
-    </Term>
-  </g>
-);
 
 // Fig. 01: the goal. Any entity gets its abilities from behaviors added as child nodes, mixed and
 // matched per object; the folder and the ticket are two real compositions from the reception scene.
@@ -242,7 +200,8 @@ const lanes = [
   { x: 830, label: "Pressable · Draggable", term: "Pressable" },
 ];
 
-// Not shown on the page right now (kept for later). Renumber its FigureLabel if it returns.
+// Not shown on the page right now (kept for later, with CompactSequence). Renumber its FigureLabel if it returns.
+// eslint-disable-next-line no-unused-vars
 const SequenceDiagram = () => (
   <svg viewBox="-24 -8 948 346" role="img" aria-label="Sequence: right-click on a folder. The coordinator delivers it to Activatable, which claims a block and enters Activating. While blocked, clicks for Pressable and Draggable are skipped. When the animation completes, Activatable enters Active and releases the claim.">
     <defs>

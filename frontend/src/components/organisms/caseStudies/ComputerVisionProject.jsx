@@ -5,6 +5,7 @@ import { CaseStudyOpening, Separator } from "./CaseStudyOpening.jsx";
 import { Plain } from "./Plain.jsx";
 import { SwapLabel } from "./SwapLabel.jsx";
 import { HintCue, HintProvider, Term } from "./Hints.jsx";
+import { Arrowhead, FigureLabel, Placeholder } from "./diagram.jsx";
 import { CaseStudyMedia } from "@/components/molecules/CaseStudyMedia";
 import trackingHubImage from "@/img/computer-vision/tracking-hub.png";
 import debuggingImage from "@/gifs/hand-diagnostics.gif";
@@ -34,12 +35,6 @@ const applicationScreenshots = {
 
 // Project overview grounded in ComputerVisionBasics/hand-tracking (docs/architecture.md and
 // docs/functionality_diagrams.md). Media slots stay labelled until recordings are available.
-const Placeholder = ({ label, ratio = "16 / 9" }) => (
-  <figure className="cs-placeholder" style={{ aspectRatio: ratio }} aria-label={`Placeholder: ${label}`}>
-    <figcaption className="typeset-card-toner">{label}</figcaption>
-  </figure>
-);
-
 // One gesture's trip from the camera to another application. Each stage is what the system knows at
 // that point, the step that produces it, and the class that does the work.
 const stages = [
@@ -165,12 +160,6 @@ const StageFlow = () => (
 
 // Fig. 01, drawn: the pipeline left to right, what configures it above, and what it feeds below.
 // Class names are technical lines, hidden in the simplified reading mode.
-const Arrowhead = ({ id }) => (
-  <marker id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-    <path d="M0,0 L10,5 L0,10 z" className="cs-fill-ink" />
-  </marker>
-);
-
 const Box = ({ x, y, width = 156, height = 72, name, note, code, className }) => (
   <g className={className}>
     <rect x={x} y={y} width={width} height={height} className="cs-node" />
@@ -200,7 +189,7 @@ const simpleSteps = [
 const SimpleSystemDiagram = () => (
   <svg viewBox="-24 -8 948 372" role="img" aria-label="The system in three steps: the camera films your hand, the app recognizes your hand and matches it to your gestures, then simulates the key presses you assigned, which go to your application. In the app's window you set your gestures, keys and tuning, which configure the recognizing and the key presses, and you see live feedback of what it recognized.">
     <defs><Arrowhead id="cv-simple-arrow" /></defs>
-    <text x="0" y="12" className="cs-fig-label"><tspan className="cs-fig-number">FIG. 01</tspan><tspan dx="12">FROM HAND TO KEY PRESS</tspan></text>
+    <FigureLabel number="01" title="FROM HAND TO KEY PRESS" />
 
     {/* The app's window: where you set things up, and where you see what it recognized. */}
     <Box x={233} y={40} width={433} height={56} name="Your settings" note="gestures, keys and tuning · set in the app" />
@@ -251,7 +240,7 @@ const boxX = (i) => i * 186;
 const SystemDiagram = () => (
   <svg viewBox="-24 -8 948 384" role="img" aria-label="The system, left to right: the camera's live video goes to the hand finder, which locates 21 joints per hand; the pose reader turns those into finger bends and palm direction; the matcher compares the pose with the active profile; and the key presser sends taps, holds and delays to your application. Settings configure the hand finder and pose reader, and the profile configures the matcher. The hand, pose and gesture also feed the live views: the debugging panel, desktop overlay and camera preview.">
     <defs><Arrowhead id="cv-arrow" /></defs>
-    <text x="0" y="12" className="cs-fig-label"><tspan className="cs-fig-number">FIG. 01</tspan><tspan dx="12">FROM HAND TO KEY PRESS</tspan></text>
+    <FigureLabel number="01" title="FROM HAND TO KEY PRESS" />
 
     {/* What configures the pipeline: saved files, edited in the app. */}
     <Box x={186} y={40} width={342} height={46} name="Settings" note="model · finger ranges · smoothing" />

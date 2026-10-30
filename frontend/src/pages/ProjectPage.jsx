@@ -5,13 +5,7 @@ import { useEffect } from "react";
 import {WebGpuCanvas} from "@/components/organisms/WebGpuCanvas.jsx";
 import projectPreview from "@/previews/MitsuhaRun.mp4";
 import projectPoster from "@/previews/MitsuhaRun.jpg";
-import { ThresholdCaseStudy } from "@/components/organisms/caseStudies/ThresholdCaseStudy.jsx";
-import { ComputerVisionProject } from "@/components/organisms/caseStudies/ComputerVisionProject.jsx";
-import { TreeSystemsCaseStudy } from "@/components/organisms/caseStudies/TreeSystemsCaseStudy.jsx";
-import { WindSystemCaseStudy } from "@/components/organisms/caseStudies/WindSystemCaseStudy.jsx";
-
-// Projects with a dedicated page show it in place of the placeholder preview.
-const projectPages = { "project-1": ComputerVisionProject, "project-2": ThresholdCaseStudy, "tree-systems": TreeSystemsCaseStudy, "wind-system": WindSystemCaseStudy };
+import { caseStudyPages } from "@/components/organisms/caseStudies/index.js";
 
 export const ProjectPage = () => {
 
@@ -21,7 +15,8 @@ export const ProjectPage = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [projectId]);
 
-  const ProjectContent = projectPages[projectId];
+  // Projects with a dedicated case study show it in place of the placeholder preview.
+  const ProjectContent = caseStudyPages[projectId];
   if (ProjectContent) return <ScrollingContent><ProjectContent /></ScrollingContent>;
 
   return (
