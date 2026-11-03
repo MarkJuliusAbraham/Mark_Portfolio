@@ -64,7 +64,7 @@ export function WindSystemCaseStudy() {
   return (
     <CaseStudy className="case-study typeset-card-readable">
       <CaseStudyOpening id="wind-system" summary="Wind that moves through a forest, from a gentle breeze to a passing gust.">
-        <h1 className="typeset-title">Wind System - One Field for the Whole Forest</h1>
+        <h1 className="typeset-title">Wind Systems - One Field for the Whole Forest</h1>
         <p>The wind for <i>Woods</i>, built in Godot with C# and shaders.</p>
         <p>
           A forest that stands perfectly still reads as a set of props. Wind is what makes it feel alive, but a

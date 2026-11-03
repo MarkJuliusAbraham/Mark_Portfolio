@@ -14,6 +14,7 @@ import chasePoster from "@/previews/MitsuhaChaseMeteor.jpg";
 import receptionPreview from "@/gifs/threshold-preview.gif";
 import treeSystemsPreview from "@/gifs/tree-systems.gif";
 import windVideo from "@/previews/WindSystem.mp4";
+import waterPreview from "@/gifs/water-system.gif";
 import windPoster from "@/previews/WindSystem.jpg";
 import gestureVideo from "@/previews/GestureCapture.mp4";
 import gesturePoster from "@/previews/GestureCapture.jpg";
@@ -40,6 +41,8 @@ const ownPreviews = {
   "tree-systems": { gif: treeSystemsPreview, alt: "" },
   // A gust passing through the gust viewer's moonlit stand, cropped tight for the card.
   "wind-system": { video: windVideo, poster: windPoster },
+  // A tree mirrored in the river at night, with leaves landing on the water.
+  "water-system": { gif: waterPreview, alt: "" },
 };
 
 // The same stand-in for a project every time, so it matches between the carousel and the grid.
