@@ -50,9 +50,10 @@ const arrowHints = [
     term: "Camera → Find the hand",
     definition: (
       <Plain simple="The webcam keeps filming, and a hand-tracking model finds the joints of each hand. The app never waits on the model: it uses the most recent answer it has, so everything stays responsive.">
-        The camera captures on its own worker thread and keeps only the latest frame. MediaPipe's Hand
-        Landmarker runs asynchronously: each tick submits a new frame and reads back the most recent finished
-        result, which may belong to an earlier frame. Nothing blocks waiting on inference.
+        The camera captures on its own worker thread and keeps only the latest frame. The tracking engine,
+        on its own thread, waits up to 5 ms for a newer frame and submits it to MediaPipe's Hand Landmarker,
+        which runs asynchronously and returns the most recent finished result, possibly from an earlier frame.
+        Nothing blocks waiting on inference.
       </Plain>
     ),
   },
@@ -119,10 +120,11 @@ const arrowHints = [
   {
     term: "Live views",
     definition: (
-      <Plain simple="Everything you see in the app reads the same live results, so opening another window never makes the tracking work twice.">
-        Each tick, the TrackingEngine returns one report of hand states and matched gestures. The debugging
-        panel, settings preview and desktop overlay all read that same report, and the camera preview draws
-        the landmarks and fingertip paths. The backend never imports the frontend, and a test enforces it.
+      <Plain simple="Everything you see in the app reads the same live results, and drawing the windows never slows the tracking down.">
+        The whole pipeline runs on a <code>tracking-engine</code> thread, which publishes a snapshot of each
+        frame's hand states and matched gestures. Every 15 ms, Tk's thread draws the newest snapshot in the
+        debugging panel, settings preview, desktop overlay and camera preview, so drawing never delays a key
+        press. The backend never imports the frontend, and a test enforces it.
       </Plain>
     ),
   },
@@ -154,6 +156,7 @@ const StageFlow = () => (
     <p className="cs-flow-branch typeset-card-toner">
       At every stage, the same results also feed the live views: the debugging panel, the
       camera preview and the desktop overlay.
+      <span className="cs-technical"> The stages run on the tracking-engine thread; the live views draw its newest snapshot every 15 ms.</span>
     </p>
   </div>
 );
@@ -238,7 +241,7 @@ const pipelineBoxes = [
 const boxX = (i) => i * 186;
 
 const SystemDiagram = () => (
-  <svg viewBox="-24 -8 948 384" role="img" aria-label="The system, left to right: the camera's live video goes to the hand finder, which locates 21 joints per hand; the pose reader turns those into finger bends and palm direction; the matcher compares the pose with the active profile; and the key presser sends taps, holds and delays to your application. Settings configure the hand finder and pose reader, and the profile configures the matcher. The hand, pose and gesture also feed the live views: the debugging panel, desktop overlay and camera preview.">
+  <svg viewBox="-24 -8 948 384" role="img" aria-label="The system, left to right: the camera's live video goes to the hand finder, which locates 21 joints per hand; the pose reader turns those into finger bends and palm direction; the matcher compares the pose with the active profile; and the key presser sends taps, holds and delays to your application. Settings configure the hand finder and pose reader, and the profile configures the matcher. The hand, pose and gesture also feed the live views: the debugging panel, desktop overlay and camera preview. The pipeline runs on the tracking-engine thread, and the live views draw its newest snapshot on Tk's thread every 15 ms.">
     <defs><Arrowhead id="cv-arrow" /></defs>
     <FigureLabel number="01" title="FROM HAND TO KEY PRESS" />
 
@@ -251,6 +254,9 @@ const SystemDiagram = () => (
       <line x1="636" y1="86" x2="636" y2="148" />
     </g>
 
+    {/* The pipeline runs on its own thread; the live views only draw its newest snapshot. */}
+    <rect x={-12} y={116} width={924} height={120} className="cs-frame" strokeDasharray="5 4" />
+    <text x={-2} y={134} className="cs-state-line">tracking-engine thread</text>
     {pipelineBoxes.map((box, i) => <Box key={box.name} x={boxX(i)} y={150} {...box} />)}
     <g className="cs-wire" markerEnd="url(#cv-arrow)">
       {pipelineBoxes.slice(1).map((box, i) => <line key={box.name} x1={boxX(i) + 156} y1="186" x2={boxX(i + 1) - 2} y2="186" />)}
@@ -271,9 +277,72 @@ const SystemDiagram = () => (
     {[264, 450, 636].map((x) => <ArrowHint key={x} term="Live views" x={x} y={259} />)}
 
     {/* What the pipeline feeds: the same results, shown to you and sent to another program. */}
-    <Box x={186} y={298} width={528} height={50} name="Live views" note="debugging panel · desktop overlay · camera preview" />
-    <g className="cs-solid-blue"><Box x={744} y={298} width={156} height={50} name="Your application" note="receives the keys" /></g>
+    <Box x={186} y={298} width={528} height={72} name="Live views" note="debugging panel · desktop overlay · camera preview" code="Tk thread · draws the newest snapshot every 15 ms" />
+    <g className="cs-solid-blue"><Box x={744} y={298} width={156} height={72} name="Your application" note="receives the keys" /></g>
   </svg>
+);
+
+// Fig. 02: every thread the app runs and what passes between them (docs/architecture.md and the
+// thread table in docs/startup_lifecycle.md). The camera-preview thread exists only on Windows.
+const ThreadDiagram = () => (
+  <svg viewBox="-24 -8 948 316" role="img" aria-label="The app's threads. The camera capture worker reads the webcam and hands the newest frame to the tracking-engine thread, which runs the pipeline and the key presses. The engine submits frames to MediaPipe inference, which returns the latest result through a callback; the hand-model-loader thread creates and retires MediaPipe's sessions. The engine publishes a snapshot that Tk's main thread draws every 15 ms, and Tk sends requests such as pause or settings changes back to the engine. On Windows, Tk passes the annotated frame to a camera-preview thread with its own OpenCV window; on macOS the preview is drawn on Tk's thread, so it runs five threads instead of six.">
+    <defs><Arrowhead id="cv-thread-arrow" /></defs>
+    <FigureLabel number="02" title="THREADS" />
+
+    <Box x={0} y={60} width={180} height={72} name="Camera capture" note="reads the webcam" code="capture worker" />
+    <Box x={248} y={60} width={180} height={72} name="Tracking engine" note="pipeline · key presses" code="tracking-engine" />
+    <Box x={496} y={60} width={180} height={72} name="Interface" note="draws every 15 ms" code="Tk main thread" />
+    <Box x={744} y={60} width={180} height={72} name="Camera preview" note="OpenCV's window" code="camera-preview" className="cs-hookbox" />
+    <Box x={0} y={210} width={180} height={72} name="Model loader" note="loads the model" code="hand-model-loader" />
+    <Box x={248} y={210} width={180} height={72} name="MediaPipe" note="hand landmarks" code="inference" />
+
+    <g className="cs-wire" markerEnd="url(#cv-thread-arrow)">
+      <line x1="180" y1="86" x2="246" y2="86" />
+      <line x1="428" y1="86" x2="494" y2="86" />
+      <line x1="496" y1="116" x2="430" y2="116" />
+      <line x1="676" y1="86" x2="742" y2="86" />
+      <line x1="300" y1="132" x2="300" y2="208" />
+      <line x1="376" y1="210" x2="376" y2="134" />
+      <line x1="180" y1="246" x2="246" y2="246" />
+    </g>
+    <g className="cs-note">
+      <text x="213" y="78" textAnchor="middle">frame</text>
+      <text x="462" y="78" textAnchor="middle">snapshot</text>
+      <text x="462" y="130" textAnchor="middle">requests</text>
+      <text x="709" y="78" textAnchor="middle">frame</text>
+      <text x="294" y="175" textAnchor="end">submits frames</text>
+      <text x="382" y="175">result callback</text>
+      <text x="213" y="238" textAnchor="middle">sessions</text>
+    </g>
+    <g className="cs-note">
+      <text x="744" y="156">Windows only. On macOS the</text>
+      <text x="744" y="173">preview draws on Tk's thread.</text>
+      <text x="744" y="246">Windows: 6 threads</text>
+      <text x="744" y="263">macOS: 5 threads</text>
+    </g>
+  </svg>
+);
+
+const threads = [
+  { name: "Camera capture", code: "capture worker", does: "Reads the webcam and keeps only the newest frame for the engine." },
+  { name: "Tracking engine", code: "tracking-engine", does: "Runs queued requests, takes the newest frame, runs the pipeline and presses keys, then publishes a snapshot." },
+  { name: "MediaPipe", code: "inference", does: "Finds hand landmarks asynchronously and returns the latest result through a callback." },
+  { name: "Model loader", code: "hand-model-loader", does: "Creates and retires MediaPipe's sessions, so switching models never stalls the engine." },
+  { name: "Interface", code: "Tk main thread", does: "Draws the newest snapshot every 15 ms and sends requests, like pause or new settings, back to the engine." },
+  { name: "Camera preview", code: "camera-preview", does: "Windows only: shows the annotated frame in OpenCV's window. On macOS the preview draws on Tk's thread instead." },
+];
+
+const ThreadList = () => (
+  <div className="cs-compact">
+    <div className="cs-compact-stack">
+      {threads.map(({ name, code, does }) => (
+        <div key={name} className="cs-compact-node">
+          <b className="cs-compact-name">{name}</b> <code>{code}</code>
+          <p>{does}</p>
+        </div>
+      ))}
+    </div>
+  </div>
 );
 
 /**
@@ -378,10 +447,16 @@ const designDetails = [
     how: "If a hand disappears or results are more than 250 ms apart, smoothing and motion history reset instead of bridging the gap with a guess.",
   },
   {
+    problem: "Busy windows could delay a key press",
+    group: "stuck",
+    fix: "Tracking runs on its own thread",
+    how: "Frame processing, gesture matching and key presses run on the tracking-engine thread; Tk's thread only draws. Requests from the interface run in order before the next frame, so switching commands off applies to every frame after it.",
+  },
+  {
     problem: "A crash could leave a key held down",
     group: "stuck",
     fix: "Input is always released",
-    how: "An unexpected error stops tracking and commands, and shutdown releases gesture input before closing the camera, model and windows.",
+    how: "An error on the engine thread is caught by the next interface update, which stops commands, hides the overlays and shows the error. Shutdown stops the engine and releases gesture input before closing the camera, model and windows.",
   },
 ];
 
@@ -418,7 +493,7 @@ export const ComputerVisionProject = () => (
   <HintProvider lookup={hintFor}>
   <CaseStudy className="case-study typeset-card-readable">
     <CaseStudyOpening id="project-1" summary="Use hand gestures to control games and other apps.">
-      <p className="cs-eyebrow typeset-card-toner">Project · Desktop application · Python / Tkinter / OpenCV / MediaPipe</p>
+      <p className="cs-eyebrow typeset-card-toner">Project · Desktop application · Windows and macOS · Python / Tkinter / OpenCV / MediaPipe</p>
       <h1 className="typeset-title">Computer Vision for Input Simulation</h1>
       <p>A desktop application that turns hand gestures into keyboard input.</p>
       <p>
@@ -427,7 +502,9 @@ export const ComputerVisionProject = () => (
       </p>
       <p className="cs-technical">
         Under the hood: OpenCV captures the camera, MediaPipe finds the hand's landmarks, and a Python pipeline
-        classifies each finger, matches gestures against the profile and sends keys through pynput.
+        classifies each finger, matches gestures against the profile and sends keys through pynput. It runs
+        on Windows and macOS: everything that differs between them (the preview window, the overlay, title
+        bars, display scaling and the default camera) sits behind one <code>Platform</code>, chosen at startup.
       </p>
     </CaseStudyOpening>
 <ReadingVersions overview={<> <section><h2 className="typeset-card-title">Your hand becomes the controller</h2><p>The camera reads a hand shape and presses the keys you chose.</p><figure className="cs-figure"><SimpleSystemDiagram /></figure><CaseStudyMedia media={applicationScreenshots.camera} /></section>
@@ -454,6 +531,16 @@ export const ComputerVisionProject = () => (
       </div>
       <figure className="cs-figure cs-technical"><SystemDiagram /><StageFlow /></figure>
       <figure className="cs-figure cs-simple-block"><SimpleSystemDiagram /><SimpleStageFlow /></figure>
+
+      <div className="cs-subsection cs-technical">
+        <h3 className="typeset-card-title">Threads</h3>
+        <p className="cs-prose">
+          The camera, the model and the windows each run on their own thread, so none of them holds up a key
+          press. Every hand-off keeps only the newest frame or result, or queues a request, so no thread waits
+          on another. Windows runs six threads; macOS runs five, because its camera preview draws on Tk's thread.
+        </p>
+        <figure className="cs-figure"><ThreadDiagram /><ThreadList /></figure>
+      </div>
 
     </section>
 
@@ -503,6 +590,7 @@ export const ComputerVisionProject = () => (
             <li>Joints and finger chains drawn over the mirrored camera.</li>
             <li>Tracked fingertips leave paths, marked wherever a repeat fired.</li>
             <li>Profiles can add their own feedback, like Invoker's spell icons.</li>
+            <li>Windows uses OpenCV's own window; macOS draws it in a Tk window, up to 30 times a second.</li>
           </ul>
         </Feature>
 
@@ -605,7 +693,9 @@ export const ComputerVisionProject = () => (
           media={<CaseStudyMedia media={applicationScreenshots.overlay} />}
         >
           <ul className="cs-feature-points">
-            <li>Shows the same live report as the debugging panel.</li>
+            <li>Shows the hand stats, or the camera above them in a small, medium or large width.</li>
+            <li>Click-through and always on top, even over full-screen apps.</li>
+            <li>A layered window on Windows, a native AppKit panel on macOS.</li>
             <li>Set its style, opacity and position, then save or discard.</li>
           </ul>
         </Feature>

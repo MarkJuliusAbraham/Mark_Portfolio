@@ -5,7 +5,7 @@ export const projects = [
     id: "project-1",
     featured: true,
     title: "Gesture Mapping Application",
-    description: "A desktop application for mapping hand gestures to keyboard input, with editable profiles, live feedback, and tracking controls.",
+    description: "A desktop application for Windows and macOS that maps hand gestures to keyboard input, with editable profiles, live feedback, and tracking controls.",
     genre: "Input Simulation/Computer Vision",
     techStack: ["Python", "Tkinter", "OpenCV", "MediaPipe"],
     year: 2026,
@@ -40,6 +40,14 @@ export const projects = [
     description: "Designing unfamiliar systems with AI tools: a procedural tree generator, live authoring controls, and debug views that make the rules visible.",
     genre: "Game systems",
     techStack: ["C#", "Godot", "Shaders"],
+    year: 2026,
+  },
+  {
+    id: "caseroute",
+    title: "CaseRoute",
+    description: "A system design case study in reliable case intake: Kafka, an outbox and idempotent writes keep every submitted case saved and processed exactly once, proven by a checker at up to 1,000,000 submissions a minute.",
+    genre: "System design",
+    techStack: ["Java", "Spring Boot", "Kafka", "PostgreSQL", "Docker"],
     year: 2026,
   },
   // One buffer for future work.

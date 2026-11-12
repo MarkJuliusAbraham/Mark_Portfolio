@@ -18,6 +18,8 @@ import waterPreview from "@/gifs/water-system.gif";
 import windPoster from "@/previews/WindSystem.jpg";
 import gestureVideo from "@/previews/GestureCapture.mp4";
 import gesturePoster from "@/previews/GestureCapture.jpg";
+import caseRouteVideo from "@/previews/CaseRoute.mp4";
+import caseRoutePoster from "@/previews/CaseRoute.jpg";
 import { prefersReducedMotion } from "@/lib/scroll.js";
 
 // Placeholder previews until each project has its own: short looping videos (far smaller than the
@@ -43,6 +45,8 @@ const ownPreviews = {
   "wind-system": { video: windVideo, poster: windPoster },
   // A tree mirrored in the river at night, with leaves landing on the water.
   "water-system": { gif: waterPreview, alt: "" },
+  // The dashboard warming up a 100k/min run: the pipeline graph, outcomes and connections.
+  caseroute: { video: caseRouteVideo, poster: caseRoutePoster },
 };
 
 // The same stand-in for a project every time, so it matches between the carousel and the grid.
